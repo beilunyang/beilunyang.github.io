@@ -6,20 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="前言每次开发一个后端应用，基本上都要编写一个admin后台来管理(CRUD)各种资源，在Python生态中，Django和Flask框架都有对应的admin包，通过简单设置就可以拥有一个CRUD的admin后台。我也一直在寻找类似功能的NodeJS包，终于找到了AdminBro。由于目前AdminBro官网上的NestJS+AdminBro文档写得不是很清晰，所以写下这篇文章，记录下如何在Nest">
+    <meta name="description" content="前言每次开发一个后端应用，基本上都要编写一个admin后台来管理(CRUD)各种资源，在Python生态中，Django和Flask框架都有对应的admin包，通过简单设置就可以拥有一个CRUD的admin后台。我也一直在寻找类似功能的NPM包，终于找到了AdminBro。由于目前AdminBro官网上的NestJS+AdminBro文档写得不是很清晰，所以写下这篇文章，记录下如何在NestJS应">
 <meta name="keywords" content="NestJS,NodeJS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用AdminBro为NestJS应用创建简易Admin后台">
 <meta property="og:url" content="https://beilunyang.github.io/2021/04/11/使用AdminBro为NestJS应用创建简易Admin后台/index.html">
 <meta property="og:site_name" content="悖论の小黑屋">
-<meta property="og:description" content="前言每次开发一个后端应用，基本上都要编写一个admin后台来管理(CRUD)各种资源，在Python生态中，Django和Flask框架都有对应的admin包，通过简单设置就可以拥有一个CRUD的admin后台。我也一直在寻找类似功能的NodeJS包，终于找到了AdminBro。由于目前AdminBro官网上的NestJS+AdminBro文档写得不是很清晰，所以写下这篇文章，记录下如何在Nest">
+<meta property="og:description" content="前言每次开发一个后端应用，基本上都要编写一个admin后台来管理(CRUD)各种资源，在Python生态中，Django和Flask框架都有对应的admin包，通过简单设置就可以拥有一个CRUD的admin后台。我也一直在寻找类似功能的NPM包，终于找到了AdminBro。由于目前AdminBro官网上的NestJS+AdminBro文档写得不是很清晰，所以写下这篇文章，记录下如何在NestJS应">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://i.loli.net/2021/04/11/lKLDBnySw12Gzke.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/11/GHV2iE5qPBRQOuX.png">
-<meta property="og:updated_time" content="2021-04-11T14:26:22.601Z">
+<meta property="og:updated_time" content="2021-04-11T14:39:08.609Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用AdminBro为NestJS应用创建简易Admin后台">
-<meta name="twitter:description" content="前言每次开发一个后端应用，基本上都要编写一个admin后台来管理(CRUD)各种资源，在Python生态中，Django和Flask框架都有对应的admin包，通过简单设置就可以拥有一个CRUD的admin后台。我也一直在寻找类似功能的NodeJS包，终于找到了AdminBro。由于目前AdminBro官网上的NestJS+AdminBro文档写得不是很清晰，所以写下这篇文章，记录下如何在Nest">
+<meta name="twitter:description" content="前言每次开发一个后端应用，基本上都要编写一个admin后台来管理(CRUD)各种资源，在Python生态中，Django和Flask框架都有对应的admin包，通过简单设置就可以拥有一个CRUD的admin后台。我也一直在寻找类似功能的NPM包，终于找到了AdminBro。由于目前AdminBro官网上的NestJS+AdminBro文档写得不是很清晰，所以写下这篇文章，记录下如何在NestJS应">
 <meta name="twitter:image" content="https://i.loli.net/2021/04/11/lKLDBnySw12Gzke.png">
     
     
@@ -82,10 +82,10 @@
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
-      <span id="i-prev" class="info" style="display:none;">Post Anterior</span>
-      <span id="i-next" class="info" style="display:none;">Post Següent</span>
-      <span id="i-top" class="info" style="display:none;">Adalt</span>
-      <span id="i-share" class="info" style="display:none;">Compartir Post</span>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
     </span>
     <br>
     <div id="share" style="display: none">
@@ -148,7 +148,7 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>每次开发一个后端应用，基本上都要编写一个admin后台来管理(CRUD)各种资源，在Python生态中，Django和Flask框架都有对应的admin包，通过简单设置就可以拥有一个CRUD的admin后台。我也一直在寻找类似功能的NodeJS包，终于找到了AdminBro。由于目前AdminBro官网上的NestJS+AdminBro文档写得不是很清晰，所以写下这篇文章，记录下如何在NestJS应用中使用AdminBro</p>
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>每次开发一个后端应用，基本上都要编写一个admin后台来管理(CRUD)各种资源，在Python生态中，Django和Flask框架都有对应的admin包，通过简单设置就可以拥有一个CRUD的admin后台。我也一直在寻找类似功能的NPM包，终于找到了AdminBro。由于目前AdminBro官网上的NestJS+AdminBro文档写得不是很清晰，所以写下这篇文章，记录下如何在NestJS应用中使用AdminBro</p>
 <p>以下代码演示环境为:</p>
 <ul>
 <li>数据库：MongoDB 4.4.3</li>
@@ -211,10 +211,10 @@
     </div>
 
     <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menú</a>
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
         <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Compartir</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Cap amunt</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
     </div>
 
   </div>
