@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="前言Redux 是如今最流行的状态管理框架之一，其通过单一 Store 和限制状态更新的方式，让状态变得可控可预测。然而，redux 的一系列限制，也让其产生了一些弊端:  样板式代码过多，书写繁琐 不支持异步 action那么有什么办法来让 redux 支持异步 action 呢。redux 吸收借鉴了 express 和 koa 的 middleware 思想，拥有一套强大的 middlewa">
+<meta name="keywords" content="Redux,源码欣赏">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redux Middleware一瞥">
+<meta property="og:url" content="https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="前言Redux 是如今最流行的状态管理框架之一，其通过单一 Store 和限制状态更新的方式，让状态变得可控可预测。然而，redux 的一系列限制，也让其产生了一些弊端:  样板式代码过多，书写繁琐 不支持异步 action那么有什么办法来让 redux 支持异步 action 呢。redux 吸收借鉴了 express 和 koa 的 middleware 思想，拥有一套强大的 middlewa">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2024-01-04T13:55:46.685Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redux Middleware一瞥">
+<meta name="twitter:description" content="前言Redux 是如今最流行的状态管理框架之一，其通过单一 Store 和限制状态更新的方式，让状态变得可控可预测。然而，redux 的一系列限制，也让其产生了一些弊端:  样板式代码过多，书写繁琐 不支持异步 action那么有什么办法来让 redux 支持异步 action 呢。redux 吸收借鉴了 express 和 koa 的 middleware 思想，拥有一套强大的 middlewa">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+          
+        
+    
+    <!-- title -->
+    <title>Redux Middleware一瞥</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/01/28/SQLAlchemy备忘录/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/05/15/群晖NAS初体验/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Post Anterior</span>
+      <span id="i-next" class="info" style="display:none;">Post Següent</span>
+      <span id="i-top" class="info" style="display:none;">Adalt</span>
+      <span id="i-share" class="info" style="display:none;">Compartir Post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&text=Redux Middleware一瞥"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&title=Redux Middleware一瞥"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&is_video=false&description=Redux Middleware一瞥"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Redux Middleware一瞥&body=Check out this article: https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&title=Redux Middleware一瞥"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&title=Redux Middleware一瞥"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&title=Redux Middleware一瞥"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&title=Redux Middleware一瞥"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&name=Redux Middleware一瞥&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Middleware-的用法"><span class="toc-number">2.</span> <span class="toc-text">Middleware 的用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Middleware-的形式"><span class="toc-number">3.</span> <span class="toc-text">Middleware 的形式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Middleware-机制的实现"><span class="toc-number">4.</span> <span class="toc-text">Middleware 机制的实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结语"><span class="toc-number">5.</span> <span class="toc-text">结语</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Redux Middleware一瞥
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">悖论の小黑屋</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-10-19T13:06:19.000Z" itemprop="datePublished">2019-10-19</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Redux/">Redux</a>, <a class="tag-link" href="/tags/源码欣赏/">源码欣赏</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Redux 是如今最流行的状态管理框架之一，其通过单一 Store 和限制状态更新的方式，让状态变得可控可预测。然而，redux 的一系列限制，也让其产生了一些弊端:</p>
+<ol>
+<li>样板式代码过多，书写繁琐</li>
+<li>不支持异步 action<br>那么有什么办法来让 redux 支持异步 action 呢。redux 吸收借鉴了 express 和 koa 的 middleware 思想，拥有一套强大的 middleware 系统，通过 middleware，即可实现异步 action 功能。今天，闲来无事，走马观花，重新认识下 redux middleware</li>
+</ol>
+<h2 id="Middleware-的用法"><a href="#Middleware-的用法" class="headerlink" title="Middleware 的用法"></a>Middleware 的用法</h2><p>先来看看，在 redux 中，它是如何使用的。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createStore, combineReducers, applyMiddleware &#125; <span class="keyword">from</span> <span class="string">"redux"</span>;</span><br><span class="line"><span class="keyword">import</span> reducers <span class="keyword">from</span> <span class="string">"./reducers"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> App = combineReducers(reducers);</span><br><span class="line"><span class="keyword">const</span> middlewares = [你的middleware];</span><br><span class="line"><span class="keyword">const</span> store = createStore(app, applyMiddleware(...middlewares));</span><br></pre></td></tr></table></figure>
+<p>很简单，使用时，只要引入 applyMiddleware 函数，然后将你需要使用的 middleware 作为参数传入 applyMiddleware 调用，最后将返回结果作为参数传入 createStore，就完成了 redux 引入 middleware</p>
+<h2 id="Middleware-的形式"><a href="#Middleware-的形式" class="headerlink" title="Middleware 的形式"></a>Middleware 的形式</h2><p>再来看看，一个 middleware 长什么样，以 redux-thunk 这个最有名的天选 middleware 为例</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createThunkMiddleware</span>(<span class="params">extraArgument</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function">(<span class="params">&#123; dispatch, getState &#125;</span>) =&gt;</span> next =&gt; <span class="function"><span class="params">action</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> action === <span class="string">"function"</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> action(dispatch, getState, extraArgument);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> next(action);</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> thunk = createThunkMiddleware();</span><br><span class="line">thunk.withExtraArgument = createThunkMiddleware;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> thunk;</span><br></pre></td></tr></table></figure>
+<p>redux-thunk 代码就这么短短几行，为了注入 extraArgument，特意使用的工厂模式，生产最后会导出的 thunk。所以，删减下，这个 thunk middleware 其实长这样</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> thunk = <span class="function">(<span class="params">&#123; dispatch, getState &#125;</span>) =&gt;</span> next =&gt; <span class="function"><span class="params">action</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> action === <span class="string">"function"</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> action(dispatch, getState);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> next(action);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> thunk;</span><br></pre></td></tr></table></figure>
+<p>结合文档中的其它 middleware，大致能得出一个 middleware 长什么样了</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">（&#123; dispatch, getState &#125;）=&gt; <span class="function">(<span class="params">next</span>) =&gt;</span> (action) =&gt; &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Middleware-机制的实现"><a href="#Middleware-机制的实现" class="headerlink" title="Middleware 机制的实现"></a>Middleware 机制的实现</h2><p>查看 redux 源码中的 middleware 部分，验证下一个 middleware 是不是应该长这样，以及 redux 是如何实现 middleware 机制的。<br>首先看<code>applyMiddleware.js</code>文件</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">applyMiddleware</span>(<span class="params">...middlewares</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="params">createStore</span> =&gt;</span> (...args) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> store = createStore(...args);</span><br><span class="line">    <span class="keyword">let</span> dispatch = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(</span><br><span class="line">        <span class="string">`Dispatching while constructing your middleware is not allowed. `</span> +</span><br><span class="line">          <span class="string">`Other middleware would not be applied to this dispatch.`</span></span><br><span class="line">      );</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> middlewareAPI = &#123;</span><br><span class="line">      getState: store.getState,</span><br><span class="line">      dispatch: <span class="function">(<span class="params">...args</span>) =&gt;</span> dispatch(...args)</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">const</span> chain = middlewares.map(<span class="function"><span class="params">middleware</span> =&gt;</span> middleware(middlewareAPI));</span><br><span class="line">    dispatch = compose(...chain)(store.dispatch);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      ...store,</span><br><span class="line">      dispatch</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>applyMiddleware 是一个高阶函数，利用 ES6 rest 操作符，<br>将传入的 middleware，收集到一个 middlewares 数组中，然后返回一个新的函数。而这个新的函数则是一个<a href="https://redux.js.org/glossary#store-enhancer" target="_blank" rel="noopener">store enhancer</a>, 一个 store enhancer, 接收一个 store creator,返回一个新的 store creator.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">type StoreEnhancer = (next: StoreCreator) =&gt; StoreCreator</span><br></pre></td></tr></table></figure>
+<p>新的 store creator 内部，先调用旧的 store creator, 并且定义了一个默认的 dispatch。然后创建一个对象 middlewareAPI,这个对象有两个方法(getState 和 dispath), getState 为原 store.getState 的引用；dispatch 为一个箭头函数，里面会调用默认的 dispatch， 这里用箭头函数包裹，会形成一个闭包, 当默认 dispatch 函数变化的时候，middlewareAPI 中的 dispatch 也会变化。<br>然后 middlewares.map 一下,执行各个 middleware,为它们注入 middlewareAPI 这个对象,返回新的名叫 chain 的数组。<br>看到这里，也就知道了，为什么一个中间件会</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">（&#123; dispatch, getState &#125; ）=&gt; &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来，调用了一个 compose 函数.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">compose</span>(<span class="params">...funcs</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (funcs.length === <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="params">arg</span> =&gt;</span> arg;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (funcs.length === <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> funcs[<span class="number">0</span>];</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> funcs.reduce(<span class="function">(<span class="params">a, b</span>) =&gt;</span> (...args) =&gt; a(b(...args)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>compose 函数通过 rest 将参数收集到一个数组中，然后调用 reduce 这个累计函数，返回一个新的函数。如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compose(f, g, h), 返回(...args) =&gt; f(g(h(...args)))</span><br></pre></td></tr></table></figure>
+<p>所以,chain 数组中的函数,就实现了如下的调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">const a = (next) =&gt; (action) =&gt; &#123;&#125;;</span><br><span class="line">const b = (next) =&gt; (action) =&gt; &#123;&#125;;</span><br><span class="line">const c = (next) =&gt; (action) =&gt; &#123;&#125;;</span><br><span class="line">const dispatchA = a(dispatch);</span><br><span class="line">const dispatchB = b(dispatchA);</span><br><span class="line">const dispatchC = c(dispatchB);</span><br></pre></td></tr></table></figure>
+<p>而这就是 redux middleware 的本质，包装原 dispatch, 返回一个新的 dispatch.</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>走马观花，简单对 Middleware 的用法，形式，实现进行了一瞥，Middleware 简单而又强大，里面蕴含了函数柯里化的思想; 闭包和 ES5 reduce 函数的使用更是巧妙。水下此文，已备忘。</p>
+
+  </div>
+</article>
+
+
+    <script src="https://utteranc.es/client.js" repo="beilunyang/beilunyang.github.io" issue-term="pathname" theme="photon-dark" crossorigin="anonymous" async>
+    </script>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Middleware-的用法"><span class="toc-number">2.</span> <span class="toc-text">Middleware 的用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Middleware-的形式"><span class="toc-number">3.</span> <span class="toc-text">Middleware 的形式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Middleware-机制的实现"><span class="toc-number">4.</span> <span class="toc-text">Middleware 机制的实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结语"><span class="toc-number">5.</span> <span class="toc-text">结语</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&text=Redux Middleware一瞥"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&title=Redux Middleware一瞥"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&is_video=false&description=Redux Middleware一瞥"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Redux Middleware一瞥&body=Check out this article: https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&title=Redux Middleware一瞥"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&title=Redux Middleware一瞥"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&title=Redux Middleware一瞥"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&title=Redux Middleware一瞥"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/&name=Redux Middleware一瞥&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menú</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Compartir</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Cap amunt</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2024 beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

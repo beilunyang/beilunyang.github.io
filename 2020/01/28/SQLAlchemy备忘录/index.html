@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="前言SQLALchemy是Python社区中著名的ORM库，由于本职工作是前端，Python相关技术栈不常用到，经常性的会造成遗忘，所以记下这篇文章，已备忘速查 以下代码演示环境为:  数据库: MySQL5.7 操作系统: Windows10 开发工具: PyCharm2019.3.2 Python3.8  安装12345# 安装sqlalchemypip install sqlalchemy#">
+<meta name="keywords" content="Python,数据库">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQLAlchemy备忘录">
+<meta property="og:url" content="https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="前言SQLALchemy是Python社区中著名的ORM库，由于本职工作是前端，Python相关技术栈不常用到，经常性的会造成遗忘，所以记下这篇文章，已备忘速查 以下代码演示环境为:  数据库: MySQL5.7 操作系统: Windows10 开发工具: PyCharm2019.3.2 Python3.8  安装12345# 安装sqlalchemypip install sqlalchemy#">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2024-01-04T13:55:46.685Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SQLAlchemy备忘录">
+<meta name="twitter:description" content="前言SQLALchemy是Python社区中著名的ORM库，由于本职工作是前端，Python相关技术栈不常用到，经常性的会造成遗忘，所以记下这篇文章，已备忘速查 以下代码演示环境为:  数据库: MySQL5.7 操作系统: Windows10 开发工具: PyCharm2019.3.2 Python3.8  安装12345# 安装sqlalchemypip install sqlalchemy#">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+          
+        
+    
+    <!-- title -->
+    <title>SQLAlchemy备忘录</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/11/15/使用Workbox创建PWA应用/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/10/19/Redux Middleware一瞥/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Post Anterior</span>
+      <span id="i-next" class="info" style="display:none;">Post Següent</span>
+      <span id="i-top" class="info" style="display:none;">Adalt</span>
+      <span id="i-share" class="info" style="display:none;">Compartir Post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&text=SQLAlchemy备忘录"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&title=SQLAlchemy备忘录"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&is_video=false&description=SQLAlchemy备忘录"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=SQLAlchemy备忘录&body=Check out this article: https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&title=SQLAlchemy备忘录"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&title=SQLAlchemy备忘录"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&title=SQLAlchemy备忘录"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&title=SQLAlchemy备忘录"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&name=SQLAlchemy备忘录&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装"><span class="toc-number">2.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引入对应的模块"><span class="toc-number">3.</span> <span class="toc-text">引入对应的模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接数据库并创建session"><span class="toc-number">4.</span> <span class="toc-text">连接数据库并创建session</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建表的class定义"><span class="toc-number">5.</span> <span class="toc-text">创建表的class定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建表-如果表已经存在，不会重新创建覆盖"><span class="toc-number">6.</span> <span class="toc-text">创建表(如果表已经存在，不会重新创建覆盖)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#删除表"><span class="toc-number">7.</span> <span class="toc-text">删除表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本CRUD"><span class="toc-number">8.</span> <span class="toc-text">基本CRUD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建多对多关系"><span class="toc-number">9.</span> <span class="toc-text">创建多对多关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建relationship"><span class="toc-number">10.</span> <span class="toc-text">创建relationship</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一对多关系"><span class="toc-number">11.</span> <span class="toc-text">创建一对多关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一对一关系"><span class="toc-number">12.</span> <span class="toc-text">创建一对一关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo源码"><span class="toc-number">13.</span> <span class="toc-text">Demo源码</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        SQLAlchemy备忘录
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">悖论の小黑屋</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-01-28T04:41:08.000Z" itemprop="datePublished">2020-01-28</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Python/">Python</a>, <a class="tag-link" href="/tags/数据库/">数据库</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><code>SQLALchemy</code>是<code>Python</code>社区中著名的<code>ORM</code>库，由于本职工作是前端，<code>Python</code>相关技术栈不常用到，经常性的会造成遗忘，所以记下这篇文章，已备忘速查</p>
+<p>以下代码演示环境为:</p>
+<ul>
+<li>数据库: <code>MySQL5.7</code></li>
+<li>操作系统: <code>Windows10</code></li>
+<li>开发工具: <code>PyCharm2019.3.2</code></li>
+<li><code>Python3.8</code></li>
+</ul>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装sqlalchemy</span></span><br><span class="line">pip install sqlalchemy</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装对应的数据库驱动</span></span><br><span class="line">pip install mysql-connector-python</span><br></pre></td></tr></table></figure>
+<h2 id="引入对应的模块"><a href="#引入对应的模块" class="headerlink" title="引入对应的模块"></a>引入对应的模块</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> sessionmaker, relationship</span><br><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> Column, String, Integer, Text, ForeignKey, create_engine</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.ext.declarative <span class="keyword">import</span> declarative_base</span><br></pre></td></tr></table></figure>
+<h2 id="连接数据库并创建session"><a href="#连接数据库并创建session" class="headerlink" title="连接数据库并创建session"></a>连接数据库并创建session</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建连接</span></span><br><span class="line">engine = create_engine(<span class="string">'mysql+mysqlconnector://&lt;username&gt;:&lt;password&gt;@&lt;host&gt;:&lt;port&gt;/&lt;db&gt;'</span>)</span><br><span class="line"><span class="comment"># 创建会话类</span></span><br><span class="line">Session = sessionmaker(bind=engine)</span><br><span class="line"><span class="comment"># 创建会话</span></span><br><span class="line">session = Session()</span><br></pre></td></tr></table></figure>
+<h2 id="创建表的class定义"><a href="#创建表的class定义" class="headerlink" title="创建表的class定义"></a>创建表的class定义</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Base = declarative_base()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Vod</span><span class="params">(Base)</span>:</span></span><br><span class="line">    <span class="comment"># 表名</span></span><br><span class="line">    __tablename__ = <span class="string">'vod'</span></span><br><span class="line">    </span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>, autoincrement=<span class="literal">True</span>)</span><br><span class="line">    </span><br><span class="line">    title = Column(String(<span class="number">200</span>))</span><br><span class="line">    </span><br><span class="line">    cover = Column(Text)</span><br><span class="line">    </span><br><span class="line">    intro = Column(Text)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Actor</span><span class="params">(Base)</span>:</span></span><br><span class="line">    <span class="comment"># 表名</span></span><br><span class="line">    __tablename__ = <span class="string">'actor'</span></span><br><span class="line">    </span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>, autoincrement=<span class="literal">True</span>)</span><br><span class="line">    </span><br><span class="line">    name = Column(String(<span class="number">40</span>))</span><br><span class="line">    </span><br><span class="line">    avatar = Column(Text)</span><br></pre></td></tr></table></figure>
+<h2 id="创建表-如果表已经存在，不会重新创建覆盖"><a href="#创建表-如果表已经存在，不会重新创建覆盖" class="headerlink" title="创建表(如果表已经存在，不会重新创建覆盖)"></a>创建表(如果表已经存在，不会重新创建覆盖)</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Base.metadata.create_all(engine)</span><br></pre></td></tr></table></figure>
+<h2 id="删除表"><a href="#删除表" class="headerlink" title="删除表"></a>删除表</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Base.metadata.drop_all(engine)</span><br></pre></td></tr></table></figure>
+<h2 id="基本CRUD"><a href="#基本CRUD" class="headerlink" title="基本CRUD"></a>基本CRUD</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_vod</span><span class="params">(vid)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> session.query(Vod).filter_by(id=vid).first()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">insert_vod</span><span class="params">(vod)</span>:</span></span><br><span class="line">    <span class="comment"># add方法仅仅是新建，如果实例的主键值已经存在于表中，则会报错，不会去更新</span></span><br><span class="line">    session.add(vod)</span><br><span class="line">    session.commit()</span><br><span class="line">    <span class="keyword">return</span> vod</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete_vod</span><span class="params">(vod)</span>:</span></span><br><span class="line">    <span class="comment"># 以一个实例对象为参数，通过主键字段来判断表中是否存在这条记录</span></span><br><span class="line">    session.delete(vod)</span><br><span class="line">    session.commit()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">update_vod</span><span class="params">(vod)</span>:</span></span><br><span class="line">    <span class="comment"># merge方法会通过主键值来判断当前实例是否存在于表中，如果存在，则更新; 否则新建</span></span><br><span class="line">    session.merge(vod)</span><br><span class="line">    session.commit()</span><br><span class="line">    <span class="comment"># 或者先通过查询获取到需要更新的对象，然后更新这个对象并提交</span></span><br><span class="line">    my_vod = session.query(Vod).filter_by(id=vod.id).first()</span><br><span class="line">    <span class="keyword">if</span> my_vod:</span><br><span class="line">        my_vod.name = vod.name</span><br><span class="line">        session.commit()</span><br></pre></td></tr></table></figure>
+<h2 id="创建多对多关系"><a href="#创建多对多关系" class="headerlink" title="创建多对多关系"></a>创建多对多关系</h2><p>创建多对多关系，需要通过中间表实现<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Vod2Actor</span><span class="params">(Base)</span>:</span></span><br><span class="line">    <span class="comment"># 表名</span></span><br><span class="line">    __tablename__ = <span class="string">'vod2actor'</span></span><br><span class="line">    </span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>, autoincrement=<span class="literal">True</span>)</span><br><span class="line">    </span><br><span class="line">    vod_id = Column(Integer, ForeignKey(<span class="string">'vod.id'</span>))</span><br><span class="line">    </span><br><span class="line">    actor_id = Column(Integer, ForeignKey(<span class="string">'actor.id'</span>))</span><br></pre></td></tr></table></figure></p>
+<p>使用<code>ForeignKey</code>创建外键, 外键所在的表为子表，所以Vod2Actor为子表，Vod和Actor为父表<br>ForeignKey接受一个字符串作为参数，参数为’&lt;__tablename__&gt;.<pk>‘</pk></p>
+<h2 id="创建relationship"><a href="#创建relationship" class="headerlink" title="创建relationship"></a>创建relationship</h2><p><code>relationship</code>是<code>sqlalchemy.orm</code>提供的对关系之间的一种便利调用方式。</p>
+<p>创建<code>relationship</code>不是必须的。假设现在已知一个<code>Vod.title</code>的值，想要知道这个<code>Vod.actors</code>的值，如果不通过<code>relationship</code>，则需要这样操作<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_actors_by_vod_title</span><span class="params">(title)</span>:</span></span><br><span class="line">    vod = session.query(Vod).filter_by(title=title).first()</span><br><span class="line">    <span class="keyword">if</span> vod:</span><br><span class="line">        vod2Actors = session.query(Vod2Actor).filter_by(vod_id=vod.id).all()</span><br><span class="line">        actors = [session.query(Actor).filter_by(id=item.actor_id).first() <span class="keyword">for</span> item <span class="keyword">in</span> vod2Actors]</span><br><span class="line">        <span class="keyword">return</span> actors</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure></p>
+<p>如果在<code>Vod</code>中加上<code>relationship</code>, 则操作就会变得非常简单<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Vod</span><span class="params">(Base)</span>:</span></span><br><span class="line">    <span class="comment"># ......</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 第一个参数为类名，第二个secondary为中间表的表名</span></span><br><span class="line">    actors = relationship(<span class="string">'Actor'</span>, secondary=<span class="string">'vod2actor'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_actors_by_vod_title_with_relationship</span><span class="params">(title)</span>:</span></span><br><span class="line">    vod = session.query(Vod).filter_by(title=title).first()</span><br><span class="line">    <span class="keyword">if</span> vod:</span><br><span class="line">        <span class="keyword">return</span> vod.actors</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure></p>
+<p><code>relationship</code>还有一个<code>backref</code>参数，它提供了反向操作的能力, 当设置后，<br><code>actor</code>也可以直接查询与其对应的<code>vods</code>的值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">class Vod(Base):</span><br><span class="line">    # ......</span><br><span class="line">    </span><br><span class="line">    # backref为一个字符串，设置后，actor便会多一个以这个字符串为名的属性</span><br><span class="line">    # 除了backref，还有一个back_populates, 两者功能一样，backref是back_populates的高级版，使用更简单方便</span><br><span class="line">    # backref只需单向声明，而back_populates则需要双向声明</span><br><span class="line">    # 以vod和actor为例,backref只需要在Vod或Actor其中一个的relationship中声明，而back_populates则需要在Vod和Actor的relationship中都声明</span><br><span class="line">    actors = relationship(&apos;Actor&apos;, secondary=&apos;vod2actor&apos;, backref=&apos;vods&apos;)</span><br><span class="line"></span><br><span class="line">def get_vods_by_actor_name_with_backref(name):</span><br><span class="line">    actor = session.query(Actor).filter_by(name=name).first()</span><br><span class="line">    if actor:</span><br><span class="line">        return actor.vods</span><br><span class="line">    return None</span><br></pre></td></tr></table></figure></p>
+<h2 id="创建一对多关系"><a href="#创建一对多关系" class="headerlink" title="创建一对多关系"></a>创建一对多关系</h2><p>创建一对多关系，只需要在子表中设置外键, 外键的值为父表的主键值， 不需要额外建立中间表；多对多关系本质上就是通过两张表与中间表建立一对多关系实现的<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Vod</span><span class="params">(Base)</span>:</span></span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    downloads = relationship(<span class="string">'Download'</span>, backref=<span class="string">"vod"</span>);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Download</span><span class="params">(Base)</span>:</span></span><br><span class="line">    <span class="comment"># 表名</span></span><br><span class="line">    __tablename__ = <span class="string">'download'</span></span><br><span class="line"></span><br><span class="line">    id = Column(Integer, primary_key=<span class="literal">True</span>, autoincrement=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    url = Column(Text)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 迅雷/磁力/百度云</span></span><br><span class="line">    type = Column(Text(<span class="number">20</span>))</span><br><span class="line">    </span><br><span class="line">    vod_id = Column(Integer, ForeignKey(<span class="string">'vod.id'</span>))</span><br></pre></td></tr></table></figure></p>
+<h2 id="创建一对一关系"><a href="#创建一对一关系" class="headerlink" title="创建一对一关系"></a>创建一对一关系</h2><p>创建一对一关系，和创建一对多关系方法一致，只是在通过<code>relationship</code>进行快捷操作时，需要设置<code>uselist=False</code>, 使<code>play_bilibili</code>不是一个列表<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Vod</span><span class="params">(Base)</span>:</span></span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    <span class="comment"># 默认uselist=True, 通过play_bilibili获取到的值是一个列表</span></span><br><span class="line">    play_bilibili = relationship(<span class="string">'Play'</span>, uselist=<span class="literal">False</span>, backref=<span class="string">'vod'</span>);</span><br></pre></td></tr></table></figure></p>
+<h2 id="Demo源码"><a href="#Demo源码" class="headerlink" title="Demo源码"></a>Demo源码</h2><p><a href="https://github.com/demo-box/sqlalchemy-demo.git" target="_blank" rel="noopener">https://github.com/demo-box/sqlalchemy-demo.git</a></p>
+
+  </div>
+</article>
+
+
+    <script src="https://utteranc.es/client.js" repo="beilunyang/beilunyang.github.io" issue-term="pathname" theme="photon-dark" crossorigin="anonymous" async>
+    </script>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装"><span class="toc-number">2.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引入对应的模块"><span class="toc-number">3.</span> <span class="toc-text">引入对应的模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接数据库并创建session"><span class="toc-number">4.</span> <span class="toc-text">连接数据库并创建session</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建表的class定义"><span class="toc-number">5.</span> <span class="toc-text">创建表的class定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建表-如果表已经存在，不会重新创建覆盖"><span class="toc-number">6.</span> <span class="toc-text">创建表(如果表已经存在，不会重新创建覆盖)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#删除表"><span class="toc-number">7.</span> <span class="toc-text">删除表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本CRUD"><span class="toc-number">8.</span> <span class="toc-text">基本CRUD</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建多对多关系"><span class="toc-number">9.</span> <span class="toc-text">创建多对多关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建relationship"><span class="toc-number">10.</span> <span class="toc-text">创建relationship</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一对多关系"><span class="toc-number">11.</span> <span class="toc-text">创建一对多关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一对一关系"><span class="toc-number">12.</span> <span class="toc-text">创建一对一关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo源码"><span class="toc-number">13.</span> <span class="toc-text">Demo源码</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&text=SQLAlchemy备忘录"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&title=SQLAlchemy备忘录"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&is_video=false&description=SQLAlchemy备忘录"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=SQLAlchemy备忘录&body=Check out this article: https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&title=SQLAlchemy备忘录"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&title=SQLAlchemy备忘录"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&title=SQLAlchemy备忘录"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&title=SQLAlchemy备忘录"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2020/01/28/SQLAlchemy备忘录/&name=SQLAlchemy备忘录&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menú</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Compartir</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Cap amunt</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2024 beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

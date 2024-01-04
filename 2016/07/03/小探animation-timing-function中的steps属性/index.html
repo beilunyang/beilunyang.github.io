@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="合抱之木，生于毫末；九层之台，起于垒土；千里之行，始于足下。——《道德经》  今天翻阅《css揭秘》，看到一章关于用css3实现饼图效果。代码如下：1234567891011121314151617181920212223242526272829303132333435&amp;lt;div class=&amp;quot;pie&amp;quot; style=&amp;quot;animation-delay: -20s&amp;">
+<meta name="keywords" content="CSS,动画">
+<meta property="og:type" content="article">
+<meta property="og:title" content="小探animation-timing-function中的steps属性">
+<meta property="og:url" content="https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="合抱之木，生于毫末；九层之台，起于垒土；千里之行，始于足下。——《道德经》  今天翻阅《css揭秘》，看到一章关于用css3实现饼图效果。代码如下：1234567891011121314151617181920212223242526272829303132333435&amp;lt;div class=&amp;quot;pie&amp;quot; style=&amp;quot;animation-delay: -20s&amp;">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://i.loli.net/2019/05/13/5cd99036bbbce88278.jpg">
+<meta property="og:updated_time" content="2024-01-04T13:55:46.687Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="小探animation-timing-function中的steps属性">
+<meta name="twitter:description" content="合抱之木，生于毫末；九层之台，起于垒土；千里之行，始于足下。——《道德经》  今天翻阅《css揭秘》，看到一章关于用css3实现饼图效果。代码如下：1234567891011121314151617181920212223242526272829303132333435&amp;lt;div class=&amp;quot;pie&amp;quot; style=&amp;quot;animation-delay: -20s&amp;">
+<meta name="twitter:image" content="https://i.loli.net/2019/05/13/5cd99036bbbce88278.jpg">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+          
+        
+    
+    <!-- title -->
+    <title>小探animation-timing-function中的steps属性</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2016/10/18/关于JavaScript中的属性特性/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2016/06/28/Node-js进行微信公众号开发时遇到的小坑/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Post Anterior</span>
+      <span id="i-next" class="info" style="display:none;">Post Següent</span>
+      <span id="i-top" class="info" style="display:none;">Adalt</span>
+      <span id="i-share" class="info" style="display:none;">Compartir Post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&text=小探animation-timing-function中的steps属性"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&title=小探animation-timing-function中的steps属性"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&is_video=false&description=小探animation-timing-function中的steps属性"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=小探animation-timing-function中的steps属性&body=Check out this article: https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&title=小探animation-timing-function中的steps属性"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&title=小探animation-timing-function中的steps属性"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&title=小探animation-timing-function中的steps属性"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&title=小探animation-timing-function中的steps属性"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&name=小探animation-timing-function中的steps属性&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        小探animation-timing-function中的steps属性
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">悖论の小黑屋</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2016-07-03T13:17:00.000Z" itemprop="datePublished">2016-07-03</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/CSS/">CSS</a>, <a class="tag-link" href="/tags/动画/">动画</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <blockquote>
+<p>合抱之木，生于毫末；九层之台，起于垒土；千里之行，始于足下。——《道德经》</p>
+</blockquote>
+<p>今天翻阅《css揭秘》，看到一章关于用css3实现饼图效果。代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;pie&quot; style=&quot;animation-delay: -20s&quot;&gt;&lt;/div&gt;</span><br><span class="line">&lt;div class=&quot;pie&quot; style=&quot;animation-delay: -60s&quot;&gt;&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">  @keyframes spin &#123;</span><br><span class="line">    to &#123; transform: rotate(.5turn); &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  @keyframes bg &#123;</span><br><span class="line">    50% &#123; background-color: #655; &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  .pie &#123;</span><br><span class="line">    display: inline-block;</span><br><span class="line">    position: relative;</span><br><span class="line">    width: 200px;</span><br><span class="line">    height: 200px;</span><br><span class="line">    background-color: yellowgreen;</span><br><span class="line">    background-images: linear-gradient(to right, transparent 50%, #655 0);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  .pie::before &#123;</span><br><span class="line">    content: &apos;&apos;;</span><br><span class="line">    position: absolute;</span><br><span class="line">    top: 0;</span><br><span class="line">    left: 50%;</span><br><span class="line">    width: 50%;</span><br><span class="line">    height: 100%;</span><br><span class="line">    background-color: inherit;</span><br><span class="line">    border-radius: 0 100% 100% 0 / 50%;</span><br><span class="line">    transform-origin: left;</span><br><span class="line">    animation: spin 50s linear infinite, bg 100s step-end infinite; </span><br><span class="line">    animation-delay: inherit; /* 由于不能通过js为伪元素赋值，所以此处通过inherit继承父元素上的值 */</span><br><span class="line">    animation-play-state: paused;</span><br><span class="line">  &#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure></p>
+<p>书上的解释很详细，但却没有解释step-end到底是什么，于是，从没见过这个值得我，一脸的懵逼。在w3cschool上也没找到这个值。于是继续搜索，在博客园找到了相关博文。<br>概括下，大概就是…</p>
+<ul>
+<li>steps 函数指定了一个阶跃函数，它接受两个参数。</li>
+<li>第一个参数接受一个整数值，表示两个关键帧之间分几步完成</li>
+<li>第二个参数有两个值&lt; start &gt; or &lt; end &gt;。默认值为&lt; end &gt;</li>
+<li>step-start 等同于 step(1, start)。step-end 等同于 step(1, end)  </li>
+</ul>
+<p>无码言屌：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class=&quot;content&quot;&gt;&lt;/div&gt;</span><br><span class="line">&lt;style&gt;</span><br><span class="line">  @keyframes cw &#123;</span><br><span class="line">    0% &#123;</span><br><span class="line">      width: 0%;</span><br><span class="line">    &#125;</span><br><span class="line">    50% &#123;</span><br><span class="line">      width: 50%;</span><br><span class="line">    &#125;</span><br><span class="line">    100% &#123;</span><br><span class="line">      width: 100%;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  .content &#123;</span><br><span class="line">    width: 0;</span><br><span class="line">    height: 50px;</span><br><span class="line">    background-color: yellowgreen;</span><br><span class="line">   /**</span><br><span class="line">    * 猜猜此时，结果会怎样？</span><br><span class="line">    * width直接变为50%然后再变为100%</span><br><span class="line">    * animation: cw 10s step-start infinite;</span><br><span class="line">    */</span><br><span class="line"></span><br><span class="line">   /**</span><br><span class="line">    * width先变为0%然后变为了50%</span><br><span class="line">    * animation: cw 10s step-end infinite;</span><br><span class="line">    */</span><br><span class="line"></span><br><span class="line">  /**</span><br><span class="line">   * width先变为25%然后50%然后75%最后100%</span><br><span class="line">   * animation: cw 10s steps(2, start) infinite;</span><br><span class="line">   */</span><br><span class="line"></span><br><span class="line">  /**</span><br><span class="line">   * width先变为0%然后25%然后50%最后75%</span><br><span class="line">   * animation: cw 10s steps(2, end) infinite;</span><br><span class="line">   /</span><br><span class="line">  &#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure></p>
+<p>综上可以发现，steps是作用于关键帧之间的，而不是整个动画。第一个参数将两个关键帧又细分为了几帧。第二个参数决定从一帧到另一帧的中间间隔是用开始帧还是结束帧来进行填充。start表示直接用结束帧进行中间填充，end表示直接用开始帧进行中间填充。<br>最后再上张神图，一图胜千言：</p>
+<p><a href="https://i.loli.net/2019/05/13/5cd99036bbbce88278.jpg" target="_blank" rel="noopener"><img src="https://i.loli.net/2019/05/13/5cd99036bbbce88278.jpg" alt="css steps.jpg"></a></p>
+
+  </div>
+</article>
+
+
+    <script src="https://utteranc.es/client.js" repo="beilunyang/beilunyang.github.io" issue-term="pathname" theme="photon-dark" crossorigin="anonymous" async>
+    </script>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&text=小探animation-timing-function中的steps属性"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&title=小探animation-timing-function中的steps属性"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&is_video=false&description=小探animation-timing-function中的steps属性"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=小探animation-timing-function中的steps属性&body=Check out this article: https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&title=小探animation-timing-function中的steps属性"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&title=小探animation-timing-function中的steps属性"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&title=小探animation-timing-function中的steps属性"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&title=小探animation-timing-function中的steps属性"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2016/07/03/小探animation-timing-function中的steps属性/&name=小探animation-timing-function中的steps属性&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menú</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Compartir</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Cap amunt</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2024 beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
