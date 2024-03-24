@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="前言各位元宵节快乐！历经 0.5 坤年，我独立开发的 Steam 云挂卡小程序（蒸汽姬云挂卡）最终还是由于经济压力关闭了。关闭后，我整理了下 Taro 小程序前端，Strapi 后端代码以及 Figma 设计稿原文件，开源到 Github 上了，各位有能力有兴趣的可以自取进行二次开发部署，允许商用~ 项目介绍steamji | 蒸汽姬云挂卡 , 一款基于 ASF 的24小时免费自动 Steam 挂">
+<meta name="keywords" content="编程, 前端, ACG, JavaScript, NodeJS, React, 编程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序">
+<meta property="og:url" content="https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="前言各位元宵节快乐！历经 0.5 坤年，我独立开发的 Steam 云挂卡小程序（蒸汽姬云挂卡）最终还是由于经济压力关闭了。关闭后，我整理了下 Taro 小程序前端，Strapi 后端代码以及 Figma 设计稿原文件，开源到 Github 上了，各位有能力有兴趣的可以自取进行二次开发部署，允许商用~ 项目介绍steamji | 蒸汽姬云挂卡 , 一款基于 ASF 的24小时免费自动 Steam 挂">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://pic.otaku.ren/20240223/AQADebkxG8liwFZ9.jpg">
+<meta property="og:image" content="https://pic.otaku.ren/20240223/AQADW7oxG8liyFZ-.jpg">
+<meta property="og:image" content="https://pic.otaku.ren/20240223/AQADYroxG8liyFZ-.jpg">
+<meta property="og:updated_time" content="2024-03-24T15:59:05.383Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序">
+<meta name="twitter:description" content="前言各位元宵节快乐！历经 0.5 坤年，我独立开发的 Steam 云挂卡小程序（蒸汽姬云挂卡）最终还是由于经济压力关闭了。关闭后，我整理了下 Taro 小程序前端，Strapi 后端代码以及 Figma 设计稿原文件，开源到 Github 上了，各位有能力有兴趣的可以自取进行二次开发部署，允许商用~ 项目介绍steamji | 蒸汽姬云挂卡 , 一款基于 ASF 的24小时免费自动 Steam 挂">
+<meta name="twitter:image" content="https://pic.otaku.ren/20240223/AQADebkxG8liwFZ9.jpg">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+          
+        
+    
+    <!-- title -->
+    <title>「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2024/03/24/MediaCrawler-小红书爬虫源码分析/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2024/02/13/「img-mom-图片老妈」Telegram-多图床图片上传机器人/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Post Anterior</span>
+      <span id="i-next" class="info" style="display:none;">Post Siguiente</span>
+      <span id="i-top" class="info" style="display:none;">Arriba</span>
+      <span id="i-share" class="info" style="display:none;">Compartir Post</span>
+    </span>
+    <br>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&text=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&title=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&is_video=false&description=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序&body=Check out this article: https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&title=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&title=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&title=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&title=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&name=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#项目介绍"><span class="toc-number">2.</span> <span class="toc-text">项目介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#特性"><span class="toc-number">3.</span> <span class="toc-text">特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#架构"><span class="toc-number">4.</span> <span class="toc-text">架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署"><span class="toc-number">5.</span> <span class="toc-text">部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#部署-API-服务"><span class="toc-number">5.1.</span> <span class="toc-text">部署 API 服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署-ASF-服务"><span class="toc-number">5.2.</span> <span class="toc-text">部署 ASF 服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署小程序"><span class="toc-number">5.3.</span> <span class="toc-text">部署小程序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#预览图"><span class="toc-number">6.</span> <span class="toc-text">预览图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设计稿"><span class="toc-number">7.</span> <span class="toc-text">设计稿</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结语"><span class="toc-number">8.</span> <span class="toc-text">结语</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">悖论の小黑屋</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-02-24T04:47:57.000Z" itemprop="datePublished">2024-02-24</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>各位元宵节快乐！历经 0.5 坤年，我独立开发的 Steam 云挂卡小程序（蒸汽姬云挂卡）最终还是由于经济压力关闭了。<br>关闭后，我整理了下 Taro 小程序前端，Strapi 后端代码以及 Figma 设计稿原文件，开源到 Github 上了，各位有能力有兴趣的可以自取进行二次开发部署，允许商用~</p>
+<h2 id="项目介绍"><a href="#项目介绍" class="headerlink" title="项目介绍"></a>项目介绍</h2><p>steamji | 蒸汽姬云挂卡 , 一款基于 ASF 的24小时免费自动 Steam 挂卡小程序。</p>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><ul>
+<li>支持QQ/微信小程序</li>
+<li>支持 Steam 挂卡/挂时长</li>
+<li>支持任务中心/硬币兑换中心/邀请送硬币等营销模块</li>
+<li>支持基于企业微信机器人的消息通知</li>
+<li>支持管理后台，方便数据管理</li>
+</ul>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p><img src="https://pic.otaku.ren/20240223/AQADebkxG8liwFZ9.jpg" alt="architecture"></p>
+<p>Steamji 项目主要由三部分构造</p>
+<ol>
+<li>使用 Taro 开发的小程序前端（QQ/微信小程序）</li>
+<li>使用 Strapi 开发的 API 服务后端以及管理后台前端</li>
+<li>开源的 ASF 挂卡程序</li>
+</ol>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><h3 id="部署-API-服务"><a href="#部署-API-服务" class="headerlink" title="部署 API 服务"></a>部署 API 服务</h3><ol start="0">
+<li>请确保部署的目标服务器环境已安装如下组件<ol>
+<li>NodeJS LTS版本（14，16）</li>
+<li>Postgres 数据库</li>
+</ol>
+</li>
+<li><p>进入server目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ./server</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装依赖</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置环境变量</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp .env.example .env</span><br><span class="line">vi .env</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 pm2 运行 server</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm i -g pm2</span><br><span class="line">pm2 start ecosystem.config.js</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="部署-ASF-服务"><a href="#部署-ASF-服务" class="headerlink" title="部署 ASF 服务"></a>部署 ASF 服务</h3><ol start="0">
+<li>请确保部署的目标服务器环境已安装如下组件<ol>
+<li>Docker</li>
+</ol>
+</li>
+<li><p>进入 server 目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ./server</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将 asf 目录下的配置文件存放到服务器 <code>/home/asf/config</code>下</p>
+</li>
+<li><p>部署 ASF</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 0.0.0.0:2222:1242 -v /home/asf/config:/app/config --name asf --pull always justarchi/archisteamfarm</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打开 Steamji 管理后台, 将新部署的 ASF 服务地址，添加到Content-Type Server下</p>
+</li>
+</ol>
+<h3 id="部署小程序"><a href="#部署小程序" class="headerlink" title="部署小程序"></a>部署小程序</h3><ol>
+<li><p>进入 miniapp 目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ./miniapp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装依赖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打开 <code>.\src\constants\endpoints.js</code>, 将 <code>https://exmple.com/api</code> 更改为你部署的 API 服务地址</p>
+</li>
+<li><p>编译QQ小程序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run build:qq</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编译微信小程序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run build:weapp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用微信/QQ小程序开发者工具上传编译后的代码然后提审</p>
+</li>
+</ol>
+<h2 id="预览图"><a href="#预览图" class="headerlink" title="预览图"></a>预览图</h2><p><img src="https://pic.otaku.ren/20240223/AQADW7oxG8liyFZ-.jpg" alt="miniapp"></p>
+<p><img src="https://pic.otaku.ren/20240223/AQADYroxG8liyFZ-.jpg" alt="admin"></p>
+<h2 id="设计稿"><a href="#设计稿" class="headerlink" title="设计稿"></a>设计稿</h2><ul>
+<li>设计稿源文件存放在 figma 目录，可以使用 Figma 打开</li>
+<li>在线预览地址:<br><a href="https://www.figma.com/file/cjaGfDgFVzC8JujUiUKaWF/%E8%92%B8%E6%B1%BD%E5%A7%AC.%E4%BA%91%E6%8C%82%E5%8D%A1?type=design&amp;node-id=0%3A1&amp;mode=dev&amp;t=jlllmERwiFBFflc0-1" target="_blank" rel="noopener">https://www.figma.com/file/cjaGfDgFVzC8JujUiUKaWF/%E8%92%B8%E6%B1%BD%E5%A7%AC.%E4%BA%91%E6%8C%82%E5%8D%A1?type=design&amp;node-id=0%3A1&amp;mode=dev&amp;t=jlllmERwiFBFflc0-1</a></li>
+</ul>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><ul>
+<li>此项目是个人独立开发项目，由于没能盈利（项目失败），所以将源码开源</li>
+<li>此项目不会进行后期维护, 建议各位 fork 后自行维护以及进行二次开发</li>
+<li>Github 地址<br><a href="https://github.com/beilunyang/steamji" target="_blank" rel="noopener">https://github.com/beilunyang/steamji</a> </li>
+</ul>
+
+  </div>
+</article>
+
+
+    <script src="https://utteranc.es/client.js" repo="beilunyang/beilunyang.github.io" issue-term="pathname" theme="photon-dark" crossorigin="anonymous" async>
+    </script>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#项目介绍"><span class="toc-number">2.</span> <span class="toc-text">项目介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#特性"><span class="toc-number">3.</span> <span class="toc-text">特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#架构"><span class="toc-number">4.</span> <span class="toc-text">架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#部署"><span class="toc-number">5.</span> <span class="toc-text">部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#部署-API-服务"><span class="toc-number">5.1.</span> <span class="toc-text">部署 API 服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署-ASF-服务"><span class="toc-number">5.2.</span> <span class="toc-text">部署 ASF 服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署小程序"><span class="toc-number">5.3.</span> <span class="toc-text">部署小程序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#预览图"><span class="toc-number">6.</span> <span class="toc-text">预览图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设计稿"><span class="toc-number">7.</span> <span class="toc-text">设计稿</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结语"><span class="toc-number">8.</span> <span class="toc-text">结语</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&text=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&title=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&is_video=false&description=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序&body=Check out this article: https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&title=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&title=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&title=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&title=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2024/02/24/「steamji-蒸汽姬云挂卡」基于-ASF-的多端-Steam-云挂卡小程序/&name=「steamji | 蒸汽姬云挂卡」基于 ASF 的多端 Steam 云挂卡小程序&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Compartir</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2024 beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+    <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
