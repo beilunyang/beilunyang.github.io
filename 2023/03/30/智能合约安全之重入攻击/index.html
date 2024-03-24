@@ -7,7 +7,7 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="概述重入攻击（Reentrancy Attack）是一种常见的智能合约安全漏洞，指黑客利用合约中存在的逻辑漏洞，在调用合约函数时，利用合约逻辑漏洞，反复调用合约的函数，并利用这种递归调用的机制，以欺骗合约的计算，从而使攻击者获得非法利益。 重入攻击的本质是合约内部调用的函数未能恰当地处理合约状态的更改。攻击者利用这个漏洞，将攻击代码插入到合约执行流程中，使得攻击者可以在合约还未完成之前再次调用某个">
-<meta name="keywords" content="区块链,安全,智能合约,以太坊">
+<meta name="keywords" content="以太坊,区块链,安全,智能合约">
 <meta property="og:type" content="article">
 <meta property="og:title" content="智能合约安全之重入攻击">
 <meta property="og:url" content="https://beilunyang.github.io/2023/03/30/智能合约安全之重入攻击/index.html">
@@ -84,8 +84,8 @@
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
       <span id="i-prev" class="info" style="display:none;">Post Anterior</span>
-      <span id="i-next" class="info" style="display:none;">Post Següent</span>
-      <span id="i-top" class="info" style="display:none;">Adalt</span>
+      <span id="i-next" class="info" style="display:none;">Post Siguiente</span>
+      <span id="i-top" class="info" style="display:none;">Arriba</span>
       <span id="i-share" class="info" style="display:none;">Compartir Post</span>
     </span>
     <br>
@@ -230,10 +230,10 @@
     </div>
 
     <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menú</a>
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
         <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
         <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Compartir</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Cap amunt</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
     </div>
 
   </div>

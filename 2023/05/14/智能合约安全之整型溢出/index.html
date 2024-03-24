@@ -7,7 +7,7 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="概述整型溢出是智能合约中常见的漏洞之一。以太坊虚拟机对整数使用固定大小的数据类型，一个整数变量仅能表示一个固定范围的数值，比如uint8类型只能保存[0, 255]。当把超过某个数据类型范围的数值保存到这个变量时，就会产生溢出。例如  将一个uint8类型，值为0的变量进行减1操作时，计算结果会等于255，称为减法溢出 将一个uint8类型，值为255的变量进行加1操作时，计算结果会等于0，称为加">
-<meta name="keywords" content="区块链,安全,智能合约,以太坊">
+<meta name="keywords" content="以太坊,区块链,安全,智能合约">
 <meta property="og:type" content="article">
 <meta property="og:title" content="智能合约安全之整型溢出">
 <meta property="og:url" content="https://beilunyang.github.io/2023/05/14/智能合约安全之整型溢出/index.html">
@@ -84,8 +84,8 @@
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
       <span id="i-prev" class="info" style="display:none;">Post Anterior</span>
-      <span id="i-next" class="info" style="display:none;">Post Següent</span>
-      <span id="i-top" class="info" style="display:none;">Adalt</span>
+      <span id="i-next" class="info" style="display:none;">Post Siguiente</span>
+      <span id="i-top" class="info" style="display:none;">Arriba</span>
       <span id="i-share" class="info" style="display:none;">Compartir Post</span>
     </span>
     <br>
@@ -229,10 +229,10 @@
     </div>
 
     <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menú</a>
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
         <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
         <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Compartir</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Cap amunt</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
     </div>
 
   </div>

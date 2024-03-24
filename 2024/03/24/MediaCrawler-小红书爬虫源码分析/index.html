@@ -7,14 +7,14 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="前言MediaCrawler 是最近冲上 Github 热搜的开源多社交平台爬虫。虽然现在已删库，但还好我眼疾手快，有幸还 Fork 了一份，乘着周末，简单分析了下小红书平台的相关代码。 爬虫难点一般写爬虫，都需要面对以下几个问题  如果 app/网页需要登录，如何获取登录态（cookie/jwt） 大部分 app/网页都会对请求参数进行 sign，如果有，如何获取 sign 逻辑 绕过其它遇到的">
-<meta name="keywords" content="编程, 前端, ACG, JavaScript, NodeJS, React, 编程">
+<meta name="keywords" content="爬虫,逆向,源码分析">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MediaCrawler 小红书爬虫源码分析">
 <meta property="og:url" content="https://beilunyang.github.io/2024/03/24/MediaCrawler-小红书爬虫源码分析/index.html">
 <meta property="og:site_name" content="悖论の小黑屋">
 <meta property="og:description" content="前言MediaCrawler 是最近冲上 Github 热搜的开源多社交平台爬虫。虽然现在已删库，但还好我眼疾手快，有幸还 Fork 了一份，乘着周末，简单分析了下小红书平台的相关代码。 爬虫难点一般写爬虫，都需要面对以下几个问题  如果 app/网页需要登录，如何获取登录态（cookie/jwt） 大部分 app/网页都会对请求参数进行 sign，如果有，如何获取 sign 逻辑 绕过其它遇到的">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2024-03-24T15:13:44.127Z">
+<meta property="og:updated_time" content="2024-03-24T15:15:48.281Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MediaCrawler 小红书爬虫源码分析">
 <meta name="twitter:description" content="前言MediaCrawler 是最近冲上 Github 热搜的开源多社交平台爬虫。虽然现在已删库，但还好我眼疾手快，有幸还 Fork 了一份，乘着周末，简单分析了下小红书平台的相关代码。 爬虫难点一般写爬虫，都需要面对以下几个问题  如果 app/网页需要登录，如何获取登录态（cookie/jwt） 大部分 app/网页都会对请求参数进行 sign，如果有，如何获取 sign 逻辑 绕过其它遇到的">
@@ -80,8 +80,8 @@
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
       <span id="i-prev" class="info" style="display:none;">Post Anterior</span>
-      <span id="i-next" class="info" style="display:none;">Post Següent</span>
-      <span id="i-top" class="info" style="display:none;">Adalt</span>
+      <span id="i-next" class="info" style="display:none;">Post Siguiente</span>
+      <span id="i-top" class="info" style="display:none;">Arriba</span>
       <span id="i-share" class="info" style="display:none;">Compartir Post</span>
     </span>
     <br>
@@ -134,6 +134,11 @@
       
 
       
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/源码分析/">源码分析</a>, <a class="tag-link" href="/tags/爬虫/">爬虫</a>, <a class="tag-link" href="/tags/逆向/">逆向</a>
+    </div>
+
 
     </div>
   </header>
@@ -272,10 +277,10 @@
     </div>
 
     <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menú</a>
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
         <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
         <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Compartir</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Cap amunt</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
     </div>
 
   </div>
