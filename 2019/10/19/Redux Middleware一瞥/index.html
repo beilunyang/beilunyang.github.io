@@ -7,14 +7,14 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="前言Redux 是如今最流行的状态管理框架之一，其通过单一 Store 和限制状态更新的方式，让状态变得可控可预测。然而，redux 的一系列限制，也让其产生了一些弊端:  样板式代码过多，书写繁琐 不支持异步 action那么有什么办法来让 redux 支持异步 action 呢。redux 吸收借鉴了 express 和 koa 的 middleware 思想，拥有一套强大的 middlewa">
-<meta name="keywords" content="Redux,源码欣赏">
+<meta name="keywords" content="源码分析,Redux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redux Middleware一瞥">
 <meta property="og:url" content="https://beilunyang.github.io/2019/10/19/Redux Middleware一瞥/index.html">
 <meta property="og:site_name" content="悖论の小黑屋">
 <meta property="og:description" content="前言Redux 是如今最流行的状态管理框架之一，其通过单一 Store 和限制状态更新的方式，让状态变得可控可预测。然而，redux 的一系列限制，也让其产生了一些弊端:  样板式代码过多，书写繁琐 不支持异步 action那么有什么办法来让 redux 支持异步 action 呢。redux 吸收借鉴了 express 和 koa 的 middleware 思想，拥有一套强大的 middlewa">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2024-01-04T13:55:46.685Z">
+<meta property="og:updated_time" content="2024-03-24T15:16:14.953Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redux Middleware一瞥">
 <meta name="twitter:description" content="前言Redux 是如今最流行的状态管理框架之一，其通过单一 Store 和限制状态更新的方式，让状态变得可控可预测。然而，redux 的一系列限制，也让其产生了一些弊端:  样板式代码过多，书写繁琐 不支持异步 action那么有什么办法来让 redux 支持异步 action 呢。redux 吸收借鉴了 express 和 koa 的 middleware 思想，拥有一套强大的 middlewa">
@@ -82,8 +82,8 @@
         <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
       </ul>
       <span id="i-prev" class="info" style="display:none;">Post Anterior</span>
-      <span id="i-next" class="info" style="display:none;">Post Siguiente</span>
-      <span id="i-top" class="info" style="display:none;">Arriba</span>
+      <span id="i-next" class="info" style="display:none;">Post Següent</span>
+      <span id="i-top" class="info" style="display:none;">Adalt</span>
       <span id="i-share" class="info" style="display:none;">Compartir Post</span>
     </span>
     <br>
@@ -138,7 +138,7 @@
       
     <div class="article-tag">
         <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Redux/">Redux</a>, <a class="tag-link" href="/tags/源码欣赏/">源码欣赏</a>
+        <a class="tag-link" href="/tags/Redux/">Redux</a>, <a class="tag-link" href="/tags/源码分析/">源码分析</a>
     </div>
 
 
@@ -224,10 +224,10 @@
     </div>
 
     <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menú</a>
         <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
         <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Compartir</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Cap amunt</a>
     </div>
 
   </div>
