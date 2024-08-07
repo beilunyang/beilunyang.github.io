@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言最近AI技术十分火爆，chatgpt的出现，大大提升了我日常的开发效率和学习效率。今天看到群友在分享midjourney生成的图片，感觉效果还是相当不错的。所以我灵光一现，利用chatgpt + midjourney，能不能把我日常工作中接触的区块链虚拟币这些抽象物体，进行拟人化，萌娘化，让她们变成一个个具体的可爱的妹子呢(ﾟ▽ﾟ)&#x2F;，让工作变得多点乐趣。 调教chatgpt我：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我用ChatGPT和Midjourney萌娘化了区块链和虚拟币">
+<meta property="og:url" content="https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="前言最近AI技术十分火爆，chatgpt的出现，大大提升了我日常的开发效率和学习效率。今天看到群友在分享midjourney生成的图片，感觉效果还是相当不错的。所以我灵光一现，利用chatgpt + midjourney，能不能把我日常工作中接触的区块链虚拟币这些抽象物体，进行拟人化，萌娘化，让她们变成一个个具体的可爱的妹子呢(ﾟ▽ﾟ)&#x2F;，让工作变得多点乐趣。 调教chatgpt我：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.otaku.ren/20230322/beilun_Bitcoin-chan_is_a_beautiful_girl_wearing_a_golden_should_6a3b193f-482e-4957-b94d-191ab8b76ec3.png">
+<meta property="og:image" content="https://img.otaku.ren/20230322/beilun_Bitcoin-chan_is_a_beautiful_girl_wearing_a_golden_should_d0d6ffe3-a399-430b-849d-7e9017010d83.png">
+<meta property="og:image" content="https://img.otaku.ren/20230322/beilun_Ethereum-chan_is_a_beautiful_girl_wearing_a_blue_dress_a_5a7a59cd-aa31-449a-bf3a-50d9e893be97.png">
+<meta property="og:image" content="https://img.otaku.ren/20230322/beilun_Ethereum-chan_is_a_beautiful_girl_wearing_a_blue_dress_a_c3dc9d5c-2255-4065-904c-2fde36d264b2.png">
+<meta property="og:image" content="https://img.otaku.ren/20230322/beilun_EOS-chan_is_a_beautiful_girl_wearing_a_black_and_green_s_df496680-b816-4c32-89c0-b85a9c04108b.png">
+<meta property="og:image" content="https://img.otaku.ren/20230322/beilun_EOS-chan_is_a_beautiful_girl_wearing_a_black_and_green_s_fcbb4c8e-78e3-4700-8eaa-24f008a44237.png">
+<meta property="og:image" content="https://img.otaku.ren/20230322/beilun_Filecoin-chan_is_a_beautiful_girl_wearing_a_white_and_bl_473c24be-9759-416d-ba05-37cbb9c78de2.png">
+<meta property="og:image" content="https://img.otaku.ren/20230322/beilun_Filecoin-chan_is_a_beautiful_girl_wearing_a_white_and_bl_09e75194-6787-453a-ba13-99f145565a6e.png">
+<meta property="og:image" content="https://img.otaku.ren/20230322/beilun_Dogecoin-chan_is_a_cute_girl_wearing_a_pink_hoodie_and_s_2f2f75dd-12dd-4964-9f34-4b39360942b4.png">
+<meta property="og:image" content="https://img.otaku.ren/20230322/beilun_Dogecoin-chan_is_a_cute_girl_wearing_a_pink_hoodie_and_s_7844066b-fde4-47cc-a6a4-72b08f07b6d0.png">
+<meta property="og:image" content="https://img.otaku.ren/20230322/prompt.png">
+<meta property="article:published_time" content="2023-03-23T00:45:15.000Z">
+<meta property="article:modified_time" content="2024-08-07T17:52:34.071Z">
+<meta property="article:author" content="beilunyang">
+<meta property="article:tag" content="区块链">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.otaku.ren/20230322/beilun_Bitcoin-chan_is_a_beautiful_girl_wearing_a_golden_should_6a3b193f-482e-4957-b94d-191ab8b76ec3.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+    
+    <!-- title -->
+    <title>我用ChatGPT和Midjourney萌娘化了区块链和虚拟币</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&text=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&title=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&is_video=false&description=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币&body=Check out this article: https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&title=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&title=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&title=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&title=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&name=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&t=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E6%95%99chatgpt"><span class="toc-number">2.</span> <span class="toc-text">调教chatgpt</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%95%E5%96%82midjourney"><span class="toc-number">3.</span> <span class="toc-text">投喂midjourney</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ETH"><span class="toc-number">3.1.</span> <span class="toc-text">ETH</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EOS"><span class="toc-number">3.2.</span> <span class="toc-text">EOS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Filecoin"><span class="toc-number">3.3.</span> <span class="toc-text">Filecoin</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dogecoin"><span class="toc-number">3.4.</span> <span class="toc-text">Dogecoin</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4chatgpt%E5%AF%B9%E8%AF%9D"><span class="toc-number">4.</span> <span class="toc-text">完整chatgpt对话</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">5.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        我用ChatGPT和Midjourney萌娘化了区块链和虚拟币
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">beilunyang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-03-23T00:45:15.000Z" class="dt-published" itemprop="datePublished">2023-03-23</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/AI/" rel="tag">AI</a>, <a class="p-category" href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/" rel="tag">区块链</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近AI技术十分火爆，chatgpt的出现，大大提升了我日常的开发效率和学习效率。今天看到群友在分享midjourney生成的图片，感觉效果还是相当不错的。所以我灵光一现，利用chatgpt + midjourney，能不能把我日常工作中接触的区块链虚拟币这些抽象物体，进行拟人化，萌娘化，让她们变成一个个具体的可爱的妹子呢(ﾟ▽ﾟ)&#x2F;，让工作变得多点乐趣。</p>
+<h2 id="调教chatgpt"><a href="#调教chatgpt" class="headerlink" title="调教chatgpt"></a>调教chatgpt</h2><p>我：</p>
+<blockquote>
+<p>我需要你扮演我的Midjourney指令优化大师，我给你我想要的指令的大概意思，你帮我生成一个正确的指令</p>
+</blockquote>
+<p>chatgpt:</p>
+<blockquote>
+<p>好的，我会尽力帮助你生成正确的指令。请告诉我你想要执行的任务和需要的指令的大概意思，以及你希望达成什么目标</p>
+</blockquote>
+<p>我：</p>
+<blockquote>
+<p>你知道日本网络上的物品娘化文化吗</p>
+</blockquote>
+<p>chatgpt:</p>
+<blockquote>
+<p>是的，我知道”物品娘化”，或者说“擬人化”，是一种在日本网络文化中流行的现象，将物品或概念拟人化，例如把电视机、汽车、甚至是政治制度等物品或概念化身为可爱的女孩子或男孩子，以表达人们对这些物品或概念的喜爱和感情。这种文化形式在日本的二次元文化中很常见，也受到一些人的喜爱。请问您需要我做些什么呢？ </p>
+</blockquote>
+<p>至此，chatgpt已经知道了自己所需要扮演的角色，以及萌娘化的一些概念和知识</p>
+<p>接下来，开始给出我的需求</p>
+<p>我：</p>
+<blockquote>
+<p>生成一个关于比特币的娘化人物形象描述，我要让midjourney画出来。请给出中文和英文描述</p>
+</blockquote>
+<p>chatgpt:</p>
+<blockquote>
+<p>好的，以下是比特币娘化人物形象的中文和英文描述：<br>中文描述：<br>比特币娘是一位身穿金色披肩连衣裙，头戴黄色头花的美少女，她拥有明亮的蓝色眼睛和长长的金发，手中持有一枚黄色比特币硬币，表情自信而神秘，她身上的装饰品和配件充满了科技感，展现了比特币作为一种数字货币的先进和未来感。<br>英文描述：<br>Bitcoin-chan is a beautiful girl wearing a golden shoulder-length dress with a yellow hairpin on her head. She has bright blue eyes and long golden hair. In her hand, she holds a yellow Bitcoin coin, with a confident and mysterious expression. The decorations and accessories on her body are full of technology, showing the advanced and futuristic nature of Bitcoin as a digital currency.</p>
+</blockquote>
+<p>chatgpt理解了我的需求，给出了中英文的娘化人物形象的描述。这里中文是方便我理解，英文则是给到midjourney</p>
+<h2 id="投喂midjourney"><a href="#投喂midjourney" class="headerlink" title="投喂midjourney"></a>投喂midjourney</h2><p>打开discord, 进入midjourney官方频道<br>输入chatgpt为我们生成的midjourney prompt</p>
+<blockquote>
+<p>Bitcoin-chan is a beautiful girl wearing a golden shoulder-length dress with a yellow hairpin on her head. She has bright blue eyes and long golden hair. In her hand, she holds a yellow Bitcoin coin, with a confident and mysterious expression. The decorations and accessories on her body are full of technology, showing the advanced and futuristic nature of Bitcoin as a digital currency.</p>
+</blockquote>
+<p>应该是为了防止生成小黄图，midjourney屏蔽了<code>her body</code>词组，所以这里需要手动把<code>her body</code>改成<code>her</code><br>等待一段时间后，midjourney生成了bitcoin的萌娘化形象╰(￣▽￣)╭<br><img src="https://img.otaku.ren/20230322/beilun_Bitcoin-chan_is_a_beautiful_girl_wearing_a_golden_should_6a3b193f-482e-4957-b94d-191ab8b76ec3.png" alt="bitcoin4"><br><img src="https://img.otaku.ren/20230322/beilun_Bitcoin-chan_is_a_beautiful_girl_wearing_a_golden_should_d0d6ffe3-a399-430b-849d-7e9017010d83.png" alt="bitcoin"></p>
+<p>重复上面的步骤，生成ETH，EOS，Filecoin, Dogecoin的萌娘化形象</p>
+<h3 id="ETH"><a href="#ETH" class="headerlink" title="ETH"></a>ETH</h3><p><img src="https://img.otaku.ren/20230322/beilun_Ethereum-chan_is_a_beautiful_girl_wearing_a_blue_dress_a_5a7a59cd-aa31-449a-bf3a-50d9e893be97.png" alt="eth4"><br><img src="https://img.otaku.ren/20230322/beilun_Ethereum-chan_is_a_beautiful_girl_wearing_a_blue_dress_a_c3dc9d5c-2255-4065-904c-2fde36d264b2.png" alt="eth"></p>
+<h3 id="EOS"><a href="#EOS" class="headerlink" title="EOS"></a>EOS</h3><p><img src="https://img.otaku.ren/20230322/beilun_EOS-chan_is_a_beautiful_girl_wearing_a_black_and_green_s_df496680-b816-4c32-89c0-b85a9c04108b.png" alt="eos4"><br><img src="https://img.otaku.ren/20230322/beilun_EOS-chan_is_a_beautiful_girl_wearing_a_black_and_green_s_fcbb4c8e-78e3-4700-8eaa-24f008a44237.png" alt="eos"></p>
+<h3 id="Filecoin"><a href="#Filecoin" class="headerlink" title="Filecoin"></a>Filecoin</h3><p><img src="https://img.otaku.ren/20230322/beilun_Filecoin-chan_is_a_beautiful_girl_wearing_a_white_and_bl_473c24be-9759-416d-ba05-37cbb9c78de2.png" alt="filecoin4"><br><img src="https://img.otaku.ren/20230322/beilun_Filecoin-chan_is_a_beautiful_girl_wearing_a_white_and_bl_09e75194-6787-453a-ba13-99f145565a6e.png" alt="filecoin"></p>
+<h3 id="Dogecoin"><a href="#Dogecoin" class="headerlink" title="Dogecoin"></a>Dogecoin</h3><p><img src="https://img.otaku.ren/20230322/beilun_Dogecoin-chan_is_a_cute_girl_wearing_a_pink_hoodie_and_s_2f2f75dd-12dd-4964-9f34-4b39360942b4.png" alt="dogecoin"><br><img src="https://img.otaku.ren/20230322/beilun_Dogecoin-chan_is_a_cute_girl_wearing_a_pink_hoodie_and_s_7844066b-fde4-47cc-a6a4-72b08f07b6d0.png" alt="dogecoin"></p>
+<h2 id="完整chatgpt对话"><a href="#完整chatgpt对话" class="headerlink" title="完整chatgpt对话"></a>完整chatgpt对话</h2><p><img src="https://img.otaku.ren/20230322/prompt.png" alt="prompt"></p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>利用chatgpt生成的人物形象描述，midjourney能生成效果相当不错的萌娘图片，当然，手指和图片上的文字部分还是有些许瑕疵。<br>兄弟们，开冲！</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>加载评论需要在浏览器启用 JavaScript 脚本支持。</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%83%E6%95%99chatgpt"><span class="toc-number">2.</span> <span class="toc-text">调教chatgpt</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%95%E5%96%82midjourney"><span class="toc-number">3.</span> <span class="toc-text">投喂midjourney</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ETH"><span class="toc-number">3.1.</span> <span class="toc-text">ETH</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EOS"><span class="toc-number">3.2.</span> <span class="toc-text">EOS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Filecoin"><span class="toc-number">3.3.</span> <span class="toc-text">Filecoin</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dogecoin"><span class="toc-number">3.4.</span> <span class="toc-text">Dogecoin</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4chatgpt%E5%AF%B9%E8%AF%9D"><span class="toc-number">4.</span> <span class="toc-text">完整chatgpt对话</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">5.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&text=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&title=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&is_video=false&description=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币&body=Check out this article: https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&title=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&title=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&title=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&title=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&name=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/&t=我用ChatGPT和Midjourney萌娘化了区块链和虚拟币"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

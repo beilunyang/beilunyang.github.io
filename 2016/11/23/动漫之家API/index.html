@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="此API通过Charles抓包获得,未进行任何破解。此API仅供开发研究使用，API使用者造成的一切侵犯动漫之家权益的行为，请使用者自行承担责任。  新闻推荐列表URL：http:&#x2F;&#x2F;v2.api.dmzj.com&#x2F;article&#x2F;recommend&#x2F;header.jsonmethod: GETcontent-type: text&#x2F;htmlresponse: 1234567891011">
+<meta property="og:type" content="article">
+<meta property="og:title" content="动漫之家API">
+<meta property="og:url" content="https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="此API通过Charles抓包获得,未进行任何破解。此API仅供开发研究使用，API使用者造成的一切侵犯动漫之家权益的行为，请使用者自行承担责任。  新闻推荐列表URL：http:&#x2F;&#x2F;v2.api.dmzj.com&#x2F;article&#x2F;recommend&#x2F;header.jsonmethod: GETcontent-type: text&#x2F;htmlresponse: 1234567891011">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-11-23T10:17:15.000Z">
+<meta property="article:modified_time" content="2024-08-07T17:52:34.071Z">
+<meta property="article:author" content="beilunyang">
+<meta property="article:tag" content="API">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+    
+    <!-- title -->
+    <title>动漫之家API</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2016/12/23/%E7%94%A8Sass%E7%BC%96%E5%86%99EVA%E9%A3%8E%E6%A0%BC%E7%AE%80%E5%8D%95%E9%A1%B5/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2016/11/12/JavaScript%E5%B1%9E%E6%80%A7%E8%AE%BE%E7%BD%AE%E4%B8%8E%E5%B1%8F%E8%94%BD/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&text=动漫之家API"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&title=动漫之家API"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&is_video=false&description=动漫之家API"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=动漫之家API&body=Check out this article: https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&title=动漫之家API"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&title=动漫之家API"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&title=动漫之家API"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&title=动漫之家API"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&name=动漫之家API&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&t=动漫之家API"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B0%E9%97%BB"><span class="toc-number">1.</span> <span class="toc-text">新闻</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E5%88%97%E8%A1%A8"><span class="toc-number">1.1.</span> <span class="toc-text">推荐列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E7%AB%A0%E5%88%86%E7%B1%BB"><span class="toc-number">1.2.</span> <span class="toc-text">文章分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E7%AB%A0%E5%88%97%E8%A1%A8"><span class="toc-number">1.3.</span> <span class="toc-text">文章列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E7%AB%A0%E8%AF%A6%E6%83%85"><span class="toc-number">1.4.</span> <span class="toc-text">文章详情</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BD%BB%E5%B0%8F%E8%AF%B4"><span class="toc-number">2.</span> <span class="toc-text">轻小说</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90"><span class="toc-number">2.1.</span> <span class="toc-text">推荐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E8%BF%91%E6%9B%B4%E6%96%B0"><span class="toc-number">2.2.</span> <span class="toc-text">最近更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E8%AF%B4%E8%AF%A6%E6%83%85"><span class="toc-number">2.3.</span> <span class="toc-text">小说详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E8%AF%B4%E5%8D%B7%E5%88%97%E8%A1%A8"><span class="toc-number">2.4.</span> <span class="toc-text">小说卷列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E8%AF%B4%E7%AB%A0%E8%8A%82%E6%AD%A3%E6%96%87"><span class="toc-number">2.5.</span> <span class="toc-text">小说章节正文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E8%AF%B4%E5%88%86%E7%B1%BB"><span class="toc-number">2.6.</span> <span class="toc-text">小说分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E8%AF%B4%E7%AD%9B%E9%80%89%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.7.</span> <span class="toc-text">小说筛选条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E8%AF%B4%E5%88%97%E8%A1%A8"><span class="toc-number">2.8.</span> <span class="toc-text">小说列表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2"><span class="toc-number">3.</span> <span class="toc-text">搜索</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        动漫之家API
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">beilunyang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2016-11-23T10:17:15.000Z" class="dt-published" itemprop="datePublished">2016-11-23</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/API/" rel="tag">API</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <blockquote>
+<p>此API通过Charles抓包获得,未进行任何破解。此API仅供开发研究使用，API使用者造成的一切侵犯动漫之家权益的行为，请使用者自行承担责任。</p>
+</blockquote>
+<h2 id="新闻"><a href="#新闻" class="headerlink" title="新闻"></a>新闻</h2><h3 id="推荐列表"><a href="#推荐列表" class="headerlink" title="推荐列表"></a>推荐列表</h3><p>URL：<a target="_blank" rel="noopener" href="http://v2.api.dmzj.com/article/recommend/header.json">http://v2.api.dmzj.com/article/recommend/header.json</a><br>method: GET<br>content-type: text&#x2F;html<br>response:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;code&quot;</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">&quot;msg&quot;</span>: <span class="string">&quot;成功&quot;</span>,</span><br><span class="line"><span class="string">&quot;data&quot;</span>: [&#123;</span><br><span class="line">    <span class="string">&quot;id&quot;</span>: <span class="number">786</span>,</span><br><span class="line">    <span class="string">&quot;title&quot;</span>: <span class="string">&quot;P站美图推荐——fate grand order特辑&quot;</span>,</span><br><span class="line">    <span class="string">&quot;pic_url&quot;</span>:  <span class="string">&quot;http:\/\/images.dmzj.com\/news\/recommend\/14794598686673.jpg&quot;</span>,</span><br><span class="line">    <span class="string">&quot;object_id&quot;</span>: <span class="number">7435</span>,</span><br><span class="line">    <span class="string">&quot;object_url&quot;</span>:     <span class="string">&quot;http:\/\/v2.api.dmzj.com\/article\/show\/v2\/7435.html&quot;</span>,</span><br><span class="line">&#125;, &#123;</span><br><span class="line">    <span class="string">&quot;id&quot;</span>: <span class="number">784</span>,</span><br><span class="line">    <span class="string">&quot;title&quot;</span>: <span class="string">&quot;《监狱学园》会长白木牙衣子手办&quot;</span>,</span><br><span class="line">    <span class="string">&quot;pic_url&quot;</span>: <span class="string">&quot;http:\/\/images.dmzj.com\/news\/recommend\/14794597896273.jpg&quot;</span>,</span><br><span class="line">    <span class="string">&quot;object_id&quot;</span>: <span class="number">7461</span>,</span><br><span class="line">    <span class="string">&quot;object_url&quot;</span>: <span class="string">&quot;http:\/\/v2.api.dmzj.com\/article\/show\/v2\/7461.html&quot;</span></span><br><span class="line">&#125;, &#123;</span><br><span class="line">    <span class="string">&quot;id&quot;</span>: <span class="number">783</span>,</span><br><span class="line">    <span class="string">&quot;title&quot;</span>: <span class="string">&quot;P站美图推荐——单马尾特辑&quot;</span>,</span><br><span class="line">    <span class="string">&quot;pic_url&quot;</span>: <span class="string">&quot;http:\/\/images.dmzj.com\/news\/recommend\/14794597233783.jpg&quot;</span>,</span><br><span class="line">    <span class="string">&quot;object_id&quot;</span>: <span class="number">7313</span>,</span><br><span class="line">    <span class="string">&quot;object_url&quot;</span>: <span class="string">&quot;http:\/\/v2.api.dmzj.com\/article\/show\/v2\/7313.html&quot;</span></span><br><span class="line">&#125;, &#123;</span><br><span class="line">    <span class="string">&quot;id&quot;</span>: <span class="number">774</span>,</span><br><span class="line">    <span class="string">&quot;title&quot;</span>: <span class="string">&quot;P站美图推荐——无口少女特辑&quot;</span>,</span><br><span class="line">    <span class="string">&quot;pic_url&quot;</span>: <span class="string">&quot;http:\/\/images.dmzj.com\/news\/recommend\/14782566241692.jpg&quot;</span>,</span><br><span class="line">    <span class="string">&quot;object_id&quot;</span>: <span class="number">7237</span>,</span><br><span class="line">    <span class="string">&quot;object_url&quot;</span>: <span class="string">&quot;http:\/\/v2.api.dmzj.com\/article\/show\/v2\/7237.html&quot;</span></span><br><span class="line">&#125;, &#123;</span><br><span class="line">    <span class="string">&quot;id&quot;</span>: <span class="number">772</span>,</span><br><span class="line">    <span class="string">&quot;title&quot;</span>: <span class="string">&quot;P站美图推荐——呆毛特辑&quot;</span>,</span><br><span class="line">    <span class="string">&quot;pic_url&quot;</span>: <span class="string">&quot;http:\/\/images.dmzj.com\/news\/recommend\/14782565573356.jpg&quot;</span>,</span><br><span class="line">    <span class="string">&quot;object_id&quot;</span>: <span class="number">7207</span>,</span><br><span class="line">    <span class="string">&quot;object_url&quot;</span>: <span class="string">&quot;http:\/\/v2.api.dmzj.com\/article\/show\/v2\/7207.html&quot;</span></span><br><span class="line">&#125;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="文章分类"><a href="#文章分类" class="headerlink" title="文章分类"></a>文章分类</h3><p>URL：<a target="_blank" rel="noopener" href="http://v2.api.dmzj.com/article/category.json">http://v2.api.dmzj.com/article/category.json</a><br>method: GET<br>content-type: text&#x2F;html<br>response:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line">    <span class="string">&quot;tag_id&quot;</span>: <span class="number">3</span>,</span><br><span class="line">    <span class="string">&quot;tag_name&quot;</span>: <span class="string">&quot;轻小说情报&quot;</span></span><br><span class="line">&#125;,&#123;</span><br><span class="line">    <span class="string">&quot;tag_id&quot;</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="string">&quot;tag_name&quot;</span>: <span class="string">&quot;全部&quot;</span></span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+<h3 id="文章列表"><a href="#文章列表" class="headerlink" title="文章列表"></a>文章列表</h3><p>URL：<a target="_blank" rel="noopener" href="http://v2.api.dmzj.com/article/list/v2/$%7Btag_id%7D/2/$%7Bpage%7D.json">http://v2.api.dmzj.com/article/list/v2/${tag_id}/2/${page}.json</a><br>method: GET<br>content-type: text&#x2F;html<br>params:</p>
+<ul>
+<li>tag_id: 新闻分类</li>
+<li>page: 页数 从0开始</li>
+</ul>
+<p>ps: 那个2,我估计是排序之类的，在charles中没发现相关信息<br>response:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;title&quot;</span>: <span class="string">&quot;《美妙天堂》剧场版第四部特报公布 全新舞台登场&quot;</span>,</span><br><span class="line"><span class="string">&quot;from_name&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line"><span class="string">&quot;from_url&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line"><span class="string">&quot;create_time&quot;</span>: <span class="number">1479890214</span>,</span><br><span class="line"><span class="string">&quot;is_foreign&quot;</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">&quot;foreign_url&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line"><span class="string">&quot;intro&quot;</span>: <span class="string">&quot;《美妙天堂》是龙之子工作室与DONGWOO A&amp;amp;E共同制作的日本美少女偶像题材新作品，是《美妙旋律》的姐妹篇。此前，该作已经推出过三部剧场版，此次的第四部剧场版也预定将于来年3月4日上映。&quot;</span>,</span><br><span class="line"><span class="string">&quot;author_id&quot;</span>: <span class="number">100452615</span>,</span><br><span class="line"><span class="string">&quot;status&quot;</span>: <span class="number">1</span>,</span><br><span class="line"><span class="string">&quot;row_pic_url&quot;</span>: <span class="string">&quot;http:\/\/images.dmzj.com\/news\/article\/7728\/row_583555186343e.jpg&quot;</span>,</span><br><span class="line"><span class="string">&quot;col_pic_url&quot;</span>: <span class="string">&quot;http:\/\/images.dmzj.com\/news\/article\/7728\/col_5835551fb1485.jpg&quot;</span>,</span><br><span class="line"><span class="string">&quot;article_id&quot;</span>: <span class="number">7728</span>,</span><br><span class="line"><span class="string">&quot;page_url&quot;</span>: <span class="string">&quot;http:\/\/v2.api.dmzj.com\/article\/show\/v2\/7728.html&quot;</span>,</span><br><span class="line"><span class="string">&quot;comment_amount&quot;</span>: <span class="string">&quot;0&quot;</span>,</span><br><span class="line"><span class="string">&quot;author_uid&quot;</span>: <span class="number">100452615</span>,</span><br><span class="line"><span class="string">&quot;cover&quot;</span>: <span class="string">&quot;http:\/\/images.dmzj.com\/user\/67\/68\/67685a0c8cc11a77eaf294236d2ac758.png&quot;</span>,</span><br><span class="line"><span class="string">&quot;nickname&quot;</span>: <span class="string">&quot;托甫台希迪&quot;</span>,</span><br><span class="line"><span class="string">&quot;mood_amount&quot;</span>: <span class="number">0</span></span><br><span class="line">&#125;,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h3 id="文章详情"><a href="#文章详情" class="headerlink" title="文章详情"></a>文章详情</h3><p>URL：<a target="_blank" rel="noopener" href="http://v2.api.dmzj.com/article/show/v2/$%7Bobject_id%7D.html">http://v2.api.dmzj.com/article/show/v2/${object_id}.html</a><br>method: GET<br>context-type: text&#x2F;html<br>data: html页面</p>
+<h2 id="轻小说"><a href="#轻小说" class="headerlink" title="轻小说"></a>轻小说</h2><h3 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h3><p>URL：<a target="_blank" rel="noopener" href="http://v2.api.dmzj.com/novel/recommend.json">http://v2.api.dmzj.com/novel/recommend.json</a><br>method：GET<br>content-type: text&#x2F;html<br>response:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line"><span class="string">&quot;category_id&quot;</span>: <span class="number">57</span>,</span><br><span class="line"><span class="string">&quot;sort&quot;</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">&quot;title&quot;</span>: <span class="string">&quot;轮番图&quot;</span>,</span><br><span class="line"><span class="string">&quot;data&quot;</span>: [&#123;</span><br><span class="line">    <span class="string">&quot;id&quot;</span>: <span class="number">2010</span>,</span><br><span class="line">    <span class="string">&quot;obj_id&quot;</span>: <span class="number">1671</span>,</span><br><span class="line">    <span class="string">&quot;title&quot;</span>: <span class="string">&quot;为美好的世界献上祝福！第10卷&quot;</span>,</span><br><span class="line">    <span class="string">&quot;cover&quot;</span>: <span class="string">&quot;http:\/\/images.dmzj.com\/tuijian\/xiaoshuo\/750-480\/145.jpg&quot;</span>,</span><br><span class="line">    <span class="string">&quot;url&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="string">&quot;type&quot;</span>: <span class="number">2</span>,</span><br><span class="line">    <span class="string">&quot;sub_title&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="string">&quot;status&quot;</span>: <span class="string">&quot;连载中&quot;</span></span><br><span class="line">  &#125;]</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+<h3 id="最近更新"><a href="#最近更新" class="headerlink" title="最近更新"></a>最近更新</h3><p>URL： <a target="_blank" rel="noopener" href="http://v2.api.dmzj.com/novel/recentUpdate/$%7Bpage%7D.json">http://v2.api.dmzj.com/novel/recentUpdate/${page}.json</a><br>method: GET<br>content-type: text&#x2F;html<br>params:  </p>
+<ul>
+<li>page: 页数（从0开始）</li>
+</ul>
+<p>response:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line"><span class="string">&quot;id&quot;</span>: <span class="number">2235</span>,</span><br><span class="line"><span class="string">&quot;status&quot;</span>: <span class="string">&quot;连载中&quot;</span>,</span><br><span class="line"><span class="string">&quot;name&quot;</span>: <span class="string">&quot;沃特尼亚战记&quot;</span>,</span><br><span class="line"><span class="string">&quot;authors&quot;</span>: <span class="string">&quot;保利亮太&quot;</span>,</span><br><span class="line"><span class="string">&quot;cover&quot;</span>: <span class="string">&quot;http:\/\/xs.dmzj.com\/img\/webpic\/9\/wtny1122l.jpg&quot;</span>,</span><br><span class="line"><span class="string">&quot;types&quot;</span>: [<span class="string">&quot;冒险&quot;</span>, ],</span><br><span class="line"><span class="string">&quot;last_update_chapter_id&quot;</span>: <span class="number">69145</span>,</span><br><span class="line"><span class="string">&quot;last_update_volume_id&quot;</span>: <span class="number">8308</span>,</span><br><span class="line"><span class="string">&quot;last_update_volume_name&quot;</span>: <span class="string">&quot;第一卷&quot;</span>,</span><br><span class="line"><span class="string">&quot;last_update_chapter_name&quot;</span>: <span class="string">&quot;插画&quot;</span>,</span><br><span class="line"><span class="string">&quot;last_update_time&quot;</span>: <span class="number">1479811431</span></span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+<h3 id="小说详情"><a href="#小说详情" class="headerlink" title="小说详情"></a>小说详情</h3><p>URL：<a target="_blank" rel="noopener" href="http://v2.api.dmzj.com/novel/$%7Bid%7D.json">http://v2.api.dmzj.com/novel/${id}.json</a><br>method: GET<br>content-type: text&#x2F;html<br>params:  </p>
+<ul>
+<li>id: 小说id</li>
+</ul>
+<p>response:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"><span class="string">&quot;id&quot;</span>: <span class="number">2229</span>,</span><br><span class="line"><span class="string">&quot;name&quot;</span>: <span class="string">&quot;从今天起我就是萝莉的小白脸！&quot;</span>,</span><br><span class="line"><span class="string">&quot;zone&quot;</span>: <span class="string">&quot;\u65e5\u672c&quot;</span>,</span><br><span class="line"><span class="string">&quot;status&quot;</span>: <span class="string">&quot;连载中&quot;</span>,</span><br><span class="line"><span class="string">&quot;last_update_volume_name&quot;</span>: <span class="string">&quot;第一卷&quot;</span>,</span><br><span class="line"><span class="string">&quot;last_update_chapter_name&quot;</span>: <span class="string">&quot;插画&quot;</span>,</span><br><span class="line"><span class="string">&quot;last_update_volume_id&quot;</span>: <span class="number">8282</span>,</span><br><span class="line"><span class="string">&quot;last_update_chapter_id&quot;</span>: <span class="number">68706</span>,</span><br><span class="line"><span class="string">&quot;last_update_time&quot;</span>: <span class="number">1478948067</span>,</span><br><span class="line"><span class="string">&quot;cover&quot;</span>: <span class="string">&quot;http:\/\/xs.dmzj.com\/img\/webpic\/3\/xbl1112l.jpg&quot;</span>,</span><br><span class="line"><span class="string">&quot;hot_hits&quot;</span>: <span class="number">8473</span>,</span><br><span class="line"><span class="string">&quot;introduction&quot;</span>: <span class="string">&quot;我——天堂晴悠哉地决定成为漫画家。有一天，我感觉自己的人生已经圆满了。那是因为，凭借投资赚得盆满钵满富得流油的美少女小学生——二条藤花居然是我的大粉丝，而且还说要成为我的赞助者！藤花让我住在她的家里，基本上不愁吃不愁穿，而且还给我买来各种各样的漫画BD手办Cos服装等能够成为我创作资料的东西！虽说有了资料也不一定能画出漫画，但既然有了如此梦幻般的环境，我总有一天一定能够画出名垂千古的作品的。……嗯，我想，大概可以吧……？充满甜蜜与快乐的理想小白脸生活，正式开始！&quot;</span>,</span><br><span class="line"><span class="string">&quot;types&quot;</span>: [<span class="string">&quot;校园/后宫&quot;</span>],</span><br><span class="line"><span class="string">&quot;authors&quot;</span>: <span class="string">&quot;晓雪&quot;</span>,</span><br><span class="line"><span class="string">&quot;subscribe_num&quot;</span>: <span class="number">5696</span>,</span><br><span class="line"><span class="string">&quot;volume&quot;</span>: [&#123;</span><br><span class="line">    <span class="string">&quot;id&quot;</span>: <span class="number">8282</span>,</span><br><span class="line">    <span class="string">&quot;lnovel_id&quot;</span>: <span class="number">2229</span>,</span><br><span class="line">    <span class="string">&quot;volume_name&quot;</span>: <span class="string">&quot;第一卷&quot;</span>,</span><br><span class="line">    <span class="string">&quot;volume_order&quot;</span>: <span class="number">10</span>,</span><br><span class="line">    <span class="string">&quot;addtime&quot;</span>: <span class="number">1478947412</span>,</span><br><span class="line">    <span class="string">&quot;sum_chapters&quot;</span>: <span class="number">9</span></span><br><span class="line">&#125;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="小说卷列表"><a href="#小说卷列表" class="headerlink" title="小说卷列表"></a>小说卷列表</h3><p>URL：<a target="_blank" rel="noopener" href="http://v2.api.dmzj.com/novel/chapter/$%7Bid%7D.json">http://v2.api.dmzj.com/novel/chapter/${id}.json</a><br>method: GET<br>content-type: text&#x2F;html<br>params:  </p>
+<ul>
+<li>id: 小说id</li>
+</ul>
+<p>response:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line"><span class="string">&quot;volume_id&quot;</span>: <span class="number">8303</span>,</span><br><span class="line"><span class="string">&quot;volume_name&quot;</span>: <span class="string">&quot;第十一卷&quot;</span>,</span><br><span class="line"><span class="string">&quot;volume_order&quot;</span>: <span class="number">160</span>,</span><br><span class="line"><span class="string">&quot;chapters&quot;</span>: [&#123;</span><br><span class="line">    <span class="string">&quot;chapter_id&quot;</span>: <span class="number">69077</span>,</span><br><span class="line">    <span class="string">&quot;chapter_name&quot;</span>: <span class="string">&quot;转载信息&quot;</span>,</span><br><span class="line">    <span class="string">&quot;chapter_order&quot;</span>: <span class="number">10</span></span><br><span class="line">&#125;, &#123;</span><br><span class="line">    <span class="string">&quot;chapter_id&quot;</span>: <span class="number">69135</span>,</span><br><span class="line">    <span class="string">&quot;chapter_name&quot;</span>: <span class="string">&quot;序章&quot;</span>,</span><br><span class="line">    <span class="string">&quot;chapter_order&quot;</span>: <span class="number">20</span></span><br><span class="line">&#125;, &#123;</span><br><span class="line">    <span class="string">&quot;chapter_id&quot;</span>: <span class="number">69136</span>,</span><br><span class="line">    <span class="string">&quot;chapter_name&quot;</span>: <span class="string">&quot;第一章 本卷的业界neta全都是假的所以有一个&quot;</span>,</span><br><span class="line">    <span class="string">&quot;chapter_order&quot;</span>: <span class="number">30</span></span><br><span class="line">  &#125;]</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+<h3 id="小说章节正文"><a href="#小说章节正文" class="headerlink" title="小说章节正文"></a>小说章节正文</h3><p>URL:<a target="_blank" rel="noopener" href="http://v2.api.dmzj.com/novel/download/$%7Bid%7D/_$%7Bvolume/_id%7D/_$%7Bchapter_id%7D.txt">http://v2.api.dmzj.com/novel/download/${id}\_${volume\_id}\_${chapter_id}.txt</a><br>method: GET<br>content-type: application&#x2F;force-download<br>params：</p>
+<ul>
+<li>id: 小说id</li>
+<li>volume_id: 卷id</li>
+<li>chapter_id: 章节id</li>
+</ul>
+<p>response: txt文件</p>
+<h3 id="小说分类"><a href="#小说分类" class="headerlink" title="小说分类"></a>小说分类</h3><p>URL: <a target="_blank" rel="noopener" href="http://v2.api.dmzj.com/1/category.json">http://v2.api.dmzj.com/1/category.json</a><br>method: GET<br>content-type: text&#x2F;html<br>response:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line"><span class="string">&quot;tag_id&quot;</span>: <span class="number">20</span>,</span><br><span class="line"><span class="string">&quot;title&quot;</span>: <span class="string">&quot;冒险&quot;</span>,</span><br><span class="line"><span class="string">&quot;cover&quot;</span>: <span class="string">&quot;http:\/\/images.dmzj.com\/tuijian\/xiaoshuo        \/fenlei\/maoxian.jpg&quot;</span></span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+<h3 id="小说筛选条件"><a href="#小说筛选条件" class="headerlink" title="小说筛选条件"></a>小说筛选条件</h3><p>URL：<a target="_blank" rel="noopener" href="http://v2.api.dmzj.com/novel/filter.json">http://v2.api.dmzj.com/novel/filter.json</a><br>method: GET<br>content-type: text&#x2F;html<br>response:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line"><span class="string">&quot;title&quot;</span>: <span class="string">&quot;连载进度&quot;</span>,</span><br><span class="line"><span class="string">&quot;items&quot;</span>: [&#123;</span><br><span class="line">    <span class="string">&quot;tag_id&quot;</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="string">&quot;tag_name&quot;</span>: <span class="string">&quot;全部&quot;</span></span><br><span class="line">  &#125;]</span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+<h3 id="小说列表"><a href="#小说列表" class="headerlink" title="小说列表"></a>小说列表</h3><p>URL:<a target="_blank" rel="noopener" href="http://v2.api.dmzj.com/novel/$%7Bcat_id%7D/$%7Bstatus/_id%7D/$%7Border/_id%7D/$%7Bpage%7D.json">http://v2.api.dmzj.com/novel/${cat_id}/${status\_id}/${order\_id}/${page}.json</a><br>method: GET<br>content-type: text&#x2F;html<br>params:</p>
+<ul>
+<li>cat_id: 分类id</li>
+<li>status_id: 连载情况</li>
+<li>order_id: 排序 0为人气从高到低，1为更新时间从近到远</li>
+<li>page: 页数</li>
+</ul>
+<p>response:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line"><span class="string">&quot;cover&quot;</span>: <span class="string">&quot;http:\/\/xs.dmzj.com\/img\/webpic\/22\/1520828_00_main.jpg&quot;</span>,</span><br><span class="line"><span class="string">&quot;name&quot;</span>: <span class="string">&quot;! 惊叹号&quot;</span>,</span><br><span class="line"><span class="string">&quot;authors&quot;</span>: <span class="string">&quot;二宫敦人&quot;</span>,</span><br><span class="line"><span class="string">&quot;id&quot;</span>: <span class="number">1597</span></span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+
+<h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><p>URL:<a target="_blank" rel="noopener" href="http://v2.api.dmzj.com/search/show/$%7Bbig/_cat/_id%7D/$%7Bkeywords%7D/$%7Bpage%7D.json">http://v2.api.dmzj.com/search/show/${big\_cat\_id}/${keywords}/${page}.json</a><br>method: GET<br>content-type: text&#x2F;html<br>params:</p>
+<ul>
+<li>big_cat_id: 分类id; 0为漫画, 1为轻小说</li>
+<li>keywords: 关键字</li>
+<li>page: 页数</li>
+</ul>
+<p>response:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line"><span class="string">&quot;id&quot;</span>: <span class="number">42</span>,</span><br><span class="line"><span class="string">&quot;status&quot;</span>: <span class="string">&quot;连载中&quot;</span>,</span><br><span class="line"><span class="string">&quot;title&quot;</span>: <span class="string">&quot;Campione！弑神者!&quot;</span>,</span><br><span class="line"><span class="string">&quot;last_name&quot;</span>: <span class="string">&quot;第十九卷 魔王内战&quot;</span>,</span><br><span class="line"><span class="string">&quot;cover&quot;</span>: <span class="string">&quot;http:\/\/xs.dmzj.com\/img\/webpic\/23\/151117shishenzhel.jpg&quot;</span>,</span><br><span class="line"><span class="string">&quot;authors&quot;</span>: <span class="string">&quot;丈月城&quot;</span>,</span><br><span class="line"><span class="string">&quot;types&quot;</span>: <span class="string">&quot;神鬼/后宫&quot;</span>,</span><br><span class="line"><span class="string">&quot;hot_hits&quot;</span>: <span class="number">9511526</span></span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+
+
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>加载评论需要在浏览器启用 JavaScript 脚本支持。</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B0%E9%97%BB"><span class="toc-number">1.</span> <span class="toc-text">新闻</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E5%88%97%E8%A1%A8"><span class="toc-number">1.1.</span> <span class="toc-text">推荐列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E7%AB%A0%E5%88%86%E7%B1%BB"><span class="toc-number">1.2.</span> <span class="toc-text">文章分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E7%AB%A0%E5%88%97%E8%A1%A8"><span class="toc-number">1.3.</span> <span class="toc-text">文章列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E7%AB%A0%E8%AF%A6%E6%83%85"><span class="toc-number">1.4.</span> <span class="toc-text">文章详情</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BD%BB%E5%B0%8F%E8%AF%B4"><span class="toc-number">2.</span> <span class="toc-text">轻小说</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90"><span class="toc-number">2.1.</span> <span class="toc-text">推荐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E8%BF%91%E6%9B%B4%E6%96%B0"><span class="toc-number">2.2.</span> <span class="toc-text">最近更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E8%AF%B4%E8%AF%A6%E6%83%85"><span class="toc-number">2.3.</span> <span class="toc-text">小说详情</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E8%AF%B4%E5%8D%B7%E5%88%97%E8%A1%A8"><span class="toc-number">2.4.</span> <span class="toc-text">小说卷列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E8%AF%B4%E7%AB%A0%E8%8A%82%E6%AD%A3%E6%96%87"><span class="toc-number">2.5.</span> <span class="toc-text">小说章节正文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E8%AF%B4%E5%88%86%E7%B1%BB"><span class="toc-number">2.6.</span> <span class="toc-text">小说分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E8%AF%B4%E7%AD%9B%E9%80%89%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.7.</span> <span class="toc-text">小说筛选条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E8%AF%B4%E5%88%97%E8%A1%A8"><span class="toc-number">2.8.</span> <span class="toc-text">小说列表</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2"><span class="toc-number">3.</span> <span class="toc-text">搜索</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&text=动漫之家API"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&title=动漫之家API"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&is_video=false&description=动漫之家API"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=动漫之家API&body=Check out this article: https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&title=动漫之家API"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&title=动漫之家API"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&title=动漫之家API"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&title=动漫之家API"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&name=动漫之家API&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2016/11/23/%E5%8A%A8%E6%BC%AB%E4%B9%8B%E5%AE%B6API/&t=动漫之家API"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

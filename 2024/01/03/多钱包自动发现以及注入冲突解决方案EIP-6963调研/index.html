@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言如果浏览器插件钱包需要向 Dapp 提供以太坊 Provider 能力，必须实现 EIP1193 协议。根据 EIP1193 协议描述，要求插件钱包将 Provider 实现注入到 window.ethereum。 这就导致了一些问题。  注入冲突。用户如果安装了多个插件钱包，就会造成 window.ethereum 被重复覆盖，最终值取决于插件钱包的加载顺序。 恶意竞争。为了让自家钱包的 P">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多钱包自动发现以及注入冲突解决方案: EIP-6963调研">
+<meta property="og:url" content="https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="前言如果浏览器插件钱包需要向 Dapp 提供以太坊 Provider 能力，必须实现 EIP1193 协议。根据 EIP1193 协议描述，要求插件钱包将 Provider 实现注入到 window.ethereum。 这就导致了一些问题。  注入冲突。用户如果安装了多个插件钱包，就会造成 window.ethereum 被重复覆盖，最终值取决于插件钱包的加载顺序。 恶意竞争。为了让自家钱包的 P">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-01-03T22:24:10.000Z">
+<meta property="article:modified_time" content="2024-08-07T17:52:34.071Z">
+<meta property="article:author" content="beilunyang">
+<meta property="article:tag" content="以太坊">
+<meta property="article:tag" content="区块链">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+    
+    <!-- title -->
+    <title>多钱包自动发现以及注入冲突解决方案: EIP-6963调研</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2024/02/13/%E3%80%8Cimg-mom-%E5%9B%BE%E7%89%87%E8%80%81%E5%A6%88%E3%80%8DTelegram-%E5%A4%9A%E5%9B%BE%E5%BA%8A%E5%9B%BE%E7%89%87%E4%B8%8A%E4%BC%A0%E6%9C%BA%E5%99%A8%E4%BA%BA/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2023/08/11/Slidev-%E6%9B%B4%E9%80%82%E5%90%88%E7%A8%8B%E5%BA%8F%E5%91%98%E4%BD%BF%E7%94%A8%E7%9A%84PPT%E5%88%B6%E4%BD%9C%E5%B7%A5%E5%85%B7/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&text=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&title=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&is_video=false&description=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=多钱包自动发现以及注入冲突解决方案: EIP-6963调研&body=Check out this article: https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&title=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&title=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&title=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&title=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&name=多钱包自动发现以及注入冲突解决方案: EIP-6963调研&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&t=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EIP-6963-%E5%8D%8F%E8%AE%AE%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.</span> <span class="toc-text">EIP-6963 协议介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#EIP6963ProviderInfo"><span class="toc-number">2.1.</span> <span class="toc-text">EIP6963ProviderInfo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EIP6963ProviderDetail"><span class="toc-number">2.2.</span> <span class="toc-text">EIP6963ProviderDetail</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Announce%E5%92%8CRequest-%E4%BA%8B%E4%BB%B6"><span class="toc-number">2.3.</span> <span class="toc-text">Announce和Request 事件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E4%BF%A1%E6%B5%81%E7%A8%8B"><span class="toc-number">2.4.</span> <span class="toc-text">通信流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EIP-6963-%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text">EIP-6963 具体实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EIP-6963-%E6%B5%8B%E8%AF%95"><span class="toc-number">4.</span> <span class="toc-text">EIP-6963 测试</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        多钱包自动发现以及注入冲突解决方案: EIP-6963调研
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">beilunyang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-01-03T22:24:10.000Z" class="dt-published" itemprop="datePublished">2024-01-03</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E4%BB%A5%E5%A4%AA%E5%9D%8A/" rel="tag">以太坊</a>, <a class="p-category" href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/" rel="tag">区块链</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>如果浏览器插件钱包需要向 Dapp 提供以太坊 Provider 能力，必须实现 <a target="_blank" rel="noopener" href="https://eips.ethereum.org/EIPS/eip-1193">EIP1193 协议</a>。根据 EIP1193 协议描述，要求插件钱包将 Provider 实现注入到 <code>window.ethereum</code>。 这就导致了一些问题。</p>
+<ul>
+<li>注入冲突。用户如果安装了多个插件钱包，就会造成 <code>window.ethereum</code> 被重复覆盖，最终值取决于插件钱包的加载顺序。</li>
+<li>恶意竞争。为了让自家钱包的 Provider 实现能够成功注入到 <code>window.ethereum</code>, 有些插件钱包会延迟自家 Provider 的注入，甚至<code>freeze</code> <code>window.ethereum</code>对象，使其无法被覆盖。</li>
+</ul>
+<p>同时，由于 EIP1193 没有定义钱包 Provider 的元数据描述接口，导致 Dapp 无法统一自动解析 Provider 中的特定信息来区分不同钱包。插件钱包的元数据(图标，名称等)如果要正确被显示，就需要钱包开发者手动将这些信息提交给 Dapp 或者 Provider Discovery Library (<a target="_blank" rel="noopener" href="https://github.com/rainbow-me/rainbowkit/pull/1166">https://github.com/rainbow-me/rainbowkit/pull/1166</a>)，耗时耗力。</p>
+<h2 id="EIP-6963-协议介绍"><a href="#EIP-6963-协议介绍" class="headerlink" title="EIP-6963 协议介绍"></a>EIP-6963 协议介绍</h2><p><a target="_blank" rel="noopener" href="https://eips.ethereum.org/EIPS/eip-6963">EIP-6963（Multi Injected Provider Discovery）</a>，就很好地解决了上述这些问题。下面简要概述下该协议的核心内容。</p>
+<h3 id="EIP6963ProviderInfo"><a href="#EIP6963ProviderInfo" class="headerlink" title="EIP6963ProviderInfo"></a>EIP6963ProviderInfo</h3><p>该协议定义了 一个标准化的 <code>EIP6963ProviderInfo</code> 接口，包含了钱包 Provider 的一些相关元数据。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Represents the assets needed to display a wallet</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">EIP6963ProviderInfo</span> &#123;</span><br><span class="line">  <span class="attr">uuid</span>:<span class="built_in">string</span>;</span><br><span class="line">  <span class="attr">name</span>:<span class="built_in">string</span>;</span><br><span class="line">  <span class="attr">icon</span>:<span class="built_in">string</span>;</span><br><span class="line">  <span class="attr">rdns</span>:<span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>uuid: 符合 UUID v4.0 规范的钱包本地唯一标识符。</li>
+<li>name: 人类可读的钱包名称。</li>
+<li>icon:  指向图像的 URI，应为 96x96px 的最小分辨率的正方形。建议使用 PNG , WebP 或SVG。</li>
+<li>rdns:  钱包的反向域名标识符，如 <code>io.metamask.wallet</code></li>
+</ul>
+<h3 id="EIP6963ProviderDetail"><a href="#EIP6963ProviderDetail" class="headerlink" title="EIP6963ProviderDetail"></a>EIP6963ProviderDetail</h3><p>该协议定义了一个标准化的 <code>EIP6963ProviderDetail</code> 接口，用于公布钱包 Provider 对象(<a target="_blank" rel="noopener" href="https://eips.ethereum.org/EIPS/eip-1193">实现EIP1193规范</a>)和钱包 Provider 的一些相关元数据(实现<code>EIP6963ProviderInfo</code>接口)。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">EIP6963ProviderDetail</span> &#123;</span><br><span class="line">  <span class="attr">info</span>: <span class="title class_">EIP6963ProviderInfo</span>;</span><br><span class="line">  <span class="attr">provider</span>: <span class="title class_">EIP1193Provider</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Announce和Request-事件"><a href="#Announce和Request-事件" class="headerlink" title="Announce和Request 事件"></a>Announce和Request 事件</h3><p>该协议引入了一组 window 事件，通过事件实现 Dapp 与钱包 Provider 的双向通信。</p>
+<ul>
+<li><p>Dapp 与钱包 Provider 都需要使用 <code>window.dispatchEvent</code> 函数来触发事件，使用 <code>window.addEventListener</code> 来监听事件。</p>
+</li>
+<li><p>定义了 <code>EIP6963AnnounceProviderEvent</code> 接口，并且实现该接口的对象必须是<code>CustomEvent</code> 对象。应该使用<code>Object.freeze()</code> 冻结 <code>detail</code> 属性。</p>
+  <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Announce Event dispatched by a Wallet</span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">EIP6963AnnounceProviderEvent</span> <span class="keyword">extends</span> <span class="title class_">CustomEvent</span> &#123;</span><br><span class="line">  <span class="attr">type</span>: <span class="string">&quot;eip6963:announceProvider&quot;</span>;</span><br><span class="line">  <span class="attr">detail</span>: <span class="title class_">EIP6963ProviderDetail</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义了 <code>EIP6963RequestProviderEvent</code> 接口，并且实现该接口的对象必须是 <code>Event</code> 对象。</p>
+  <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Request Event dispatched by a DApp</span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">EIP6963RequestProviderEvent</span> <span class="keyword">extends</span> <span class="title class_">Event</span> &#123;</span><br><span class="line">  <span class="attr">type</span>: <span class="string">&quot;eip6963:requestProvider&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="通信流程"><a href="#通信流程" class="headerlink" title="通信流程"></a>通信流程</h3><p>钱包端</p>
+<ul>
+<li>钱包通过<code>window.addEventListener</code>监听<code>eip6963:requestProvider</code>事件, 当收到该事件时，应该立即通过 <code>window.dispatchEvent</code> 触发<code>EIP6963AnnounceProviderEvent</code> 事件，将钱包的<code>EIP6963ProviderDetail</code> 信息发送给 Dapp。</li>
+<li>由于钱包可能晚于 Dapp 加载完成，导致未能成功监听到 Dapp 发送的<code>eip6963:requestProvider</code> 事件。所以当钱包加载完成时，应该立即通过 <code>window.dispatchEvent</code> 触发一次 <code>EIP6963AnnounceProviderEvent</code> 。</li>
+</ul>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="attr">info</span>: <span class="title class_">EIP6963ProviderInfo</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="attr">provider</span>: <span class="title class_">EIP1193Provider</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">announceEvent</span>: <span class="title class_">EIP6963AnnounceProviderEvent</span> = <span class="keyword">new</span> <span class="title class_">CustomEvent</span>(</span><br><span class="line">  <span class="string">&quot;eip6963:announceProvider&quot;</span>,</span><br><span class="line">  &#123; <span class="attr">detail</span>: <span class="title class_">Object</span>.<span class="title function_">freeze</span>(&#123; info, provider &#125;) &#125;</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">// The Wallet dispatches an announce event which is heard by</span></span><br><span class="line"><span class="comment">// the DApp code that had run earlier</span></span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">dispatchEvent</span>(announceEvent);</span><br><span class="line"></span><br><span class="line"><span class="comment">// The Wallet listens to the request events which may be</span></span><br><span class="line"><span class="comment">// dispatched later and re-dispatches the `EIP6963AnnounceProviderEvent`</span></span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&quot;eip6963:requestProvider&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">window</span>.<span class="title function_">dispatchEvent</span>(announceEvent);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>Dapp端</p>
+<ul>
+<li>Dapp 应该通过 <code>window.addEventListener</code> 监听 <code>eip6963:announceProvider</code> 事件。并且在页面生命周期内，不得移除该事件监听。</li>
+<li>当监听<code>eip6963:announceProvider</code> 事件后，Dapp 才可以通过<code>window.dispatchEvent</code> 发送<code>eip6963:requestProvider</code> 事件，向钱包请求 <code>EIP6963ProviderDetail</code> 信息。</li>
+</ul>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The DApp listens to announced providers</span></span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(</span><br><span class="line">  <span class="string">&quot;eip6963:announceProvider&quot;</span>,</span><br><span class="line">  <span class="function">(<span class="params"><span class="attr">event</span>: <span class="title class_">EIP6963AnnounceProviderEvent</span></span>) =&gt;</span> &#123;&#125;</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">// The DApp dispatches a request event which will be heard by </span></span><br><span class="line"><span class="comment">// Wallets&#x27; code that had run earlier</span></span><br><span class="line"><span class="variable language_">window</span>.<span class="title function_">dispatchEvent</span>(<span class="keyword">new</span> <span class="title class_">Event</span>(<span class="string">&quot;eip6963:requestProvider&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<h2 id="EIP-6963-具体实现"><a href="#EIP-6963-具体实现" class="headerlink" title="EIP-6963 具体实现"></a>EIP-6963 具体实现</h2><ul>
+<li>一些主流钱包已经陆续实现了该协议，如: Metamask, Okx Wallet, Bitget Wallet,  Brave, Rainbow,  Safeheron Wallet 等。更多钱包见<a target="_blank" rel="noopener" href="https://github.com/WalletConnect/EIP6963/blob/master/src/utils/constants.ts">https://github.com/WalletConnect/EIP6963/blob/master/src/utils/constants.ts</a></li>
+<li>如果你的插件钱包需要实现该协议，可以参考Metamask代码<a target="_blank" rel="noopener" href="https://github.com/MetaMask/providers/blob/v14.0.2/src/EIP6963.ts">https://github.com/MetaMask/providers/blob/v14.0.2/src/EIP6963.ts</a></li>
+</ul>
+<h2 id="EIP-6963-测试"><a href="#EIP-6963-测试" class="headerlink" title="EIP-6963 测试"></a>EIP-6963 测试</h2><p>如果需要测试钱包是否支持了该协议，可以使用如下 Dapp 测试</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://eip6963.org/">https://eip6963.org/</a></li>
+<li><a target="_blank" rel="noopener" href="https://metamask.github.io/test-dapp/">https://metamask.github.io/test-dapp/</a></li>
+<li><a target="_blank" rel="noopener" href="https://web3modal.com/">https://web3modal.com/</a></li>
+</ul>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>加载评论需要在浏览器启用 JavaScript 脚本支持。</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EIP-6963-%E5%8D%8F%E8%AE%AE%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.</span> <span class="toc-text">EIP-6963 协议介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#EIP6963ProviderInfo"><span class="toc-number">2.1.</span> <span class="toc-text">EIP6963ProviderInfo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EIP6963ProviderDetail"><span class="toc-number">2.2.</span> <span class="toc-text">EIP6963ProviderDetail</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Announce%E5%92%8CRequest-%E4%BA%8B%E4%BB%B6"><span class="toc-number">2.3.</span> <span class="toc-text">Announce和Request 事件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E4%BF%A1%E6%B5%81%E7%A8%8B"><span class="toc-number">2.4.</span> <span class="toc-text">通信流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EIP-6963-%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text">EIP-6963 具体实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EIP-6963-%E6%B5%8B%E8%AF%95"><span class="toc-number">4.</span> <span class="toc-text">EIP-6963 测试</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&text=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&title=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&is_video=false&description=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=多钱包自动发现以及注入冲突解决方案: EIP-6963调研&body=Check out this article: https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&title=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&title=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&title=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&title=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&name=多钱包自动发现以及注入冲突解决方案: EIP-6963调研&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/&t=多钱包自动发现以及注入冲突解决方案: EIP-6963调研"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言最近在公司的一个项目中使用到了Webpack5， 然而在使用某个npm包的时候，出现了Buffer is not defined 这个问题，原因很明显了，因为浏览器运行时没有Buffer这个API，所以需要为浏览器引入Buffer Polyfill.   Webpack5这种在Webpack项目下使用NodeJS包的场景应该是很常见的，为什么之前没有遇到过这个问题。因为Webpack5之前的版">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为Webpack5项目引入Buffer Polyfill">
+<meta property="og:url" content="https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="前言最近在公司的一个项目中使用到了Webpack5， 然而在使用某个npm包的时候，出现了Buffer is not defined 这个问题，原因很明显了，因为浏览器运行时没有Buffer这个API，所以需要为浏览器引入Buffer Polyfill.   Webpack5这种在Webpack项目下使用NodeJS包的场景应该是很常见的，为什么之前没有遇到过这个问题。因为Webpack5之前的版">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/12/09/kXGNasISgKF72JR.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/09/GDwWfQokTyqrAhF.png">
+<meta property="article:published_time" content="2022-12-09T00:17:08.000Z">
+<meta property="article:modified_time" content="2024-08-07T17:52:34.071Z">
+<meta property="article:author" content="beilunyang">
+<meta property="article:tag" content="NPM">
+<meta property="article:tag" content="Webpack">
+<meta property="article:tag" content="NodeJS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/12/09/kXGNasISgKF72JR.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+    
+    <!-- title -->
+    <title>为Webpack5项目引入Buffer Polyfill</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&text=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&title=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&is_video=false&description=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=为Webpack5项目引入Buffer Polyfill&body=Check out this article: https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&title=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&title=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&title=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&title=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&name=为Webpack5项目引入Buffer Polyfill&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&t=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Webpack5"><span class="toc-number">2.</span> <span class="toc-text">Webpack5</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEWebpack5"><span class="toc-number">3.</span> <span class="toc-text">配置Webpack5</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Buffer-Polyfill"><span class="toc-number">3.1.</span> <span class="toc-text">安装Buffer Polyfill</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-Fallback"><span class="toc-number">3.2.</span> <span class="toc-text">配置 Fallback</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEProvidePlugin"><span class="toc-number">3.3.</span> <span class="toc-text">配置ProvidePlugin</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E9%85%8D%E7%BD%AE"><span class="toc-number">3.4.</span> <span class="toc-text">完整配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#package-json-browser%E5%AD%97%E6%AE%B5"><span class="toc-number">4.</span> <span class="toc-text">package.json browser字段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">5.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        为Webpack5项目引入Buffer Polyfill
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">beilunyang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-12-09T00:17:08.000Z" class="dt-published" itemprop="datePublished">2022-12-09</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/NPM/" rel="tag">NPM</a>, <a class="p-category" href="/tags/NodeJS/" rel="tag">NodeJS</a>, <a class="p-category" href="/tags/Webpack/" rel="tag">Webpack</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近在公司的一个项目中使用到了Webpack5， 然而在使用某个npm包的时候，出现了<code>Buffer is not defined</code> 这个问题，原因很明显了，因为浏览器运行时没有Buffer这个API，所以需要为浏览器引入Buffer Polyfill. </p>
+<p><img src="https://s2.loli.net/2022/12/09/kXGNasISgKF72JR.png" alt="截屏2022-12-06 16.40.27.png"></p>
+<h2 id="Webpack5"><a href="#Webpack5" class="headerlink" title="Webpack5"></a>Webpack5</h2><p>这种在Webpack项目下使用NodeJS包的场景应该是很常见的，为什么之前没有遇到过这个问题。因为Webpack5之前的版本，Webpack会自动为我们引入NodeJS API Polyfill, 然而Webpack5之后，官方认为自动引入Polyfill会导致bundle体积过大，并且大多数情况下这些自动引入的Polyfill是没有用到的。所以Webpack5需要我们手动引入Polyfill</p>
+<h2 id="配置Webpack5"><a href="#配置Webpack5" class="headerlink" title="配置Webpack5"></a>配置Webpack5</h2><h3 id="安装Buffer-Polyfill"><a href="#安装Buffer-Polyfill" class="headerlink" title="安装Buffer Polyfill"></a>安装Buffer Polyfill</h3><p>我们需要先安装兼容浏览器环境的Buffer实现。这里使用的是buffer这个npm包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -D buffer</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-Fallback"><a href="#配置-Fallback" class="headerlink" title="配置 Fallback"></a>配置 Fallback</h3><p>Webpack resolve.fallback指定了当我们的目标构建环境中不存在对应的包时，将使用fallback的值作为回退。这里我们使用安装的buffer包作为fallback</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">resolve</span>: &#123;</span><br><span class="line">		<span class="attr">fallback</span>: &#123;</span><br><span class="line">			<span class="attr">buffer</span>: <span class="built_in">require</span>.<span class="title function_">resolve</span>(<span class="string">&#x27;buffer/&#x27;</span>),</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 这里使用了’buffer&#x2F;‘, 这样可以明确告诉NodeJS模块查询算法，使用buffer npm包，而不是NodeJS自带的buffer模块</p>
+<h3 id="配置ProvidePlugin"><a href="#配置ProvidePlugin" class="headerlink" title="配置ProvidePlugin"></a>配置ProvidePlugin</h3><p>Webpack ProvidePlugin可以注入一个模块或者值，作为全局变量。我们之后可以直接使用被注入的全局变量，无需import&#x2F;require</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">plugins</span>: [</span><br><span class="line">		<span class="keyword">new</span> webpack.<span class="title class_">ProvidePlugin</span>(&#123;</span><br><span class="line">			<span class="title class_">Buffer</span>: [<span class="string">&#x27;buffer&#x27;</span>, <span class="string">&#x27;Buffer&#x27;</span>], <span class="comment">// [&#x27;包名&#x27;, &#x27;包中的值&#x27;]</span></span><br><span class="line">		&#125;)</span><br><span class="line">	]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 上面的配置相当于</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Buffer</span> = <span class="built_in">require</span>(<span class="string">&#x27;buffer&#x27;</span>).<span class="property">Buffer</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="完整配置"><a href="#完整配置" class="headerlink" title="完整配置"></a>完整配置</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">resolve</span>: &#123;</span><br><span class="line">		<span class="attr">fallback</span>: &#123;</span><br><span class="line">			<span class="attr">buffer</span>: <span class="built_in">require</span>.<span class="title function_">resolve</span>(<span class="string">&#x27;buffer/&#x27;</span>),</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;,</span><br><span class="line">	<span class="attr">plugins</span>: [</span><br><span class="line">		<span class="keyword">new</span> webpack.<span class="title class_">ProvidePlugin</span>(&#123;</span><br><span class="line">			<span class="title class_">Buffer</span>: [<span class="string">&#x27;buffer&#x27;</span>, <span class="string">&#x27;Buffer&#x27;</span>],</span><br><span class="line">		&#125;)</span><br><span class="line">	]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="package-json-browser字段"><a href="#package-json-browser字段" class="headerlink" title="package.json browser字段"></a>package.json browser字段</h2><p>经过上面的配置，正常情况下就可以解决<code>Buffer is not defined</code> 这个问题了。然而我使用的公司内部的某个npm包却报出了新的问题<code>Cannot read properties of undefined(reading &#39;allocUnsafe&#39;)</code> , 其它依赖buffer的包则一切正常。</p>
+<p><img src="https://s2.loli.net/2022/12/09/GDwWfQokTyqrAhF.png" alt="截屏2022-12-06 16.38.54.png"></p>
+<p>经过排查，和这个包的package.json browser字段有关。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// package.json</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">	<span class="attr">&quot;browser&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">		<span class="attr">&quot;buffer&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">	<span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>按照非npm官方规范（<a target="_blank" rel="noopener" href="https://github.com/defunctzombie/package-browser-field-spec">https://github.com/defunctzombie/package-browser-field-spec</a>），browser可以有三种用途</p>
+<ol>
+<li><p>main字段的替代。npm官方文档中介绍的用途，值为string类型，用于指定浏览器环境的包入口</p>
+ <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;browser&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./browser/specific/main.js&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>替代指定文件。左侧为你需要替换的模块或文件名称，右侧为替换项</p>
+ <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;browser&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;module-a&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./shims/module-a.js&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;./server/only.js&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./shims/client-only.js&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>忽略模块。设置false可以阻止模块或文件被打包到包中</p>
+ <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;browser&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;module-a&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p> 以上配置会导致a为undefined</p>
+ <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> a = <span class="built_in">require</span>(<span class="string">&#x27;module-a&#x27;</span>);</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>解决方法也很简单，让包的维护者把package.json中的browser字段删除即可。至此，所有报错全部解决，可以愉快地使用Buffer API了</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>Webpack5不再自动为我们引入NodeJS Polyfill,  我们可以安装兼容浏览器环境的npm包，然后通过配置resolve.fallback以及providePlugin插件来手动引入；如果配置完成后，某些包还是有问题，可以尝试检查对应包中的package.json browser字段</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>加载评论需要在浏览器启用 JavaScript 脚本支持。</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Webpack5"><span class="toc-number">2.</span> <span class="toc-text">Webpack5</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEWebpack5"><span class="toc-number">3.</span> <span class="toc-text">配置Webpack5</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Buffer-Polyfill"><span class="toc-number">3.1.</span> <span class="toc-text">安装Buffer Polyfill</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-Fallback"><span class="toc-number">3.2.</span> <span class="toc-text">配置 Fallback</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEProvidePlugin"><span class="toc-number">3.3.</span> <span class="toc-text">配置ProvidePlugin</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E9%85%8D%E7%BD%AE"><span class="toc-number">3.4.</span> <span class="toc-text">完整配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#package-json-browser%E5%AD%97%E6%AE%B5"><span class="toc-number">4.</span> <span class="toc-text">package.json browser字段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">5.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&text=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&title=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&is_video=false&description=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=为Webpack5项目引入Buffer Polyfill&body=Check out this article: https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&title=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&title=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&title=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&title=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&name=为Webpack5项目引入Buffer Polyfill&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/&t=为Webpack5项目引入Buffer Polyfill"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

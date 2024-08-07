@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言某成人水果APP非VIP用户存在播放次数限制，每天只能播放3次。超过3次需要购买VIP。 由于过于贫穷，于是抽空，对其安卓APP进行了逆向分析，最终成功破解了其播放次数限制。 破解思路思路一通过使用发现，当我点击列表，跳转至视频详情页时，播放次数就会减一。如果APP开发人员，更改播放次数和获取视频详情时使用了两个单独的接口，我们就可以通过屏蔽更改播放次数的接口，让可播放次数永远不减少，从而实现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安卓逆向之破解某成人APP播放次数限制">
+<meta property="og:url" content="https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="前言某成人水果APP非VIP用户存在播放次数限制，每天只能播放3次。超过3次需要购买VIP。 由于过于贫穷，于是抽空，对其安卓APP进行了逆向分析，最终成功破解了其播放次数限制。 破解思路思路一通过使用发现，当我点击列表，跳转至视频详情页时，播放次数就会减一。如果APP开发人员，更改播放次数和获取视频详情时使用了两个单独的接口，我们就可以通过屏蔽更改播放次数的接口，让可播放次数永远不减少，从而实现">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.otaku.ren/20230129/1.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/2.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/3.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/4.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/5.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/6.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/7.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/8.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/9.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/10.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/11.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/12.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/13.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/14.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/15.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/16.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/17.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/18.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/19.png">
+<meta property="og:image" content="https://img.otaku.ren/20230129/20.png">
+<meta property="article:published_time" content="2023-01-29T10:17:15.000Z">
+<meta property="article:modified_time" content="2024-08-07T17:52:34.071Z">
+<meta property="article:author" content="beilunyang">
+<meta property="article:tag" content="安卓逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.otaku.ren/20230129/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+    
+    <!-- title -->
+    <title>安卓逆向之破解某成人APP播放次数限制</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&text=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&title=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&is_video=false&description=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=安卓逆向之破解某成人APP播放次数限制&body=Check out this article: https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&title=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&title=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&title=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&title=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&name=安卓逆向之破解某成人APP播放次数限制&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&t=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A0%B4%E8%A7%A3%E6%80%9D%E8%B7%AF"><span class="toc-number">2.</span> <span class="toc-text">破解思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E4%B8%80"><span class="toc-number">2.1.</span> <span class="toc-text">思路一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E4%BA%8C"><span class="toc-number">2.2.</span> <span class="toc-text">思路二</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%93%E5%8C%85"><span class="toc-number">3.</span> <span class="toc-text">抓包</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E6%89%BE%E8%A7%A3%E5%AF%86%E5%87%BD%E6%95%B0"><span class="toc-number">3.1.</span> <span class="toc-text">查找解密函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%AF%86"><span class="toc-number">3.2.</span> <span class="toc-text">解密</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#watching%E6%8E%A5%E5%8F%A3"><span class="toc-number">3.3.</span> <span class="toc-text">watching接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A0%B4%E8%A7%A3"><span class="toc-number">4.</span> <span class="toc-text">破解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">5.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        安卓逆向之破解某成人APP播放次数限制
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">beilunyang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-01-29T10:17:15.000Z" class="dt-published" itemprop="datePublished">2023-01-29</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/" rel="tag">安卓逆向</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>某成人水果APP非VIP用户存在播放次数限制，每天只能播放3次。超过3次需要购买VIP。 由于过于贫穷，于是抽空，对其安卓APP进行了逆向分析，最终成功破解了其播放次数限制。</p>
+<h2 id="破解思路"><a href="#破解思路" class="headerlink" title="破解思路"></a>破解思路</h2><h3 id="思路一"><a href="#思路一" class="headerlink" title="思路一"></a>思路一</h3><p>通过使用发现，当我点击列表，跳转至视频详情页时，播放次数就会减一。如果APP开发人员，更改播放次数和获取视频详情时使用了两个单独的接口，我们就可以通过屏蔽更改播放次数的接口，让可播放次数永远不减少，从而实现无限播放</p>
+<h3 id="思路二"><a href="#思路二" class="headerlink" title="思路二"></a>思路二</h3><p>APP存在匿名注册，安装并打开APP后，无需手机号和邮箱，会自动生成一个匿名账号。这种匿名注册一般都是会根据手机硬件相关的信息生成uid。这样的话，可以在每次播放次数用完后，hook手机硬件相关的API， 返回新的硬件信息，注册新的匿名账号，从而实现无限播放</p>
+<h2 id="抓包"><a href="#抓包" class="headerlink" title="抓包"></a>抓包</h2><p>有了大致思路，老规矩，先抓包看看APP的接口信息。打开BurpSuite, 配置代理。发现请求和响应都存在加密。</p>
+<p><img src="https://img.otaku.ren/20230129/1.png" alt="1.png"></p>
+<p><img src="https://img.otaku.ren/20230129/2.png" alt="2.png"></p>
+<p>所以需要先解密。</p>
+<h3 id="查找解密函数"><a href="#查找解密函数" class="headerlink" title="查找解密函数"></a>查找解密函数</h3><p>因为App最终还是需要使用明文数据的，所以APP中肯定有解密函数。</p>
+<p>打开Jadx-gui, 将apk打开，发现没有加壳。搜索请求参数关键字_ver, timestamp，sign等，定位到加密逻辑</p>
+<p><img src="https://img.otaku.ren/20230129/3.png" alt="3.png"></p>
+<p><img src="https://img.otaku.ren/20230129/4.png" alt="4.png"></p>
+<p><img src="https://img.otaku.ren/20230129/5.png" alt="5.png"></p>
+<p><img src="https://img.otaku.ren/20230129/6.png" alt="6.png"></p>
+<p><code>EncrytUitl.encrypt</code>这个方法进行了加密，<code>EncryUtil.decrypt</code> 这个方法进行解密。</p>
+<h3 id="解密"><a href="#解密" class="headerlink" title="解密"></a>解密</h3><p>由于加解密都是通过so库完成，逆向出完整解密逻辑比较困难并且也没有必要。所以直接通过frida + brida + burpsuite，直接调用解密函数进行解密</p>
+<ol>
+<li><p>编写frida hook代码</p>
+ <figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">calldecrypt</span>(<span class="params">str</span>) &#123;    </span><br><span class="line">    <span class="keyword">if</span> (!str) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span> <span class="title function_">x</span>(<span class="params"></span>) &#123;</span><br><span class="line">            <span class="keyword">const</span> encryptUtil = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&#x27;com.qq.lib.EncryptUtil&#x27;</span>)</span><br><span class="line">            <span class="keyword">const</span> ret = encryptUtil.<span class="title function_">decrypt</span>(str, <span class="string">&#x27;PT0dPVxYXglbDARZXwlfXwwMDApYDgReWV4JXl4ICAtfWAxcJD4WCD8SFRYCFQ==&#x27;</span>)</span><br><span class="line">            <span class="title function_">resolve</span>(ret)</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">callencrypt</span>(<span class="params">str</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!str) &#123;</span><br><span class="line">        <span class="keyword">return</span>;	</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> encryptUtil = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&#x27;com.qq.lib.EncryptUtil&#x27;</span>)</span><br><span class="line">        <span class="keyword">const</span> ret = encryptUtil.<span class="title function_">encrypt</span>(str, <span class="string">&#x27;PT0dPVxYXglbDARZXwlfXwwMDApYDgReWV4JXl4ICAtfWAxcJD4WCD8SFRYCFQ==&#x27;</span>)</span><br><span class="line">        <span class="title function_">resolve</span>(ret)</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">rpc.<span class="property">exports</span> = &#123;</span><br><span class="line">    calldecrypt,</span><br><span class="line">    callencrypt,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置brida</p>
+<p> <img src="https://img.otaku.ren/20230129/7.png" alt="7.png"></p>
+<p> <img src="https://img.otaku.ren/20230129/8.png" alt="8.png"></p>
+</li>
+<li><p>点击decrypt标签即可解密</p>
+<p> <img src="https://img.otaku.ren/20230129/9.png" alt="9.png"></p>
+</li>
+</ol>
+<h3 id="watching接口"><a href="#watching接口" class="headerlink" title="watching接口"></a>watching接口</h3><p>解密后，发现<code>/api/mv/watching</code> 接口非常可疑，很像是用来标记观看次数。报文如下</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// request</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;bundle_id&quot;</span>:<span class="string">&quot;gov.bkzuj.pikpnf&quot;</span>,</span><br><span class="line">    <span class="string">&quot;id_log&quot;</span>:<span class="string">&quot;83952&quot;</span>,</span><br><span class="line">    <span class="string">&quot;log&quot;</span>:<span class="string">&quot;&#123;\&quot;83952\&quot;:1&#125;&quot;</span>,</span><br><span class="line">    <span class="string">&quot;new_player&quot;</span>:<span class="string">&quot;fx&quot;</span>,</span><br><span class="line">    <span class="string">&quot;oauth_id&quot;</span>:<span class="string">&quot;98fd1cc24524a16ee0f8ef0e76040411&quot;</span>,</span><br><span class="line">    <span class="string">&quot;oauth_type&quot;</span>:<span class="string">&quot;android&quot;</span>,</span><br><span class="line">    <span class="string">&quot;timestamp&quot;</span>:<span class="string">&quot;1674835200&quot;</span>,</span><br><span class="line">    <span class="string">&quot;token&quot;</span>:<span class="string">&quot;867cee9b486e89748097588652a94b0a&quot;</span>,</span><br><span class="line">    <span class="string">&quot;version&quot;</span>:<span class="string">&quot;3.3.0&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// response</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;crypt&quot;</span>:<span class="literal">true</span>,</span><br><span class="line">    <span class="string">&quot;data&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;canWatchCount&quot;</span>:<span class="number">3</span>, <span class="comment">// 可以观看的次数</span></span><br><span class="line">        <span class="string">&quot;left&quot;</span>:<span class="number">1</span>, <span class="comment">// 剩余次数</span></span><br><span class="line">        <span class="string">&quot;todayTimestamp&quot;</span>:<span class="number">1674835200</span>,</span><br><span class="line">        <span class="string">&quot;watched&quot;</span>:<span class="number">2</span> <span class="comment">// 已观看次数</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;isLogin&quot;</span>:<span class="literal">false</span>,</span><br><span class="line">    <span class="string">&quot;isVV&quot;</span>:<span class="literal">false</span>,</span><br><span class="line">    <span class="string">&quot;msg&quot;</span>:<span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="string">&quot;needLogin&quot;</span>:<span class="literal">false</span>,</span><br><span class="line">    <span class="string">&quot;status&quot;</span>:<span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用burpsuite intercept并且drop相关请求，可观看次数的确没有减少。</p>
+<p>然而经过多次尝试，发现次数虽然没有减少，但是当连续观看3次之后，需要重启APP或者去个人中心页面，刷新个人信息，才能继续观看。</p>
+<p>猜测可能是因为APP会在内存中维持一个状态，进行计数。重启或者去个人中心页面刷新，会重置这个状态。</p>
+<p>继续抓包，发现重启或者刷新个人中心页面，都会调用<code>/api/users/getBaseInfo</code> ,其响应报文中有一个can_watch字段</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;crypt&quot;</span>:<span class="literal">true</span>,</span><br><span class="line">    <span class="string">&quot;data&quot;</span>:&#123;</span><br><span class="line">		<span class="comment">// ...</span></span><br><span class="line">        <span class="string">&quot;can_watch&quot;</span>: <span class="number">1</span>,</span><br><span class="line">		<span class="comment">// ...</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;isLogin&quot;</span>:<span class="literal">false</span>,</span><br><span class="line">    <span class="string">&quot;isVV&quot;</span>:<span class="literal">false</span>,</span><br><span class="line">    <span class="string">&quot;msg&quot;</span>:<span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="string">&quot;needLogin&quot;</span>:<span class="literal">false</span>,</span><br><span class="line">    <span class="string">&quot;status&quot;</span>:<span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>搜索can_watch相关代码</p>
+<p><img src="https://img.otaku.ren/20230129/10.png" alt="10.png"></p>
+<p><img src="https://img.otaku.ren/20230129/11.png" alt="11.png"></p>
+<p><img src="https://img.otaku.ren/20230129/12.png" alt="12.png"></p>
+<p>代码逻辑为，接口请求成功后，如果<code>can_watch &gt;= 0</code>, 则将其存放到sp中，key为<code>key_left_watch_count</code></p>
+<p>搜索<code>key_left_watch_count</code> 相关代码</p>
+<p><img src="https://img.otaku.ren/20230129/13.png" alt="13.png"></p>
+<p><img src="https://img.otaku.ren/20230129/14.png" alt="14.png"></p>
+<p><img src="https://img.otaku.ren/20230129/15.png" alt="15.png"></p>
+<p><img src="https://img.otaku.ren/20230129/16.png" alt="16.png"></p>
+<p>相关代码逻辑大致为，进入详情页播放时，判断是否为vip，如果是，则跳过<code>can_watch</code>逻辑，直接可以播放。如果非vip,则从sp中读取<code>can_watch</code>的值，如果大于1，则可以播放，并且将<code>can_watch - 1</code> 后重新写入sp中</p>
+<p>综合以上分析，破解的步骤如下</p>
+<ol>
+<li>屏蔽掉<code>/api/mv/watching</code> 接口调用</li>
+<li>让<code>user.getIs_vip</code> 永远返回true</li>
+</ol>
+<h2 id="破解"><a href="#破解" class="headerlink" title="破解"></a>破解</h2><ol>
+<li><p>使用frida进行hook, 验证想法是否正确。一切正常，成功运行</p>
+</li>
+<li><p>打开AndroidKiller, 反编译出smail代码</p>
+</li>
+<li><p>修改smail代码，修改如下。这里为了UI界面正常显示，顺便修改了<code>getVip_level</code> , 让它永远返回4</p>
+<p> <img src="https://img.otaku.ren/20230129/17.png" alt="17.png"><br> <img src="https://img.otaku.ren/20230129/18.png" alt="18.png"></p>
+<p> 直接goto掉接口调用相关的逻辑<br> <img src="https://img.otaku.ren/20230129/19.png" alt="19.png"></p>
+</li>
+<li><p>回编译，重签名。最终效果如下</p>
+<p> <img src="https://img.otaku.ren/20230129/20.png" alt="20.png"></p>
+</li>
+</ol>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>破解APP可以先揣测开发的开发思路，然后通过抓包，反编译，静态分析，hook，逐步理解APP运行逻辑。最终制定破解方案，修改代码，完成破解。这次又白嫖了一个vip，真香😀</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>加载评论需要在浏览器启用 JavaScript 脚本支持。</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A0%B4%E8%A7%A3%E6%80%9D%E8%B7%AF"><span class="toc-number">2.</span> <span class="toc-text">破解思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E4%B8%80"><span class="toc-number">2.1.</span> <span class="toc-text">思路一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E4%BA%8C"><span class="toc-number">2.2.</span> <span class="toc-text">思路二</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%93%E5%8C%85"><span class="toc-number">3.</span> <span class="toc-text">抓包</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E6%89%BE%E8%A7%A3%E5%AF%86%E5%87%BD%E6%95%B0"><span class="toc-number">3.1.</span> <span class="toc-text">查找解密函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%AF%86"><span class="toc-number">3.2.</span> <span class="toc-text">解密</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#watching%E6%8E%A5%E5%8F%A3"><span class="toc-number">3.3.</span> <span class="toc-text">watching接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A0%B4%E8%A7%A3"><span class="toc-number">4.</span> <span class="toc-text">破解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">5.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&text=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&title=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&is_video=false&description=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=安卓逆向之破解某成人APP播放次数限制&body=Check out this article: https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&title=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&title=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&title=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&title=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&name=安卓逆向之破解某成人APP播放次数限制&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2023/01/29/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91%E4%B9%8B%E7%A0%B4%E8%A7%A3%E6%9F%90%E6%88%90%E4%BA%BAAPP%E6%92%AD%E6%94%BE%E6%AC%A1%E6%95%B0%E9%99%90%E5%88%B6/&t=安卓逆向之破解某成人APP播放次数限制"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

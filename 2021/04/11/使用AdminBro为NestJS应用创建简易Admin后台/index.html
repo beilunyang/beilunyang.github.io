@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言每次开发一个后端应用，基本上都要编写一个admin后台来管理(CRUD)各种资源，在Python生态中，Django和Flask框架都有对应的admin包，通过简单设置就可以拥有一个CRUD的admin后台。我也一直在寻找类似功能的NPM包，终于找到了AdminBro。由于目前AdminBro官网上的NestJS+AdminBro文档写得不是很清晰，所以写下这篇文章，记录下如何在NestJS应">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用AdminBro为NestJS应用创建简易Admin后台">
+<meta property="og:url" content="https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="前言每次开发一个后端应用，基本上都要编写一个admin后台来管理(CRUD)各种资源，在Python生态中，Django和Flask框架都有对应的admin包，通过简单设置就可以拥有一个CRUD的admin后台。我也一直在寻找类似功能的NPM包，终于找到了AdminBro。由于目前AdminBro官网上的NestJS+AdminBro文档写得不是很清晰，所以写下这篇文章，记录下如何在NestJS应">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/04/11/lKLDBnySw12Gzke.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/11/GHV2iE5qPBRQOuX.png">
+<meta property="article:published_time" content="2021-04-11T22:11:00.000Z">
+<meta property="article:modified_time" content="2024-08-07T17:52:34.071Z">
+<meta property="article:author" content="beilunyang">
+<meta property="article:tag" content="NodeJS">
+<meta property="article:tag" content="NestJS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/04/11/lKLDBnySw12Gzke.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+    
+    <!-- title -->
+    <title>使用AdminBro为NestJS应用创建简易Admin后台</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2022/12/09/%E4%B8%BAWebpack5%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5Buffer%20Polyfill/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2020/11/15/%E4%BD%BF%E7%94%A8Workbox%E5%88%9B%E5%BB%BAPWA%E5%BA%94%E7%94%A8/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&text=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&title=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&is_video=false&description=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=使用AdminBro为NestJS应用创建简易Admin后台&body=Check out this article: https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&title=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&title=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&title=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&title=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&name=使用AdminBro为NestJS应用创建简易Admin后台&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&t=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">2.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%88%E6%9E%9C"><span class="toc-number">4.</span> <span class="toc-text">效果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%94%E7%A4%BA%E4%BB%A3%E7%A0%81"><span class="toc-number">5.</span> <span class="toc-text">演示代码</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        使用AdminBro为NestJS应用创建简易Admin后台
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">beilunyang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-04-11T22:11:00.000Z" class="dt-published" itemprop="datePublished">2021-04-11</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/NestJS/" rel="tag">NestJS</a>, <a class="p-category" href="/tags/NodeJS/" rel="tag">NodeJS</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>每次开发一个后端应用，基本上都要编写一个admin后台来管理(CRUD)各种资源，在Python生态中，Django和Flask框架都有对应的admin包，通过简单设置就可以拥有一个CRUD的admin后台。我也一直在寻找类似功能的NPM包，终于找到了AdminBro。由于目前AdminBro官网上的NestJS+AdminBro文档写得不是很清晰，所以写下这篇文章，记录下如何在NestJS应用中使用AdminBro</p>
+<p>以下代码演示环境为:</p>
+<ul>
+<li>数据库：MongoDB 4.4.3</li>
+<li>操作系统: Windows10</li>
+<li>开发工具: VSCode</li>
+<li>技术栈: NodeJS 10.20.1 + NestJS 7.2.4 + AdminBro 3.4.0 + Mongoose 5.12.3</li>
+</ul>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm i admin-bro @admin-bro/nestjs @admin-bro/mongoose</span><br><span class="line">npm i express @admin-bro/express express-formidable</span><br><span class="line">npm i express-session</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// comment.schema.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Prop</span>, <span class="title class_">Schema</span>, <span class="title class_">SchemaFactory</span> &#125; <span class="keyword">from</span> <span class="string">&quot;@nestjs/mongoose&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Document</span> &#125; <span class="keyword">from</span> <span class="string">&quot;mongoose&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Schema</span>()</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">Comment</span> <span class="keyword">extends</span> <span class="title class_ inherited__">Document</span> &#123;</span><br><span class="line">  <span class="meta">@Prop</span>(&#123;</span><br><span class="line">    <span class="attr">default</span>: <span class="title class_">Date</span>.<span class="property">now</span>,</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="attr">created_at</span>: <span class="title class_">Date</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Prop</span>()</span><br><span class="line">  <span class="attr">user_id</span>: <span class="built_in">string</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Prop</span>()</span><br><span class="line">  <span class="attr">content</span>: <span class="built_in">string</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Prop</span>()</span><br><span class="line">  <span class="attr">liked_num</span>: <span class="built_in">number</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Prop</span>()</span><br><span class="line">  <span class="attr">client_name</span>: <span class="built_in">string</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Prop</span>()</span><br><span class="line">  <span class="attr">connect_key</span>: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> <span class="title class_">CommentSchema</span> = <span class="title class_">SchemaFactory</span>.<span class="title function_">createForClass</span>(<span class="title class_">Comment</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// app.module.ts</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Module</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@nestjs/common&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">AdminBro</span> <span class="keyword">from</span> <span class="string">&#x27;admin-bro&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">AppController</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./app.controller&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">AppService</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;./app.service&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Database</span>, <span class="title class_">Resource</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@admin-bro/mongoose&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Model</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;mongoose&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; getModelToken, <span class="title class_">MongooseModule</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@nestjs/mongoose&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">AdminModule</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@admin-bro/nestjs&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Comment</span>, <span class="title class_">CommentSchema</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;../comment/comment.schema&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="title class_">AdminBro</span>.<span class="title function_">registerAdapter</span>(&#123; <span class="title class_">Database</span>, <span class="title class_">Resource</span> &#125;);</span><br><span class="line"></span><br><span class="line"><span class="meta">@Module</span>(&#123;</span><br><span class="line">  <span class="attr">imports</span>: [</span><br><span class="line">    <span class="title class_">MongooseModule</span>.<span class="title function_">forRoot</span>(<span class="string">&#x27;mongodb://127.0.0.1/comment&#x27;</span>),</span><br><span class="line">    <span class="title class_">AdminModule</span>.<span class="title function_">createAdminAsync</span>(&#123;</span><br><span class="line">      <span class="attr">useFactory</span>: <span class="function">(<span class="params"><span class="attr">commentModel</span>: <span class="title class_">Model</span>&lt;<span class="title class_">Comment</span>&gt;</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">          <span class="attr">auth</span>: &#123;</span><br><span class="line">            <span class="attr">authenticate</span>: <span class="title function_">async</span> () =&gt; &#123;</span><br><span class="line">              <span class="comment">// 认证逻辑</span></span><br><span class="line">              <span class="keyword">return</span> <span class="title class_">Promise</span>.<span class="title function_">resolve</span>(&#123; <span class="attr">email</span>: <span class="string">&#x27;test&#x27;</span> &#125;</span><br><span class="line">            &#125;),</span><br><span class="line">            <span class="attr">cookieName</span>: <span class="string">&#x27;admin_panel&#x27;</span>,</span><br><span class="line">            <span class="attr">cookiePassword</span>: <span class="string">&#x27;xxx2arfa&#x27;</span>,</span><br><span class="line">          &#125;,</span><br><span class="line">          <span class="attr">adminBroOptions</span>: &#123;</span><br><span class="line">            <span class="attr">rootPath</span>: <span class="string">&#x27;/admin&#x27;</span>,</span><br><span class="line">            <span class="attr">resources</span>: [commentModel],</span><br><span class="line">          &#125;,</span><br><span class="line">        &#125;;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">inject</span>: [<span class="title function_">getModelToken</span>(<span class="title class_">Comment</span>.<span class="property">name</span>)],</span><br><span class="line">      <span class="attr">imports</span>: [</span><br><span class="line">        <span class="title class_">MongooseModule</span>.<span class="title function_">forFeature</span>([</span><br><span class="line">          &#123; <span class="attr">name</span>: <span class="title class_">Comment</span>.<span class="property">name</span>, <span class="attr">schema</span>: <span class="title class_">CommentSchema</span> &#125;,</span><br><span class="line">        ]),</span><br><span class="line">      ],</span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">controllers</span>: [<span class="title class_">AppController</span>],</span><br><span class="line">  <span class="attr">providers</span>: [<span class="title class_">AppService</span>],</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">AppModule</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p><img src="https://i.loli.net/2021/04/11/lKLDBnySw12Gzke.png" alt="https://i.loli.net/2021/04/11/lKLDBnySw12Gzke.png"></p>
+<p><img src="https://i.loli.net/2021/04/11/GHV2iE5qPBRQOuX.png" alt="https://i.loli.net/2021/04/11/GHV2iE5qPBRQOuX.png"></p>
+<h2 id="演示代码"><a href="#演示代码" class="headerlink" title="演示代码"></a>演示代码</h2><p><a target="_blank" rel="noopener" href="https://github.com/demo-box/adminbro-nestjs-demo">https://github.com/demo-box/adminbro-nestjs-demo</a></p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>加载评论需要在浏览器启用 JavaScript 脚本支持。</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">2.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%88%E6%9E%9C"><span class="toc-number">4.</span> <span class="toc-text">效果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%94%E7%A4%BA%E4%BB%A3%E7%A0%81"><span class="toc-number">5.</span> <span class="toc-text">演示代码</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&text=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&title=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&is_video=false&description=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=使用AdminBro为NestJS应用创建简易Admin后台&body=Check out this article: https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&title=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&title=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&title=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&title=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&name=使用AdminBro为NestJS应用创建简易Admin后台&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2021/04/11/%E4%BD%BF%E7%94%A8AdminBro%E4%B8%BANestJS%E5%BA%94%E7%94%A8%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93Admin%E5%90%8E%E5%8F%B0/&t=使用AdminBro为NestJS应用创建简易Admin后台"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

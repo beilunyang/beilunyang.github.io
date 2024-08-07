@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="从es5开始，js中开始拥有了一种描述属性特征的特性（即属性描述符）。根据特性的不同，可以把属性分成两种类型：数据属性和访问器属性。 先说说有哪些特性为了方便后面的理解，有必要先说一下，有哪几个特性。  [[Configurable]] &#x2F;&#x2F; true or false [[Writable]] &#x2F;&#x2F; true or false [[Enumerable]]">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于JavaScript中的属性特性">
+<meta property="og:url" content="https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="从es5开始，js中开始拥有了一种描述属性特征的特性（即属性描述符）。根据特性的不同，可以把属性分成两种类型：数据属性和访问器属性。 先说说有哪些特性为了方便后面的理解，有必要先说一下，有哪几个特性。  [[Configurable]] &#x2F;&#x2F; true or false [[Writable]] &#x2F;&#x2F; true or false [[Enumerable]]">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-10-18T20:44:21.000Z">
+<meta property="article:modified_time" content="2024-08-07T17:52:34.071Z">
+<meta property="article:author" content="beilunyang">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+    
+    <!-- title -->
+    <title>关于JavaScript中的属性特性</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2016/11/12/JavaScript%E5%B1%9E%E6%80%A7%E8%AE%BE%E7%BD%AE%E4%B8%8E%E5%B1%8F%E8%94%BD/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2016/07/03/%E5%B0%8F%E6%8E%A2animation-timing-function%E4%B8%AD%E7%9A%84steps%E5%B1%9E%E6%80%A7/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&text=关于JavaScript中的属性特性"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&title=关于JavaScript中的属性特性"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&is_video=false&description=关于JavaScript中的属性特性"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=关于JavaScript中的属性特性&body=Check out this article: https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&title=关于JavaScript中的属性特性"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&title=关于JavaScript中的属性特性"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&title=关于JavaScript中的属性特性"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&title=关于JavaScript中的属性特性"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&name=关于JavaScript中的属性特性&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&t=关于JavaScript中的属性特性"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E8%AF%B4%E8%AF%B4%E6%9C%89%E5%93%AA%E4%BA%9B%E7%89%B9%E6%80%A7"><span class="toc-number">1.</span> <span class="toc-text">先说说有哪些特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%88define"><span class="toc-number">2.</span> <span class="toc-text">谈define</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%B1%9E%E6%80%A7"><span class="toc-number">3.</span> <span class="toc-text">数据属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E5%99%A8%E5%B1%9E%E6%80%A7"><span class="toc-number">4.</span> <span class="toc-text">访问器属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E5%AE%83%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="toc-number">5.</span> <span class="toc-text">其它一些注意点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">6.</span> <span class="toc-text">参考资料</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        关于JavaScript中的属性特性
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">beilunyang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2016-10-18T20:44:21.000Z" class="dt-published" itemprop="datePublished">2016-10-18</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/JavaScript/" rel="tag">JavaScript</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>从es5开始，js中开始拥有了一种描述属性特征的特性（即属性描述符）。根据特性的不同，可以把属性分成两种类型：数据属性和访问器属性。</p>
+<h2 id="先说说有哪些特性"><a href="#先说说有哪些特性" class="headerlink" title="先说说有哪些特性"></a>先说说有哪些特性</h2><p>为了方便后面的理解，有必要先说一下，有哪几个特性。</p>
+<ul>
+<li>[[Configurable]] &#x2F;&#x2F; true or false</li>
+<li>[[Writable]] &#x2F;&#x2F; true or false</li>
+<li>[[Enumerable]] &#x2F;&#x2F; true or false</li>
+<li>[[Value]] &#x2F;&#x2F; everty thing</li>
+<li>[[set]] &#x2F;&#x2F; function or undefined</li>
+<li>[[get]] &#x2F;&#x2F; function or undefined</li>
+</ul>
+<p>纳尼，这些是什么鬼，不懂。<br>先不要急，现在只需要知道有这几个特性，具体是什么意思，看到后面自然就懂了。</p>
+<h2 id="谈define"><a href="#谈define" class="headerlink" title="谈define"></a>谈define</h2><p>数据属性和访问器属性都拥有特性，要想修改属性的特性，必须通过两个Object方法，即Object.defineProperty和Object.defineProperties。正如其字面意思，这两个方法都是用来定义（修改）属性的，前者一次只能定义一个属性，后者则可以多个。 不多说了，看API和例子</p>
+<ul>
+<li>defineProperty(obj, prop, descriptor)<br>obj: 将要被添加属性或修改属性的对象<br>prop: 对象的属性<br>descriptor: 对象属性的特性<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> person = &#123;&#125;;</span><br><span class="line"><span class="title class_">Object</span>.<span class="title function_">defineProperty</span>(person, birth, &#123;</span><br><span class="line">    <span class="attr">writable</span>: <span class="literal">false</span>, </span><br><span class="line">    <span class="attr">value</span>: <span class="number">1995</span>          </span><br><span class="line">&#125;); <span class="comment">// 定义了一个不可写，值为1995的新属性 </span></span><br></pre></td></tr></table></figure>
+注：在使用defineProperty方法定义新属性时（非修改旧属性），如果不指定，configurable, enumerable和writable特性的默认值都是false。所以，上面代码实际等同于:<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> person = &#123;&#125;;</span><br><span class="line"><span class="title class_">Object</span>.<span class="title function_">defineProperty</span>(person, birth, &#123;</span><br><span class="line">    <span class="attr">configurable</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">enumerable</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">writable</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="attr">value</span>: <span class="number">1995</span></span><br><span class="line">&#125;); </span><br></pre></td></tr></table></figure></li>
+<li>defineProperties(obj, props)<br>obj: 将要被添加属性或修改属性的对象<br>props: 该对象的一个或多个键值对定义了将要为对象添加或修改的属性的具体配置<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> person = &#123;&#125;;</span><br><span class="line"><span class="title class_">Object</span>.<span class="title function_">defineProperties</span>(person, &#123;</span><br><span class="line">    <span class="attr">birth</span>: &#123;</span><br><span class="line">        <span class="attr">value</span>: <span class="number">1995</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">age</span>: &#123;</span><br><span class="line">        <span class="attr">value</span>: <span class="number">21</span>,</span><br><span class="line">        <span class="attr">writable</span>: <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;); <span class="comment">// 基本同Object.defineProperty，一单一复</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="数据属性"><a href="#数据属性" class="headerlink" title="数据属性"></a>数据属性</h2><p>数据属性包含一个数值的位置，在这个位置可以读取和写入值。数据属性拥有4个特性</p>
+<ul>
+<li>[[Configurable]]: 表示能否通过delete删除属性，能否修改属性的特性，能否把属性改为访问器属性。默认值: true</li>
+<li>[[Enumerable]]: 表示能否通过for-in,Object.keys()迭代。默认值：true</li>
+<li>[[Writable]]: 表示能否修改属性的值。默认值: true</li>
+<li>[[Value]]: 表示属性的数据值。默认值: undefined</li>
+</ul>
+<h2 id="访问器属性"><a href="#访问器属性" class="headerlink" title="访问器属性"></a>访问器属性</h2><p>访问器属性不包含数据值，它们包含一对getter和setter函数。<br>在读取访问器属性时，会调用getter函数（即.操作符）;在写入访问器属性时，会调用setter函数并传入新值（即&#x3D;操作）;访问器属性不能直接定义，需要使用后面提到的Object.defineProperty函数定义。访问器属性也拥有4个特性</p>
+<ul>
+<li>[[Configurable]]: 同数据属性</li>
+<li>[[Enumerable]]: 同数据属性</li>
+<li>[[Get]]: 在读取属性时调用的函数。默认值: undefined</li>
+<li>[[Set]]: 在写入属性时调用的函数。默认值: undefined</li>
+</ul>
+<p>动起手来，定义一个访问器属性:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> person = &#123;</span><br><span class="line">    <span class="attr">birth</span>: <span class="number">1995</span>,</span><br><span class="line">    <span class="attr">age</span>:  <span class="number">21</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="title class_">Object</span>.<span class="title function_">defineProperty</span>(person, <span class="string">&#x27;year&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">get</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">birth</span> + <span class="variable language_">this</span>.<span class="property">age</span>;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">set</span>: <span class="keyword">function</span> (<span class="params">newValue</span>) &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">age</span> = newValue - <span class="variable language_">this</span>.<span class="property">birth</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>注：getter和setter都是可选的，在非严格模式下，只指定了getter却进行了写入操作，写入的值会被忽略;只指定了setter却进行了读取操作，读取到的属性值为undefined。在严格模式下，则都会报错。</p>
+<h2 id="其它一些注意点"><a href="#其它一些注意点" class="headerlink" title="其它一些注意点"></a>其它一些注意点</h2><ol>
+<li>数据特性和访问器特性不能同时存在于一个属性之中，否则会报错</li>
+<li>当configurable为false时，再调用Object.defineProperty方法修改处writable之外的特性，都会导致错误（红宝书点到这里为止）。并且writable只能修改为false，否则也会报错。当writable为true时，即使configurable为false,value也可以修改。</li>
+<li>特性选项不一定是自身选项，如果是继承来的也要考虑，为了确认保留这些默认值，你可能要在这之前冻结 Object.prototype，明确指定所有的选项，或者将proto属性指向null。（纳尼，什么意思，没听懂，看段代码，你就懂了)<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Object</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">get</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;&#125;;</span><br><span class="line"><span class="keyword">var</span> person = &#123;&#125;;</span><br><span class="line"><span class="title class_">Object</span>.<span class="title function_">defineProperty</span>(o, <span class="string">&#x27;name&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">value</span>: <span class="string">&#x27;beilunyang&#x27;</span></span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// TypeError: property descriptors must not specify a value or be writable when a getter or setter has been specified</span></span><br></pre></td></tr></table></figure>
+为什么会报如上这个错误呢？<br>原因就是第三个参数特性选项本身就是一个对象，执行defineProperty的时候,在判断特性选项对象中某个属性是否存在时使用的内部方法是[[HasProperty]].[[HasProperty]]会在[[Prototype]]上寻找属性，自然而然地找到了Object.prototype上定义的get方法，而数据特性和访问器特性不能同时存在于一个属性之中（get和value）,所以产生了如上错误。<br>解决方法：<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> des = <span class="title class_">Object</span>.<span class="title function_">create</span>(<span class="literal">null</span>); </span><br><span class="line">des.<span class="property">value</span> = <span class="string">&#x27;beilunyang&#x27;</span>;</span><br><span class="line"><span class="title class_">Object</span>.<span class="title function_">defineProperty</span>(person, <span class="string">&#x27;name&#x27;</span>, des);</span><br><span class="line"></span><br><span class="line"><span class="comment">// or</span></span><br><span class="line"></span><br><span class="line"><span class="title class_">Object</span>.<span class="title function_">defineProperty</span>(person, <span class="string">&#x27;name&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">__proto__</span>: <span class="literal">null</span>, <span class="comment">//这个操作是很慢的噢，不推荐使用</span></span><br><span class="line">    <span class="attr">value</span>: <span class="string">&#x27;beilunyang&#x27;</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li>JavaScript高级程序设计（第3版）</li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/ziyunfei/archive/2012/12/03/2799984.html">因扩展Object.prototype而引发Object.defineProperty不可用的一个问题</a></li>
+<li>MDN<ul>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty">defineProperty</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperties">defineProperties</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>加载评论需要在浏览器启用 JavaScript 脚本支持。</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E8%AF%B4%E8%AF%B4%E6%9C%89%E5%93%AA%E4%BA%9B%E7%89%B9%E6%80%A7"><span class="toc-number">1.</span> <span class="toc-text">先说说有哪些特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B0%88define"><span class="toc-number">2.</span> <span class="toc-text">谈define</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%B1%9E%E6%80%A7"><span class="toc-number">3.</span> <span class="toc-text">数据属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E5%99%A8%E5%B1%9E%E6%80%A7"><span class="toc-number">4.</span> <span class="toc-text">访问器属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E5%AE%83%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="toc-number">5.</span> <span class="toc-text">其它一些注意点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">6.</span> <span class="toc-text">参考资料</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&text=关于JavaScript中的属性特性"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&title=关于JavaScript中的属性特性"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&is_video=false&description=关于JavaScript中的属性特性"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=关于JavaScript中的属性特性&body=Check out this article: https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&title=关于JavaScript中的属性特性"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&title=关于JavaScript中的属性特性"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&title=关于JavaScript中的属性特性"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&title=关于JavaScript中的属性特性"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&name=关于JavaScript中的属性特性&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2016/10/18/%E5%85%B3%E4%BA%8EJavaScript%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7%E7%89%B9%E6%80%A7/&t=关于JavaScript中的属性特性"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

