@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言Telegram 提供了丰富的 API，使我们可以轻松地开发基于 Telegram 平台的 Bot。本教程将分成一系列文章，以连载的形势，带大家使用 TypeScript + GrammY+ Hono 技术栈从零开始构建一个 Telegram 图床 Bot, 并最终部署在 Cloudflare Workers 上。学玩本教程后，你将获得一个可以上传图片的图床 Bot，并且掌握基本的 Teleg">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目">
+<meta property="og:url" content="https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="前言Telegram 提供了丰富的 API，使我们可以轻松地开发基于 Telegram 平台的 Bot。本教程将分成一系列文章，以连载的形势，带大家使用 TypeScript + GrammY+ Hono 技术栈从零开始构建一个 Telegram 图床 Bot, 并最终部署在 Cloudflare Workers 上。学玩本教程后，你将获得一个可以上传图片的图床 Bot，并且掌握基本的 Teleg">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.otaku.ren/20240804/AQAD4b4xG52KeVV9.jpg">
+<meta property="og:image" content="https://pic.otaku.ren/20240812/AgADKBIAAhnf0VU.png">
+<meta property="article:published_time" content="2024-08-13T10:53:20.000Z">
+<meta property="article:modified_time" content="2024-08-13T03:00:06.273Z">
+<meta property="article:author" content="beilunyang">
+<meta property="article:tag" content="Cloudflare Workers">
+<meta property="article:tag" content="telegram bot 开发入门教程">
+<meta property="article:tag" content="TypeScript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.otaku.ren/20240804/AQAD4b4xG52KeVV9.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+    
+    <!-- title -->
+    <title>使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2024/03/24/MediaCrawler-%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%88%AC%E8%99%AB%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&text=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&is_video=false&description=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目&body=Check out this article: https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&name=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&t=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.</span> <span class="toc-text">前置条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GrammY-%E4%BB%A5%E5%8F%8A-Hono-%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D"><span class="toc-number">3.</span> <span class="toc-text">GrammY 以及 Hono 框架介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-GrammY"><span class="toc-number">3.1.</span> <span class="toc-text">什么是 GrammY</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Hono"><span class="toc-number">3.2.</span> <span class="toc-text">什么是 Hono</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA-Bot"><span class="toc-number">4.</span> <span class="toc-text">创建 Bot</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="toc-number">5.</span> <span class="toc-text">创建项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84%E4%BB%8B%E7%BB%8D"><span class="toc-number">6.</span> <span class="toc-text">项目结构介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-number">7.</span> <span class="toc-text">配置内网穿透</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">8.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">beilunyang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-08-13T10:53:20.000Z" class="dt-published" itemprop="datePublished">2024-08-13</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Cloudflare-Workers/" rel="tag">Cloudflare Workers</a>, <a class="p-category" href="/tags/TypeScript/" rel="tag">TypeScript</a>, <a class="p-category" href="/tags/telegram-bot-%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/" rel="tag">telegram bot 开发入门教程</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Telegram 提供了丰富的 API，使我们可以轻松地开发基于 Telegram 平台的 Bot。本教程将分成一系列文章，以连载的形势，带大家使用 TypeScript + GrammY+ Hono 技术栈从零开始构建一个 Telegram 图床 Bot, 并最终部署在 Cloudflare Workers 上。学玩本教程后，你将获得一个可以上传图片的图床 Bot，并且掌握基本的 Telegram Bot 开发技能。</p>
+<p>本篇文章是本教程的开篇，内容基础简单，可放心阅读。</p>
+<h2 id="前置条件"><a href="#前置条件" class="headerlink" title="前置条件"></a>前置条件</h2><p>本教程基于以下几个前置条件进行编写:</p>
+<ul>
+<li>了解 TypeScript 基本语法，有一些 TypeScript 语言的使用经验</li>
+<li>拥有 Cloudflare 账号，能够使用 Cloudflare Workers 功能</li>
+<li>拥有 Telegram 账户</li>
+<li>已安装 NodeJS &gt; 16.17.0</li>
+</ul>
+<h2 id="GrammY-以及-Hono-框架介绍"><a href="#GrammY-以及-Hono-框架介绍" class="headerlink" title="GrammY 以及 Hono 框架介绍"></a>GrammY 以及 Hono 框架介绍</h2><h3 id="什么是-GrammY"><a href="#什么是-GrammY" class="headerlink" title="什么是 GrammY"></a>什么是 GrammY</h3><p>GrammY 是一个使用 TypeScript 开发的 Telegram Bot 框架，它相比原始 Telegram HTTP API , 为我们封装了许多开箱即用的功能，能大大提高我们开发 Bot 的效率。相比 Telegraf ,  node-telegram-bot-api 这些 NodeJS 框架，它采用 Web 标准进行构建，无需任何 Polyfill,  即可在 Deno, Cloudflare Worker 等 类 Web 运行时上运行，并且兼容 NodeJS 运行时；它受 Telegraf , node-telegram-bot-api 这些框架的影响，对 TypeScript 类型的支持更全面，运行速度更快，文档也更全面友好。</p>
+<h3 id="什么是-Hono"><a href="#什么是-Hono" class="headerlink" title="什么是 Hono"></a>什么是 Hono</h3><p>Hono 是一个 Web 应用开发框架，快速，轻量，同样采用 Web 标准进行构建，能够支持任何 JavaScript 运行时（Cloudflare Workers, Fastly Compute, Deno, Bun, Vercel, Netlify, AWS Lambda, Lambda@Edge,  Node.js）。我们将采用它编写我们的后端服务。</p>
+<h2 id="创建-Bot"><a href="#创建-Bot" class="headerlink" title="创建 Bot"></a>创建 Bot</h2><p>每个 Telegram Bot 都有一个唯一的 Token, 代表着 Bot 的身份，Telegram 需要通过这个 Token 来对 Bot  请求进行身份验证，在之后调用 Telegram API 都需要用到这个Token。所以我们需要先拥有一个Token。</p>
+<p>在 Telegram 中搜索 <code>@BotFather</code> ，然后输入 <code>/newbot</code> 命令, 开始创建一个新的 Bot, BotFather 将引导你输入Bot的一些信息，当创建成功后，BotFather 将返回给你一个 Token。</p>
+<p>这里我创建了一个昵称为 <code>ImgMom|图片老妈</code>，用户名为 <code>img_mom_bot</code> 的 bot,  当我们在 Telegram 搜索这个昵称或者用户名时，就能搜索到这个 Bot, 当然此时如果和这个 Bot 进行对话，这个 Bot 不会有任何响应，因为我们还没有为这个 Bot 编写任何代码逻辑。</p>
+<p><img src="https://pic.otaku.ren/20240804/AQAD4b4xG52KeVV9.jpg" alt="botfather"></p>
+<p><img src="https://pic.otaku.ren/20240812/AgADKBIAAhnf0VU.png" alt="img-mom"></p>
+<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>我们使用 Hono 作为我们的 Web 开发框架, Hono 有为我们提供开箱即用的脚手架，让我们打开终端，运行如下命令来创建我们的项目。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm create hono img-mom -- --template cloudflare-workers --install</span><br></pre></td></tr></table></figure>
+
+<p>终端将不断打印信息，当看到 <code>Get started with: cd img-mom</code> 时，我们的项目也就创建成功了。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">PS</span> E:\Code\my<span class="literal">-app</span>&gt; npm create hono img<span class="literal">-mom</span> <span class="literal">--</span> <span class="literal">--template</span> cloudflare<span class="literal">-workers</span></span><br><span class="line">create<span class="literal">-hono</span> version <span class="number">0.12</span>.<span class="number">0</span></span><br><span class="line">✔ <span class="keyword">Using</span> target directory … img-mom</span><br><span class="line">✔ Cloning the template</span><br><span class="line">🎉 Copied project files</span><br><span class="line">Get started with: <span class="built_in">cd</span> img<span class="literal">-mom</span></span><br></pre></td></tr></table></figure>
+<p>接下来，我们还需安装 GrammY, 在终端运行如下命令:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install grammy</span><br></pre></td></tr></table></figure>
+
+<h2 id="项目结构介绍"><a href="#项目结构介绍" class="headerlink" title="项目结构介绍"></a>项目结构介绍</h2><p>用 VSCode 代码编辑器打开我们刚刚创建的项目。我们将看到如下项目结构，让我简单介绍下这几个文件的作用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">img-mom</span><br><span class="line">├── README.md</span><br><span class="line">├── package.json</span><br><span class="line">├── src</span><br><span class="line">│   └── index.ts</span><br><span class="line">├── tsconfig.json</span><br><span class="line">└── wrangler.toml</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>wrangler.toml</code> : Wrangler 配置文件。用于配置 Wrangler CLI, Wrangler CLI 是一个命令行工具，可以用它来运行，部署，管理我们的编写的 Cloudflare Workers, 并且与 Cloudflare 的其它服务交互。</li>
+<li><code>tsconfig.json</code>:  TypeScript 配置文件</li>
+<li><code>package.json</code> : Npm 项目配置文件</li>
+<li><code>src/index.ts</code> : 业务逻辑入口文件</li>
+</ul>
+<h2 id="配置内网穿透"><a href="#配置内网穿透" class="headerlink" title="配置内网穿透"></a>配置内网穿透</h2><p>有两种方式可以让 Bot 接受来自 Telegram 服务器的信息，它们被称为 长轮询 与 Webhook。</p>
+<p>顾名思义，长轮询 就是 Bot 主动发送请求给 Telegram 服务器以获取新的消息，如果没有消息， Bot 与 Telegram 将一直保持这个请求的连接，直到新信息抵达。其通信流程如图:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">______________                                     _____________</span><br><span class="line">|            |                                     |           |</span><br><span class="line">|            |   &lt;--- 这里有什么新消息吗？  ---       |           |</span><br><span class="line">|            |   .                                 |           |</span><br><span class="line">|            |   .                                 |           |</span><br><span class="line">|            |   .     *一同等待*                   |           |</span><br><span class="line">|  Telegram  |   .                                 |    Bot    |</span><br><span class="line">|            |   .                                 |           |</span><br><span class="line">|            |   .                                 |           |</span><br><span class="line">|            |    ---  是的，我们有新消息！ ---&gt;       |           |</span><br><span class="line">|            |                                     |           |</span><br><span class="line">|____________|                                     |___________|</span><br></pre></td></tr></table></figure>
+
+<p>Webhook 则是为 Telegram 提供一个可以从公网上访问的 URL。无论何时，只要有新的信息发送到你的 Bot，Telegram 将主动发送一个请求与 update 对象到你的服务器。其通信流程如图:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">______________                                   _____________</span><br><span class="line">|            |                                   |           |</span><br><span class="line">|            |                                   |           |</span><br><span class="line">|            |                                   |           |</span><br><span class="line">|            |         *一同等待*                 |           |</span><br><span class="line">|            |                                   |           |</span><br><span class="line">|  Telegram  |                                   |    Bot    |</span><br><span class="line">|            |                                   |           |</span><br><span class="line">|            |                                   |           |</span><br><span class="line">|            |    ---  你好，新的信息！   ---&gt;      |           |</span><br><span class="line">|            |   &lt;---    谢谢你，兄弟      ---     |           |</span><br><span class="line">|____________|                                   |___________|</span><br></pre></td></tr></table></figure>
+
+<p>由于 Cloudflare Workers 的特殊性，无法将启动的服务常驻内存, 无法将请求长时间连接，所以我们只能使用 Webhook 方式。使用 Webhook 方式必须有一个公网可访问的 URL，所以当我们在本地开发时，为了能成功接受到 Telegram 消息，我们需要利用内网穿透服务，将我们运行在本地电脑的服务暴露到公网上去。免费的内网穿透服务有很多，这里我们将使用 Cloudflare 家的 Cloudflare Tunnel。让我们运行如下命令：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install <span class="literal">-D</span> cloudflared</span><br></pre></td></tr></table></figure>
+
+<p>并在我们的 package.json 文件中新增一条 script : <code>&quot;tunnel&quot;: &quot;cloudflared tunnel --url http://127.0.0.1:8787&quot;</code> 。</p>
+<p>现在我们的 package.json 下就有了三条 script</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;dev&quot;</span><span class="punctuation">:</span> <span class="string">&quot;wrangler dev src/index.ts&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;tunnel&quot;</span><span class="punctuation">:</span> <span class="string">&quot;cloudflared tunnel --url http://127.0.0.1:8787&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;deploy&quot;</span><span class="punctuation">:</span> <span class="string">&quot;wrangler deploy --minify src/index.ts&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>npm run dev</code>:  本地开发时运行项目</li>
+<li><code>npm run deploy</code> :  将项目部署到 Cloudflare Workers</li>
+<li><code>npm run tunnel</code> : 内网穿透，将通过 <code>npm run dev</code>运行的本地项目暴露到公网上</li>
+</ul>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>至此，第一篇的内容就全部讲完了。本篇主要介绍了 GrammY 以及 Hono 框架，如何在 Telegram 上创建我们的 Bot 并获取 Token ，如何创建我们的基本项目结构，以及如何进行内网穿透。</p>
+<p>之后的文章，我们将开始进行实际 Bot 代码的编写，希望各位继续关注，你的评论，收藏，点赞，转发，将是我持续更新的动力~</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>加载评论需要在浏览器启用 JavaScript 脚本支持。</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.</span> <span class="toc-text">前置条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GrammY-%E4%BB%A5%E5%8F%8A-Hono-%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D"><span class="toc-number">3.</span> <span class="toc-text">GrammY 以及 Hono 框架介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-GrammY"><span class="toc-number">3.1.</span> <span class="toc-text">什么是 GrammY</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-Hono"><span class="toc-number">3.2.</span> <span class="toc-text">什么是 Hono</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA-Bot"><span class="toc-number">4.</span> <span class="toc-text">创建 Bot</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="toc-number">5.</span> <span class="toc-text">创建项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84%E4%BB%8B%E7%BB%8D"><span class="toc-number">6.</span> <span class="toc-text">项目结构介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F"><span class="toc-number">7.</span> <span class="toc-text">配置内网穿透</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">8.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&text=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&is_video=false&description=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目&body=Check out this article: https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&name=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/&t=使用 TypeScript 开发你的第一个 Telegram 机器人（1）- 创建项目"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'beilunyang/beilunyang.github.io';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>
