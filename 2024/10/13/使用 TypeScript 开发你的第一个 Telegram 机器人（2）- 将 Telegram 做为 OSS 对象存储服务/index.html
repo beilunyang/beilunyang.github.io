@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言在上一篇文章中，我们已经完成了 Bot 项目的创建以及一些前期准备工作。本章内容，我将带领大家开始正式业务逻辑代码的编写，并将 Telegram 作为 OSS 对象存储服务，实现基于 Telegram 的图床。 本章需要实现的功能在正式开始之前，我先介绍下，本章我们将具体实现的功能。  实现一个 &#x2F;setup endpoint，当我们请求&#x2F;setup 时，对我们的 Telegram bot 进">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务">
+<meta property="og:url" content="https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="前言在上一篇文章中，我们已经完成了 Bot 项目的创建以及一些前期准备工作。本章内容，我将带领大家开始正式业务逻辑代码的编写，并将 Telegram 作为 OSS 对象存储服务，实现基于 Telegram 的图床。 本章需要实现的功能在正式开始之前，我先介绍下，本章我们将具体实现的功能。  实现一个 &#x2F;setup endpoint，当我们请求&#x2F;setup 时，对我们的 Telegram bot 进">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.otaku.ren/20241013/AQAEwDEbzTlhVH0.jpg">
+<meta property="og:image" content="https://pic.otaku.ren/20241013/AQADkMAxG805WVR9.jpg">
+<meta property="og:image" content="https://pic.otaku.ren/20241013/AQADksAxG805WVR9.jpg">
+<meta property="og:image" content="https://pic.otaku.ren/20241013/AQADMr8xG805YVR-.jpg">
+<meta property="article:published_time" content="2024-10-13T20:29:40.000Z">
+<meta property="article:modified_time" content="2024-10-13T12:38:30.428Z">
+<meta property="article:author" content="beilunyang">
+<meta property="article:tag" content="Cloudflare Workers">
+<meta property="article:tag" content="Telegram Bot 开发入门教程">
+<meta property="article:tag" content="TypeScript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.otaku.ren/20241013/AQAEwDEbzTlhVH0.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+    
+    <!-- title -->
+    <title>使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2024/08/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%881%EF%BC%89-%20%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&text=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&is_video=false&description=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务&body=Check out this article: https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&name=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&t=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E7%AB%A0%E9%9C%80%E8%A6%81%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="toc-number">2.</span> <span class="toc-text">本章需要实现的功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E9%A1%B9%E7%9B%AE"><span class="toc-number">3.</span> <span class="toc-text">启动项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA-Bot-%E6%A8%A1%E5%9D%97%E5%B9%B6%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%80%E4%B8%AA-Bot-%E5%AE%9E%E4%BE%8B"><span class="toc-number">4.</span> <span class="toc-text">创建 Bot 模块并初始化一个 Bot 实例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A8%E6%88%91%E4%BB%AC%E7%9A%84%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">4.1.</span> <span class="toc-text">如何在我们的项目中使用环境变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0-setup"><span class="toc-number">5.</span> <span class="toc-text">实现 &#x2F;setup</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0-bot"><span class="toc-number">6.</span> <span class="toc-text">实现 &#x2F;bot</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0-Bot-%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91"><span class="toc-number">7.</span> <span class="toc-text">实现 Bot 业务逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0-img"><span class="toc-number">8.</span> <span class="toc-text">实现 &#x2F;img</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">9.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">beilunyang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-10-13T20:29:40.000Z" class="dt-published" itemprop="datePublished">2024-10-13</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Cloudflare-Workers/" rel="tag">Cloudflare Workers</a>, <a class="p-category" href="/tags/Telegram-Bot-%E5%BC%80%E5%8F%91%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/" rel="tag">Telegram Bot 开发入门教程</a>, <a class="p-category" href="/tags/TypeScript/" rel="tag">TypeScript</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在上一篇文章中，我们已经完成了 Bot 项目的创建以及一些前期准备工作。本章内容，我将带领大家开始正式业务逻辑代码的编写，并将 Telegram 作为 OSS 对象存储服务，实现基于 Telegram 的图床。</p>
+<h2 id="本章需要实现的功能"><a href="#本章需要实现的功能" class="headerlink" title="本章需要实现的功能"></a>本章需要实现的功能</h2><p>在正式开始之前，我先介绍下，本章我们将具体实现的功能。</p>
+<ul>
+<li>实现一个 <code>/setup</code> endpoint，当我们请求<code>/setup</code> 时，对我们的 Telegram bot 进行一些初始化设置。具体为：<ul>
+<li>为我们的 Telegram Bot 设置 Webhook endpoint</li>
+<li>为我们的 Telegram Bot 设置一些可使用的命令（command）</li>
+</ul>
+</li>
+<li>实现我们的 Webhook endpoint (<code>/bot</code>),  <code>/bot</code> 将接收来自 Telegram 服务器的消息，并对消息进行处理后，返回不同的响应结果。</li>
+<li>实现基础 Bot 逻辑，让 Bot 能够响应 <code>/start</code>, <code>/help</code>命令，能够监听私聊中的图片以及文档消息，并返回图片以及文档的 <code>file_id</code> 。</li>
+<li>实现一个 <code>/image</code> endpoint， 当请求这个 endpoint 时，将根据<code>file_id</code> 参数获取存储在 Telegram 服务器中的图片并返回。</li>
+</ul>
+<p>看描述是不是很简单，那么让我们动起手来，实现它们吧！</p>
+<h2 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h2><p>回顾下上篇文章的内容，我们的 package.json 文件中有三条 scripts。</p>
+<ul>
+<li><code>npm run dev</code>:  本地开发时运行项目</li>
+<li><code>npm run deploy</code> :  将项目部署到 Cloudflare Workers</li>
+<li><code>npm run tunnel</code> : 内网穿透，将通过 <code>npm run dev</code>运行的本地项目暴露到公网上</li>
+</ul>
+<p>我们现在需要本地启动项目，所以需要运行 <code>npm run dev</code> 。运行之后，我们将在终端中看到如下信息：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">PS</span> E:\Code\img<span class="literal">-mom</span>&gt; npm run dev</span><br><span class="line"></span><br><span class="line">&gt; dev</span><br><span class="line">&gt; wrangler dev src/index.ts</span><br><span class="line"></span><br><span class="line"> ⛅️ wrangler <span class="number">3.72</span>.<span class="number">0</span></span><br><span class="line"><span class="literal">-------------------</span></span><br><span class="line"></span><br><span class="line">⎔ Starting local server...</span><br><span class="line">[<span class="type">wrangler</span>:<span class="type">inf</span>] Ready on http://<span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">8787</span></span><br><span class="line">╭──────────────────────────────────────────────────────────────────────────────╮</span><br><span class="line">│ [<span class="type">b</span> <span class="type">open</span> <span class="type">a</span>       [<span class="type">d</span> <span class="type">open</span>        [<span class="type">l</span> <span class="type">turn</span> <span class="type">off</span> <span class="type">local</span>   [<span class="type">c</span>] <span class="type">clear</span>       [<span class="type">x</span> <span class="type">to</span>     │</span><br><span class="line">│   <span class="type">browser</span>,        <span class="type">Devtools</span>,      <span class="type">mode</span>,                <span class="type">console</span>,       <span class="type">exit</span>    │</span><br><span class="line">╰──────────────────────────────────────────────────────────────────────────────╯</span><br></pre></td></tr></table></figure>
+
+<p>通过浏览器打开 <code>[http://127.0.0.1:8787](http://127.0.0.1:8787)</code> , 我们将看到 <code>Hello Hono!</code> </p>
+<p>接下来，让我们用 VSCode 打开<code>src/index.ts</code> , 这个文件是我们项目的入口文件，项目代码将从这个文件开始执行。当我们打开这个文件时，你应该会看到如下代码:</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Hono</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;hono&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="keyword">new</span> <span class="title class_">Hono</span>()</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/&#x27;</span>, <span class="function">(<span class="params">c</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> c.<span class="title function_">text</span>(<span class="string">&#x27;Hello Hono!&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> app</span><br></pre></td></tr></table></figure>
+
+<p>这个代码是由 Hono 脚手架生成的模板代码。我们需要进行一些小的修改，以方便我们之后的开发。</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Hono</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;hono&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="keyword">new</span> <span class="title class_">Hono</span>()</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/&#x27;</span>, <span class="function">(<span class="params">c</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> c.<span class="title function_">text</span>(<span class="string">&#x27;Hello ImgMom!&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">fire</span>()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>我们将其中的 <code>Hello Hono!</code> 更改为 <code>Hello ImgMom!</code> 。</li>
+<li>将 <code>export default app</code> 删除，并添加 <code>app.fire()</code> 。<ul>
+<li>Cloudflare Workers 有两种模式：ESModule Workers 以及 Service Workers。 Hono 对这两种模式进行了抽象封装，对应的启用方式为：<ul>
+<li><code>export default app</code> : 使用 ESModule Workers</li>
+<li><code>app.fire()</code> : 使用 Service Workers</li>
+</ul>
+</li>
+<li>我们的 Bot 将使用 Service Workers 模式运行</li>
+</ul>
+</li>
+</ul>
+<p>重新运行下<code>npm run dev</code>  , 此时，如果你看到了<code>Hello ImgMom!</code> 这段文字，那么说明我们的项目更改已经生效。</p>
+<p>我们接下来再启动下<strong>内网穿透</strong>服务，以便将我们的本地服务暴露到公网上去。打开新的终端窗口，运行: <code>npm run tunnel</code> , 如果一切顺利，你将看到如下一些信息：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">PS E:\Code\img-mom&gt; npm run tunnel</span><br><span class="line"></span><br><span class="line">&gt; tunnel</span><br><span class="line">&gt; cloudflared tunnel --url http://127.0.0.1:8787</span><br><span class="line"></span><br><span class="line">2024-09-09T00:19:31Z INF Thank you for trying Cloudflare Tunnel. Doing so, without a Cloudflare account, is a quick way to experiment and try it out. However, be aware that these account-less Tunnels have no uptime guarantee. If you intend to use Tunnels in production you should use a pre-created named tunnel by following: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps</span><br><span class="line">2024-09-09T00:19:31Z INF Requesting new quick Tunnel on trycloudflare.com...      </span><br><span class="line">2024-09-09T00:19:35Z INF +--------------------------------------------------------------------------------------------+</span><br><span class="line">2024-09-09T00:19:35Z INF |  Your quick Tunnel has been created! Visit it at (it may take some time to be reachable):  |</span><br><span class="line">2024-09-09T00:19:35Z INF |  **https://pregnant-mentor-reggae-answer.trycloudflare.com**                                   |</span><br><span class="line">2024-09-09T00:19:35Z INF +--------------------------------------------------------------------------------------------+</span><br><span class="line">2024-09-09T00:19:35Z INF cloudflared will not automatically update on Windows systems.</span><br><span class="line">2024-09-09T00:19:35Z INF Generated Connector ID: bcb2533a-ed9d-4fc1-b846-aa86a40d3551</span><br><span class="line">2024-09-09T00:19:35Z INF Initial protocol quic</span><br><span class="line">2024-09-09T00:19:35Z INF ICMP proxy will use 192.168.0.144 as source for IPv4</span><br><span class="line">2024-09-09T00:19:36Z INF ICMP proxy will use fe80::5c48:77fe:77e3:9825 in zone WLAN as source for IPv6        </span><br><span class="line">2024-09-09T00:19:36Z INF cloudflared does not support loading the system root certificate pool on Windows. Please use --origin-ca-pool &lt;PATH&gt; to specify the path to the certificate pool</span><br><span class="line">2024-09-09T00:19:36Z INF Starting metrics server on 127.0.0.1:55137/metrics</span><br><span class="line">2024-09-09T00:19:36Z INF Registered tunnel connection <span class="attr">connIndex</span>=<span class="number">0</span> connection=<span class="number">313572</span>e6-d918-<span class="number">42</span>b4-a0ca-d3edf547fa0e event=<span class="number">0</span> ip=<span class="number">198.18</span>.<span class="number">0.76</span> location=sjc05 protocol=quic</span><br></pre></td></tr></table></figure>
+
+<p>其中 <a target="_blank" rel="noopener" href="https://pregnant-mentor-reggae-answer.trycloudflare.com/">https://pregnant-mentor-reggae-answer.trycloudflare.com</a> 便是 Cloudflared 提供给我们的临时外网 URL，每次运行<code>npm run tunnel</code> , URL 都会不一样。</p>
+<p>我们打开这个外网 URL，如果也显示 <code>Hello ImgMom!</code> ，那么说明我们的内网穿透服务也已经启动成功了。接下来，便可以正式开始我们实际代码的编写。</p>
+<h2 id="创建-Bot-模块并初始化一个-Bot-实例"><a href="#创建-Bot-模块并初始化一个-Bot-实例" class="headerlink" title="创建 Bot 模块并初始化一个 Bot 实例"></a>创建 Bot 模块并初始化一个 Bot 实例</h2><p><code>src/index.ts</code> 文件是项目的入口文件以及 Hono Web 相关的一些逻辑，而我们具体的 Bot 逻辑其实与 Hono Web 无关，所以我们将创建一个 Bot 模块， 将 Bot 相关的具体业务逻辑全部封装到这个模块里。在 TypeScript 项目中，一个文件就是一个模块，所以让我们在 <code>src</code>目录中新建一个 bot 文件。然后输入如下代码：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Bot</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;grammy/web&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> bot = <span class="keyword">new</span> <span class="title class_">Bot</span>(self.<span class="property">TG_BOT_TOKEN</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> bot;</span><br></pre></td></tr></table></figure>
+
+<p>GrammY 框架为我们封装了一个 Bot 类，所有 Bot 相关的逻辑都封装在这个 Bot 类中，这个类的构造函数接收一个 bot token 参数, 然后创建对应的 bot 实例对象。这里我们使用了 <code>self.TG_BOT_TOKEN</code></p>
+<p>，这是 Cloudflare Workers ( Service Worker 模式) 使用环境变量的方式，这样可以将我们的 bot token 不硬编码在代码中，更加灵活，并且可以脱敏。</p>
+<h3 id="如何在我们的项目中使用环境变量"><a href="#如何在我们的项目中使用环境变量" class="headerlink" title="如何在我们的项目中使用环境变量"></a>如何在我们的项目中使用环境变量</h3><p>为了让 <code>self.TG_BOT_TOKEN</code> 以及之后我们将使用到的环境变量生效，我们需要对项目进行一些设置：</p>
+<ul>
+<li><p>打开 <code>wrangler.toml</code>文件，输入如下代码：</p>
+  <figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[vars]</span></span><br><span class="line"><span class="attr">TG_BOT_TOKEN</span> = <span class="string">&quot;&lt;我们通过 botfather 获取到的bot token&gt;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>  在 <code>[vars]</code> 表下面配置的键值对就是我们项目可使用的环境变量。我们可以在项目代码中通过</p>
+<p>  <code>self.&lt;变量名&gt;</code>访问具体的环境变量。</p>
+</li>
+<li><p>类型提示可以方便我们代码的编写，也可以让我们的代码更加安全。当我们在 <code>wrangler.toml</code> 文件中配置完我们将使用的环境变量后，并不能让 TypeScript 知道它们的存在。我们还需要手动进行一些类型的定义才能让 TypeScript 感知到它们。让我们新建 <code>worker-configuration.d.ts</code> , 然后输入如下代码:</p>
+  <figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">Env</span> &#123;</span><br><span class="line">	<span class="attr">TG_BOT_TOKEN</span>: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">ServiceWorkerGlobalScope</span> <span class="keyword">extends</span> <span class="title class_">Env</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  我们尝试在我们的项目代码中输入 <code>self.&lt;变量名&gt;</code> ， VSCode 自动给出了所有可使用的环境变量的提示。</p>
+</li>
+</ul>
+<h2 id="实现-setup"><a href="#实现-setup" class="headerlink" title="实现 /setup"></a>实现 <code>/setup</code></h2><p><code>/setup</code> 是一个 GET 路由，当我们向 <code>/setup</code> 发送 GET 请求时，它会为我们的 Telegram Bot 设置 Webhook endpoint 以及一些命令。让我们在 <code>src/index.ts</code> 中添加一些代码来实现这个功能。</p>
+<ul>
+<li><p>在文件头部导入我们所需要的依赖项</p>
+  <figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> bot <span class="keyword">from</span> <span class="string">&#x27;./bot&#x27;</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在文件最底部输入如下代码</p>
+  <figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/setup&#x27;</span>, <span class="title function_">async</span> (ctx) =&gt; &#123;</span><br><span class="line">		<span class="keyword">const</span> host = <span class="keyword">new</span> <span class="title function_">URL</span>(ctx.<span class="property">req</span>.<span class="property">url</span>).<span class="property">host</span>;</span><br><span class="line">  	<span class="keyword">const</span> botUrl = <span class="string">`https://<span class="subst">$&#123;host&#125;</span>/bot`</span>;</span><br><span class="line">		<span class="keyword">await</span> bot.<span class="property">api</span>.<span class="title function_">setWebhook</span>(botUrl, &#123;</span><br><span class="line">			<span class="attr">secret_token</span>: self.<span class="property">TG_WEBHOOK_SECRET_TOKEN</span>,</span><br><span class="line">		&#125;);</span><br><span class="line">		<span class="keyword">await</span> bot.<span class="property">api</span>.<span class="title function_">setMyCommands</span>([&#123;</span><br><span class="line">			<span class="attr">command</span>: <span class="string">&#x27;/settings&#x27;</span>,</span><br><span class="line">			<span class="attr">description</span>: <span class="string">&#x27;Setting up the bot&#x27;</span>,</span><br><span class="line">		&#125;]);</span><br><span class="line">  	<span class="keyword">return</span> ctx.<span class="title function_">text</span>(<span class="string">`Webhook(<span class="subst">$&#123;botUrl&#125;</span>) setup successful`</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ctx.<span class="title function_">text</span>(<span class="string">&#x27;401 Unauthorized. Please visit ImgMom docs (https://github.com/beilunyang/img-mom)&#x27;</span>, <span class="number">401</span>)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Hono 受 Express, Koa 等 NodeJS Web 框架的影响，实现了与它们类似的 API。通过调用 <code>app.get([path], handler|middleware...)</code>方法，就可以注册一个 GET 请求的路由，当服务接收到对应的 GET 请求时，handler 或者 middleware 就会执行。</li>
+<li>这里我们的 handler 会获取当前请求的 host， 然后构造出我们完整的 Webhook endpoint URL, 这里我们默认我们的 Webhook endpoint 是 <code>/bot</code> 。</li>
+<li>之前我们在 <code>src/bot.ts</code>  模块中构造了一个 bot 实例对象，通过这个 bot 对象的 <code>bot.api.setWebhook</code>  方法，我们就可以将我们的 Webhook endpoint 告知给 Telegram 服务器。</li>
+<li>这里我们还提供了一个可选的 <code>secret_token</code>参数，这个参数主要作用是为了增强 Webhook 调用的安全性，之后 Telegram 调用我们的 Webhook 时，都会带上这个 <code>secret_token</code>。我们在实现我们的 Webhook endpoint 逻辑时，就可以进行访问控制，如果发送给我们的 Webhook endpoint 请求没有携带或者携带了错误的 <code>secret_token</code>， 那就证明这个请求不是来自 Telegram, 可能是有人在恶意调用我们的 Webhook endpoint, 我们可以直接返回错误信息。</li>
+<li>通过调用<code>bot.api.setMyCommands</code> 方法，可以向 Telegram 注册命令，这里我们注册一个 <code>/settings</code> 命令，用来在之后对我们的 Bot 进行一些设置。</li>
+<li><code>ctx.text</code> 是 Hono 提供的 API，它会构造一个包含文本数据的 Response, 当 return Response 时，就会结束整个请求的处理流程并向前端返回响应结果。</li>
+</ul>
+</li>
+<li><p>在 <code>wrangler.toml</code>以及 <code>worker-configuration.d.ts</code> 中配置我们的 <code>TG_WEBHOOK_SECRET_TOKEN</code>环境变量</p>
+  <figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[vars]</span></span><br><span class="line"><span class="attr">TG_BOT_TOKEN</span> = <span class="string">&quot;my-variable&quot;</span></span><br><span class="line"><span class="attr">TG_WEBHOOK_SECRET_TOKEN</span> = <span class="string">&#x27;my-secret-token&#x27;</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">Env</span> &#123;</span><br><span class="line">	<span class="attr">TG_BOT_TOKEN</span>: <span class="built_in">string</span>;</span><br><span class="line">	<span class="attr">TG_WEBHOOK_SECRET_TOKEN</span>: <span class="built_in">string</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">ServiceWorkerGlobalScope</span> <span class="keyword">extends</span> <span class="title class_">Env</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>让我们测试下我们的实现，看看有没有异常，是否符合我们的预期：</p>
+<ul>
+<li><p>打开浏览器，访问 <code>https://pregnant-mentor-reggae-answer.trycloudflare.com/setup</code> 。此时浏览器应该显示如下信息： <code>Webhook(https://pregnant-mentor-reggae-answer.trycloudflare.com/bot) setup successful</code></p>
+</li>
+<li><p>在 Telegram 中打开我们的 Bot，我们的 Bot 应该会多一个 Menu 按钮，点击 Menu 按钮，会显示我们刚刚通过代码注册的 <code>/settings</code>命令</p>
+<p>  <img src="https://pic.otaku.ren/20241013/AQAEwDEbzTlhVH0.jpg" alt="https://pic.otaku.ren/20241013/AQAEwDEbzTlhVH0.jpg"></p>
+</li>
+</ul>
+<p>OKay. 显然我这边代码运行是符合预期的。成功将我们的 Webhook endpoint 注册到了 Telegram。成功为 Bot 设置了一个<code>/settings</code> 命令。</p>
+<p>下一步，让我们实现下我们的 Webhook endpoint <code>/bot</code></p>
+<h2 id="实现-bot"><a href="#实现-bot" class="headerlink" title="实现 /bot"></a>实现 <code>/bot</code></h2><p>Telegram 会将 Message 通过 POST 请求发送给我们注册的 Webhook，所以我们<code>/bot</code>  需要是一个 POST 路由，让我们在<code>src/index.ts</code> 文件中添加如下代码：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; webhookCallback &#125; <span class="keyword">from</span> <span class="string">&#x27;grammy/web&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">post</span>(<span class="string">&#x27;/bot&#x27;</span>, <span class="title function_">async</span> (ctx, next) =&gt; &#123;</span><br><span class="line">	self.<span class="property">host</span> = <span class="keyword">new</span> <span class="title function_">URL</span>(ctx.<span class="property">req</span>.<span class="property">url</span>).<span class="property">host</span>;</span><br><span class="line">	<span class="keyword">return</span> <span class="title function_">next</span>();</span><br><span class="line">&#125;, <span class="title function_">webhookCallback</span>(bot, <span class="string">&#x27;hono&#x27;</span>, &#123;</span><br><span class="line">	<span class="attr">secretToken</span>: self.<span class="property">TG_WEBHOOK_SECRET_TOKEN</span></span><br><span class="line">&#125;));</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>通过<code>app.post([path], handler|middleware...)</code>方法可以注册一个 <code>POST</code>路由</li>
+<li>通过<code>self.host = new URL(ctx.req.url).host</code> , 将当前请求的 host 添加到全局变量中，可以方便之后获取 host 的值</li>
+<li><code>return next()</code> , 执行下一个 middleware 中的代码。更多关于 Hono middleware 的内容，可以查询 Hono 官方文档 <a target="_blank" rel="noopener" href="https://hono.dev/docs/guides/middleware">https://hono.dev/docs/guides/middleware</a></li>
+<li><code>webhookCallback</code>  是 GrammY 提供的一个函数, 它会为不同的 Web 框架创建中间件，其中就包含 Hono。由于之前通过 <code>bot.api.setWebhook</code> 方法注册 <code>Webhook</code>时，我们设置了 <code>secretToken</code> ，每次 Telegram 发送请求到 Webhook 时都会携带设置的 <code>secretToken</code>。我们可以通过 <code>webhookCallback</code>函数实现对这个 <code>secretToken</code>正确性的校验，只需要在第三个参数中设置 <code>secretToken</code> , <code>webhookCallback</code>函数内部会用设置的 <code>secretToken</code>与接收到的 Telegram 请求头中的 <code>secretToken</code>进行对比，如果不一致，则会报错。</li>
+</ul>
+<p>由于我们新增了一个全局变量 <code>self.host</code> , 为了让 TypeScript 不类型报错，还需要在<code>worker-configuration.d.ts</code> 中添加这个全局变量及其类型信息：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">ServiceWorkerGlobalScope</span> <span class="keyword">extends</span> <span class="title class_">Env</span> &#123;</span><br><span class="line">	<span class="attr">host</span>: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>至此， <code>/bot</code> 已经实现完毕，我们已经成功将我们的 GrammY Bot 实例集成到了 Hono Web 服务上，Hono Web 服务将监听到来自 Telegram 发送过来的 Webhook 请求，并将消息内容传递给 Grammy Bot 实例。</p>
+<p>下一步，我们将实现我们 Telegram Bot 的灵魂，Bot 实例的具体业务逻辑。</p>
+<h2 id="实现-Bot-业务逻辑"><a href="#实现-Bot-业务逻辑" class="headerlink" title="实现 Bot 业务逻辑"></a>实现 Bot 业务逻辑</h2><p>在之前，我们已经创建了 <code>src/bot.ts</code>  文件，我们继续往 <code>/src/bot.ts</code> 文件添加如下代码：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">bot.<span class="title function_">use</span>(<span class="function">(<span class="params">ctx, next</span>) =&gt;</span> &#123;</span><br><span class="line">	<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(ctx.<span class="property">update</span>, <span class="literal">null</span>, <span class="number">2</span>));</span><br><span class="line">	<span class="keyword">return</span> <span class="title function_">next</span>();</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">bot.<span class="title function_">command</span>(<span class="string">&#x27;start&#x27;</span>, <span class="function">(<span class="params">ctx</span>) =&gt;</span> ctx.<span class="title function_">reply</span>(<span class="string">&#x27;Welcome to use ImgMom&#x27;</span>));</span><br><span class="line"></span><br><span class="line">bot.<span class="title function_">command</span>(<span class="string">&#x27;help&#x27;</span>, <span class="title function_">async</span> (ctx) =&gt; &#123;</span><br><span class="line">	<span class="keyword">const</span> commands = <span class="keyword">await</span> ctx.<span class="property">api</span>.<span class="title function_">getMyCommands</span>();</span><br><span class="line">	<span class="keyword">const</span> info = commands.<span class="title function_">reduce</span>(<span class="function">(<span class="params">acc, val</span>) =&gt;</span> <span class="string">`<span class="subst">$&#123;acc&#125;</span>/<span class="subst">$&#123;val.command&#125;</span> - <span class="subst">$&#123;val.description&#125;</span>\n`</span>, <span class="string">&#x27;&#x27;</span>);</span><br><span class="line">	<span class="keyword">return</span> ctx.<span class="title function_">reply</span>(info);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">bot.<span class="title function_">on</span>([<span class="string">&#x27;message:photo&#x27;</span>, <span class="string">&#x27;message:document&#x27;</span>], <span class="title function_">async</span> (ctx) =&gt; &#123;</span><br><span class="line">	<span class="keyword">const</span> file = <span class="keyword">await</span> ctx.<span class="title function_">getFile</span>();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">const</span> tgImgUrl = <span class="string">`https://<span class="subst">$&#123;self.host&#125;</span>/img/<span class="subst">$&#123;file.file_id&#125;</span>`</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> ctx.<span class="title function_">reply</span>(</span><br><span class="line">    <span class="string">`Successfully uploaded image!\nTelegram:\n<span class="subst">$&#123;tgImgUrl&#125;</span>`</span></span><br><span class="line">  );</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>bot.use(middleware)</code> : 添加一个中间件，在这里我们将<code>ctx.update</code> 的内容打印出来，方便我们调试。</p>
+  <figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[<span class="attr">wrangler</span>:inf] <span class="variable constant_">POST</span> /bot <span class="number">200</span> <span class="title function_">OK</span> (9870ms)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;update_id&quot;</span>: <span class="number">8787067</span>,</span><br><span class="line">  <span class="string">&quot;message&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;message_id&quot;</span>: <span class="number">4</span>,</span><br><span class="line">    <span class="string">&quot;from&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;id&quot;</span>: <span class="number">361756774</span>,</span><br><span class="line">      <span class="string">&quot;is_bot&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">      <span class="string">&quot;first_name&quot;</span>: <span class="string">&quot;伊卡洛斯&quot;</span>,    </span><br><span class="line">      <span class="string">&quot;username&quot;</span>: <span class="string">&quot;beilunyang&quot;</span>,</span><br><span class="line">      <span class="string">&quot;language_code&quot;</span>: <span class="string">&quot;zh-hans&quot;</span>        </span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;chat&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;id&quot;</span>: <span class="number">361756774</span>,</span><br><span class="line">      <span class="string">&quot;first_name&quot;</span>: <span class="string">&quot;伊卡洛斯&quot;</span>,    </span><br><span class="line">      <span class="string">&quot;username&quot;</span>: <span class="string">&quot;beilunyang&quot;</span>,</span><br><span class="line">      <span class="string">&quot;type&quot;</span>: <span class="string">&quot;private&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;date&quot;</span>: <span class="number">1728791059</span>,</span><br><span class="line">    <span class="string">&quot;text&quot;</span>: <span class="string">&quot;/help&quot;</span>,</span><br><span class="line">    <span class="string">&quot;entities&quot;</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="string">&quot;offset&quot;</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="string">&quot;length&quot;</span>: <span class="number">5</span>,</span><br><span class="line">        <span class="string">&quot;type&quot;</span>: <span class="string">&quot;bot_command&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>bot.command(&#39;start&#39;, middleware)</code> : 监听 start 命令，当用户输入 <code>/start</code> 命令时，将触发对应的中间件，在这里我们通过 <code>ctx.reply</code> 方法，回复 Welcome to use ImgMom。</p>
+</li>
+<li><p><code>bot.command(&#39;help&#39;, middleware)</code>: 监听 help 命令，当用户输入 <code>/help</code> 命令时，将通过 <code>ctx.api.getMyComands</code> 方法，获取当前 bot 的所有可用命令，然后将所有命令名以及命令描述，回复给用户。</p>
+<p>  <img src="https://pic.otaku.ren/20241013/AQADkMAxG805WVR9.jpg" alt="https://pic.otaku.ren/20241013/AQADkMAxG805WVR9.jpg"></p>
+</li>
+<li><p><code>bot.on([&#39;message:photo&#39;, &#39;message:document&#39;], middleware)</code> : 监听 photo 以及 document 消息，当用户向 Bot 发送 photo 以及 document 时，将通过 <code>ctx.getFile</code> 方法获取到用户发送过来的 photo 以及 document，即 file 对象，每个 file 对象都有一个唯一的 ID (file_id),  通过 file_id ，我们就可以通过 Telegram API 重新获取到对应的 File。在这里我们将 file_id 作为我们图片外链的一部分，然后回复给用户。</p>
+<p>  <img src="https://pic.otaku.ren/20241013/AQADksAxG805WVR9.jpg" alt="https://pic.otaku.ren/20241013/AQADksAxG805WVR9.jpg"></p>
+</li>
+</ul>
+<p>至此，我们 Bot 的逻辑也就基本完成了。我们向 Telegram Bot 发送一张图片，Bot 返回图片对应的 图片外链给我们，但是我们访问这个外链时，会返回 <code>404 Not Found</code> ，因为我们还没有实现这个外链对应的逻辑，即 <code>/img</code> ，下一步，我们将实现它。</p>
+<h2 id="实现-img"><a href="#实现-img" class="headerlink" title="实现 /img"></a>实现 <code>/img</code></h2><p>我们切换回 <code>src/index.ts</code> , 添加<code>/img</code> 路由以及对应的逻辑代码：</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; fileTypeFromBuffer &#125; <span class="keyword">from</span> <span class="string">&#x27;file-type&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/img/:fileId&#x27;</span>, <span class="title function_">async</span> (ctx) =&gt; &#123;</span><br><span class="line">	<span class="keyword">const</span> fileId = ctx.<span class="property">req</span>.<span class="title function_">param</span>(<span class="string">&#x27;fileId&#x27;</span>);</span><br><span class="line">	<span class="keyword">const</span> file = <span class="keyword">await</span> bot.<span class="property">api</span>.<span class="title function_">getFile</span>(fileId)</span><br><span class="line">	<span class="keyword">const</span> res = <span class="keyword">await</span> <span class="title function_">fetch</span>(<span class="string">`https://api.telegram.org/file/bot<span class="subst">$&#123;self.TG_BOT_TOKEN&#125;</span>/<span class="subst">$&#123;file.file_path&#125;</span>`</span>);</span><br><span class="line">	<span class="keyword">if</span> (!res.<span class="property">ok</span>) &#123;</span><br><span class="line">  	<span class="keyword">return</span> ctx.<span class="title function_">text</span>(<span class="string">&#x27;404 Not Found. Please visit ImgMom docs (https://github.com/beilunyang/img-mom)&#x27;</span>, <span class="number">404</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">const</span> bf = <span class="keyword">await</span> res.<span class="title function_">arrayBuffer</span>()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">const</span> fileType = <span class="keyword">await</span> <span class="title function_">fileTypeFromBuffer</span>(bf)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ctx.<span class="title function_">body</span>(bf, <span class="number">200</span>, &#123;</span><br><span class="line">		<span class="string">&#x27;Content-Type&#x27;</span>: fileType?.<span class="property">mime</span> ?? <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>我们需要知道 file 的 mime type, 设置正确的 <code>Content-Type</code>, 以便浏览器或其它用户代理能正确处理我们的外链。这里我们通过 <code>file-type</code> 包来获取 mime type。<ul>
+<li>运行 <code>npm i file-type</code> 安装<code>file-type</code>包</li>
+</ul>
+</li>
+<li><code>app.get(&#39;/img/:fileId&#39;, middleware)</code> :  注册我们的 <code>/img</code> 路由，<code>:fileId</code> 是 hono 的路由参数匹配语法，当用户访问<code>/img/123</code> 路由时，<code>123</code> 将自动赋值给 fileId , 通过 <code>ctx.req.param(&#39;fileId&#39;)</code> 方法，即可取到 fileId 的值。</li>
+<li>当获取到 fileId 后，通过调用 <code>bot.api.getFile</code> 方法，可以获取到 fileId 对应的 file 对象。file 对象有一个 file_path 属性，通过 file_path 以及我们之前获取的 <code>TG_BOT_TOKEN</code> , 即可通过请求 Telegram API 获取到存储在 Telegram 服务器中的文件。</li>
+<li>由于是网络请求，存在一定的失败可能，我们可以判断下请求是否成功，如果失败，则返回错误信息，这里为了简单，统一返回文案：404 Not Found……</li>
+<li>如果请求成功，我们可以通过调用 <code>res.arrayBuffer</code> 方法，获取文件的 Buffer 二进制数据。</li>
+<li><code>file-type</code> 包提供了一个 <code>fileTypeFromBuffer</code> 函数，将我们获取的 Buffer 数据作为参数传给它，它便会解析我们 Buffer 中 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files"><strong>magic number</strong></a> ，获取到文件的 mime type。</li>
+<li>最后，我们只需通过<code>ctx.body</code>方法，将正确的 <code>http status code (200)</code>, 正确的<code>Content-Type</code> 以及文件的 Buffer 数据，发送给用户代理即可。</li>
+</ul>
+<p>再重新访问下我们之前获取到的图片外链，此时，你应该就能看到我们发送给 Telegram Bot 的图片的内容了。</p>
+<p><img src="https://pic.otaku.ren/20241013/AQADMr8xG805YVR-.jpg" alt="https://pic.otaku.ren/20241013/AQADMr8xG805YVR-.jpg"></p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>本篇是《使用 TypeScript 开发你的第一个 Telegram 机器人》 系列文章的第二篇，正式带大家开始编写我们的 Bot 逻辑，通过本篇文章的学习，你应该了解了如何设置 Webhook；如何将 Grammy Bot 实例集成到 Hono Web 服务上；如何监听命令，监听 photo, document 消息，并执行不同的自定义逻辑；如何通过 file_id 获取存储在 Telegram 中的文件。并且在最后，成功实现了将 Telegram 作为图片的 OSS 对象存储服务，实现了一个免费的图床。</p>
+<p>在之后的篇章中，我们将继续扩展我们的 Telegram 图床，让我们的图片不仅仅只存储在 Telegram 中 ，还可以存储到其它 OSS 服务中~</p>
+<p>最后，希望各位继续关注，你的评论，收藏，点赞，转发，将是我持续更新的动力~</p>
+<blockquote>
+<p>本文首发于公众号 <strong>悖论的技术小屋</strong>，欢迎关注。🛠️ 分享大前端，Web3，信息安全方面的知识 ❓ 日常交流答疑？知无不言</p>
+</blockquote>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>加载评论需要在浏览器启用 JavaScript 脚本支持。</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E7%AB%A0%E9%9C%80%E8%A6%81%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="toc-number">2.</span> <span class="toc-text">本章需要实现的功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E9%A1%B9%E7%9B%AE"><span class="toc-number">3.</span> <span class="toc-text">启动项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA-Bot-%E6%A8%A1%E5%9D%97%E5%B9%B6%E5%88%9D%E5%A7%8B%E5%8C%96%E4%B8%80%E4%B8%AA-Bot-%E5%AE%9E%E4%BE%8B"><span class="toc-number">4.</span> <span class="toc-text">创建 Bot 模块并初始化一个 Bot 实例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A8%E6%88%91%E4%BB%AC%E7%9A%84%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">4.1.</span> <span class="toc-text">如何在我们的项目中使用环境变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0-setup"><span class="toc-number">5.</span> <span class="toc-text">实现 &#x2F;setup</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0-bot"><span class="toc-number">6.</span> <span class="toc-text">实现 &#x2F;bot</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0-Bot-%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91"><span class="toc-number">7.</span> <span class="toc-text">实现 Bot 业务逻辑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0-img"><span class="toc-number">8.</span> <span class="toc-text">实现 &#x2F;img</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">9.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&text=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&is_video=false&description=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务&body=Check out this article: https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&title=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&name=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/&t=使用 TypeScript 开发你的第一个 Telegram 机器人（2）- 将 Telegram 做为 OSS 对象存储服务"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'beilunyang/beilunyang.github.io';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>
