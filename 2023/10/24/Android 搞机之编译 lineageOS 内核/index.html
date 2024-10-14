@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="编译环境 VMware 虚拟机 + Kali 2022.3 32GB 内存 400GB 硬盘 乐视 Max2 手机 lineageOS 18.1   源码下载 从 lineageOS 官网上找到 LeMax2。在 Build for x2 章节找到 kernel 的 Github 地址  下载 kernel 源码  1git clone --depth&#x3D;1 https:&#x2F;&#x2F;github.com&#x2F;L">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 搞机之编译 lineageOS 内核">
+<meta property="og:url" content="https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="编译环境 VMware 虚拟机 + Kali 2022.3 32GB 内存 400GB 硬盘 乐视 Max2 手机 lineageOS 18.1   源码下载 从 lineageOS 官网上找到 LeMax2。在 Build for x2 章节找到 kernel 的 Github 地址  下载 kernel 源码  1git clone --depth&#x3D;1 https:&#x2F;&#x2F;github.com&#x2F;L">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.otaku.ren/20230929/1.png">
+<meta property="article:published_time" content="2023-10-24T21:10:09.000Z">
+<meta property="article:modified_time" content="2024-10-14T11:12:54.081Z">
+<meta property="article:author" content="beilunyang">
+<meta property="article:tag" content="安卓">
+<meta property="article:tag" content="安卓搞机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.otaku.ren/20230929/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+    
+    <!-- title -->
+    <title>Android 搞机之编译 lineageOS 内核</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2024/01/03/%E5%A4%9A%E9%92%B1%E5%8C%85%E8%87%AA%E5%8A%A8%E5%8F%91%E7%8E%B0%E4%BB%A5%E5%8F%8A%E6%B3%A8%E5%85%A5%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88EIP-6963%E8%B0%83%E7%A0%94/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&text=Android 搞机之编译 lineageOS 内核"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&title=Android 搞机之编译 lineageOS 内核"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&is_video=false&description=Android 搞机之编译 lineageOS 内核"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Android 搞机之编译 lineageOS 内核&body=Check out this article: https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&title=Android 搞机之编译 lineageOS 内核"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&title=Android 搞机之编译 lineageOS 内核"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&title=Android 搞机之编译 lineageOS 内核"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&title=Android 搞机之编译 lineageOS 内核"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&name=Android 搞机之编译 lineageOS 内核&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&t=Android 搞机之编译 lineageOS 内核"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83"><span class="toc-number">1.</span> <span class="toc-text">编译环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E4%B8%8B%E8%BD%BD"><span class="toc-number">2.</span> <span class="toc-text">源码下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91"><span class="toc-number">3.</span> <span class="toc-text">编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%BF%E6%8D%A2%E5%86%85%E6%A0%B8"><span class="toc-number">4.</span> <span class="toc-text">替换内核</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD-AnyKernel3"><span class="toc-number">4.1.</span> <span class="toc-text">下载 AnyKernel3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-AnyKernel3"><span class="toc-number">4.2.</span> <span class="toc-text">使用 AnyKernel3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%B7%E6%9C%BA"><span class="toc-number">4.3.</span> <span class="toc-text">刷机</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Android 搞机之编译 lineageOS 内核
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">beilunyang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-10-24T21:10:09.000Z" class="dt-published" itemprop="datePublished">2023-10-24</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%AE%89%E5%8D%93/" rel="tag">安卓</a>, <a class="p-category" href="/tags/%E5%AE%89%E5%8D%93%E6%90%9E%E6%9C%BA/" rel="tag">安卓搞机</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="编译环境"><a href="#编译环境" class="headerlink" title="编译环境"></a>编译环境</h2><ul>
+<li>VMware 虚拟机 + Kali 2022.3</li>
+<li>32GB 内存</li>
+<li>400GB 硬盘</li>
+<li>乐视 Max2 手机</li>
+<li>lineageOS 18.1</li>
+</ul>
+<p><img src="https://img.otaku.ren/20230929/1.png"></p>
+<h2 id="源码下载"><a href="#源码下载" class="headerlink" title="源码下载"></a>源码下载</h2><ol>
+<li><p>从 lineageOS 官网上找到 LeMax2。在 Build for x2 章节找到 kernel 的 Github 地址</p>
+</li>
+<li><p>下载 kernel 源码</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth=1 https://github.com/LineageOS/android_kernel_leeco_msm8996.git</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><ol>
+<li><p>安装编译工具链。lineageOS Github 提供了预编译的工具链，根据手机架构，手机中安装的 lineageOS 版本，选择合适的预编译版本进行下载</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth=1 -b lineage-18.1 https://github.com/LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置环境变量。将下载的编译工具链配置到环境变量中</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:/Documents/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9/bin</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进入到源码目录，执行下面命令开始编译。编译过程中，可能会因为编译环境缺少特定命令而报错。根据报错信息，用 <code>apt install</code>安装缺少的命令即可。</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> ARCH=arm64</span><br><span class="line"><span class="built_in">export</span> CROSS_COMPILE=aarch64-linux-android-</span><br><span class="line">make O=out mrproper</span><br><span class="line">make O=out lineage_x2_defconfig <span class="comment"># 去arch/arm64/configs 选一个你的机型对应的配置文件</span></span><br><span class="line">make O=out -j8  <span class="comment"># 开始编译</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>等待编译成功。编译成功后，产物会在<code>out/arch/&lt;目标架构&gt;/boot</code> 目录下，如：<code>/root/Documents/android_kernel_leeco_msm8996/out/arch/arm64/boot</code></p>
+</li>
+</ol>
+<h2 id="替换内核"><a href="#替换内核" class="headerlink" title="替换内核"></a>替换内核</h2><h3 id="下载-AnyKernel3"><a href="#下载-AnyKernel3" class="headerlink" title="下载 AnyKernel3"></a>下载 AnyKernel3</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth=1 https://github.com/osm0sis/AnyKernel3.git</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用-AnyKernel3"><a href="#使用-AnyKernel3" class="headerlink" title="使用 AnyKernel3"></a>使用 AnyKernel3</h3><ul>
+<li><p>编辑 <code>anykernel.sh</code> 文件</p>
+<ul>
+<li>设置 <code>do.devicecheck=0</code></li>
+<li>设置 <code>block=/dev/block/bootdevice/by-name/boot</code></li>
+</ul>
+</li>
+<li><p>将编译成功的内核 <code>Image</code> 文件复制到 AnyKernel3 根目录下</p>
+</li>
+<li><p>将 Anykernel3 根目录下的所有文件打包成 zip 压缩包</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip -r9 Anykernel.zip *</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将 <code>Anykernel.zip</code> 包推送到手机中</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb push Anykernel.zip /sdcard</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="刷机"><a href="#刷机" class="headerlink" title="刷机"></a>刷机</h3><ul>
+<li><p>进入 LineageOS recovery 模式</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb reboot recovery</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>选择 <code>Apply update</code></p>
+</li>
+<li><p>选择 <code>Choose from internal storage</code></p>
+</li>
+<li><p>选择 <code>Anykernel.zip</code></p>
+</li>
+<li><p>等待刷机完成。通过 <code>adb shell</code>查看内核版本是否为刚刚刷入的版本</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">le_x2:/ $ <span class="built_in">cat</span> /proc/version                              </span><br><span class="line">Linux version 3.18.140-lineage-g4b91b133 (root@icarus) (gcc version 4.9.x 20150123 (prerelease) (GCC)) <span class="comment">#1 SMP PREEMPT Thu Oct 19 23:39:33 CST 2023</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>加载评论需要在浏览器启用 JavaScript 脚本支持。</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83"><span class="toc-number">1.</span> <span class="toc-text">编译环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E4%B8%8B%E8%BD%BD"><span class="toc-number">2.</span> <span class="toc-text">源码下载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91"><span class="toc-number">3.</span> <span class="toc-text">编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%BF%E6%8D%A2%E5%86%85%E6%A0%B8"><span class="toc-number">4.</span> <span class="toc-text">替换内核</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD-AnyKernel3"><span class="toc-number">4.1.</span> <span class="toc-text">下载 AnyKernel3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-AnyKernel3"><span class="toc-number">4.2.</span> <span class="toc-text">使用 AnyKernel3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%B7%E6%9C%BA"><span class="toc-number">4.3.</span> <span class="toc-text">刷机</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&text=Android 搞机之编译 lineageOS 内核"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&title=Android 搞机之编译 lineageOS 内核"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&is_video=false&description=Android 搞机之编译 lineageOS 内核"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Android 搞机之编译 lineageOS 内核&body=Check out this article: https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&title=Android 搞机之编译 lineageOS 内核"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&title=Android 搞机之编译 lineageOS 内核"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&title=Android 搞机之编译 lineageOS 内核"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&title=Android 搞机之编译 lineageOS 内核"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&name=Android 搞机之编译 lineageOS 内核&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/&t=Android 搞机之编译 lineageOS 内核"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'beilunyang/beilunyang.github.io';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

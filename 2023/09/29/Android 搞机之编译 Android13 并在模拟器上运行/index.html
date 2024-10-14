@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="编译环境 VMware虚拟机 + Kali 2022.3 32GB内存 400GB硬盘   下载Android13源码 安装repo工具  1apt install repo  创建文件夹，存放aosp源码  12mkdir aospcd aosp  配置git信息  12git config —global [user.name](http:&#x2F;&#x2F;user.name) &lt;your_name&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 搞机之编译 Android13 并在模拟器上运行">
+<meta property="og:url" content="https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="编译环境 VMware虚拟机 + Kali 2022.3 32GB内存 400GB硬盘   下载Android13源码 安装repo工具  1apt install repo  创建文件夹，存放aosp源码  12mkdir aospcd aosp  配置git信息  12git config —global [user.name](http:&#x2F;&#x2F;user.name) &lt;your_name&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.otaku.ren/20230929/1.png">
+<meta property="article:published_time" content="2023-09-29T20:47:50.000Z">
+<meta property="article:modified_time" content="2024-10-14T11:12:54.081Z">
+<meta property="article:author" content="beilunyang">
+<meta property="article:tag" content="安卓">
+<meta property="article:tag" content="安卓搞机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.otaku.ren/20230929/1.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+    
+    <!-- title -->
+    <title>Android 搞机之编译 Android13 并在模拟器上运行</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2023/08/11/Slidev-%E6%9B%B4%E9%80%82%E5%90%88%E7%A8%8B%E5%BA%8F%E5%91%98%E4%BD%BF%E7%94%A8%E7%9A%84PPT%E5%88%B6%E4%BD%9C%E5%B7%A5%E5%85%B7/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&text=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&title=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&is_video=false&description=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Android 搞机之编译 Android13 并在模拟器上运行&body=Check out this article: https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&title=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&title=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&title=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&title=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&name=Android 搞机之编译 Android13 并在模拟器上运行&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&t=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83"><span class="toc-number">1.</span> <span class="toc-text">编译环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BDAndroid13%E6%BA%90%E7%A0%81"><span class="toc-number">2.</span> <span class="toc-text">下载Android13源码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E6%BA%90%E7%A0%81"><span class="toc-number">3.</span> <span class="toc-text">编译源码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C"><span class="toc-number">4.</span> <span class="toc-text">在模拟器上运行</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Android 搞机之编译 Android13 并在模拟器上运行
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">beilunyang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-09-29T20:47:50.000Z" class="dt-published" itemprop="datePublished">2023-09-29</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%AE%89%E5%8D%93/" rel="tag">安卓</a>, <a class="p-category" href="/tags/%E5%AE%89%E5%8D%93%E6%90%9E%E6%9C%BA/" rel="tag">安卓搞机</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="编译环境"><a href="#编译环境" class="headerlink" title="编译环境"></a>编译环境</h2><ul>
+<li>VMware虚拟机 + Kali 2022.3</li>
+<li>32GB内存</li>
+<li>400GB硬盘</li>
+</ul>
+<p><img src="https://img.otaku.ren/20230929/1.png"></p>
+<h2 id="下载Android13源码"><a href="#下载Android13源码" class="headerlink" title="下载Android13源码"></a>下载Android13源码</h2><ol>
+<li><p>安装repo工具</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install repo</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建文件夹，存放aosp源码</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> aosp</span><br><span class="line"><span class="built_in">cd</span> aosp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置git信息</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config —global [user.name](http://user.name) &lt;your_name&gt;</span><br><span class="line">git config —global [user.email](http://user.email) &lt;your@email.com&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>初始化repo aosp仓库</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">repo init -u https://mirrors.tuna.tsinghua.edu.cn/git/AOSP/platform/manifest -b android-13.0.0_r31</span><br><span class="line"><span class="comment"># -u 指定aosp manifest地址，可以使用谷歌官方或者其它镜像站点地址</span></span><br><span class="line"><span class="comment"># -b 用来指定某个特定的Android版本</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>同步源码树</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">repo <span class="built_in">sync</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="编译源码"><a href="#编译源码" class="headerlink" title="编译源码"></a>编译源码</h2><ol>
+<li><p>设置环境变量</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> build/envsetup.sh</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>选择编译目标</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lunch sdk_phone_x86_64-userdebug</span><br><span class="line"><span class="comment"># 这里我编译一个运行在模拟器上的x86_64位版本</span></span><br><span class="line"><span class="comment"># 可以只输入lunch，此时会有列表提示，让你选择你的编译目标</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编译</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">m -j8</span><br><span class="line"><span class="comment"># -j用来指定编译线程数，由于我是4核8线程的CPU，所以我指定-j8</span></span><br><span class="line"><span class="comment"># 可以只输入m, 此时会自动根据你的CPU核心数进行设置</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>漫长等待，编译产物在 <code>out/target/product</code> 目录下</p>
+</li>
+</ol>
+<h2 id="在模拟器上运行"><a href="#在模拟器上运行" class="headerlink" title="在模拟器上运行"></a>在模拟器上运行</h2><ol>
+<li><p>执行<code>emulator</code>命令即可</p>
+</li>
+<li><p>如果失败，则执行</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> build/envsetup.sh</span><br><span class="line">lunch sdk_phone_x86_64-userdebug</span><br><span class="line">emulator</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>加载评论需要在浏览器启用 JavaScript 脚本支持。</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83"><span class="toc-number">1.</span> <span class="toc-text">编译环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BDAndroid13%E6%BA%90%E7%A0%81"><span class="toc-number">2.</span> <span class="toc-text">下载Android13源码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E6%BA%90%E7%A0%81"><span class="toc-number">3.</span> <span class="toc-text">编译源码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C"><span class="toc-number">4.</span> <span class="toc-text">在模拟器上运行</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&text=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&title=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&is_video=false&description=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Android 搞机之编译 Android13 并在模拟器上运行&body=Check out this article: https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&title=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&title=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&title=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&title=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&name=Android 搞机之编译 Android13 并在模拟器上运行&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/&t=Android 搞机之编译 Android13 并在模拟器上运行"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'beilunyang/beilunyang.github.io';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>

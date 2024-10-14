@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言几乎所有应用市场中的 Android 应用，都处于非可调试状态。如果我们需要调试 Android 应用，往往需要反编译对应的 apk , 然后修改 apk 的 AndroidManifest.xml 中的 application 标签，将android:debuggable 属性设置为 true。然后进行回编译 12&lt;application android:debuggable&#x3D;&amp;quo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 搞机之打开系统调试总开关 ro.debuggable">
+<meta property="og:url" content="https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="前言几乎所有应用市场中的 Android 应用，都处于非可调试状态。如果我们需要调试 Android 应用，往往需要反编译对应的 apk , 然后修改 apk 的 AndroidManifest.xml 中的 application 标签，将android:debuggable 属性设置为 true。然后进行回编译 12&lt;application android:debuggable&#x3D;&amp;quo">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-11T20:00:00.000Z">
+<meta property="article:modified_time" content="2024-10-14T11:12:54.081Z">
+<meta property="article:author" content="beilunyang">
+<meta property="article:tag" content="安卓">
+<meta property="article:tag" content="安卓搞机">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+    
+    <!-- title -->
+    <title>Android 搞机之打开系统调试总开关 ro.debuggable</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2023/10/24/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20lineageOS%20%E5%86%85%E6%A0%B8/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2023/09/29/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E7%BC%96%E8%AF%91%20Android13%20%E5%B9%B6%E5%9C%A8%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%8A%E8%BF%90%E8%A1%8C/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&text=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&title=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&is_video=false&description=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Android 搞机之打开系统调试总开关 ro.debuggable&body=Check out this article: https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&title=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&title=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&title=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&title=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&name=Android 搞机之打开系统调试总开关 ro.debuggable&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&t=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E5%BC%8F%E4%B8%80%EF%BC%88%E4%B8%8D%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">方式一（不推荐）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E5%BC%8F%E4%BA%8C-%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">方式二 （推荐）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">4.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Android 搞机之打开系统调试总开关 ro.debuggable
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">beilunyang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-10-11T20:00:00.000Z" class="dt-published" itemprop="datePublished">2023-10-11</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E5%AE%89%E5%8D%93/" rel="tag">安卓</a>, <a class="p-category" href="/tags/%E5%AE%89%E5%8D%93%E6%90%9E%E6%9C%BA/" rel="tag">安卓搞机</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>几乎所有应用市场中的 Android 应用，都处于非可调试状态。如果我们需要调试 Android 应用，往往需要反编译对应的 apk , 然后修改 apk 的 AndroidManifest.xml 中的 application 标签，将android:debuggable 属性设置为 true。然后进行回编译</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">application</span> <span class="attr">android:debuggable</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这样做不仅麻烦，而且如果对应的 app 做了签名校验，可能会使 app 无法正常运行。</p>
+<p>在 Android 系统中一个应用能否被调试是这样判断的： 当 android 启动时，系统属性 ro.debuggable 为1，系统中所有的程序都是可以调试的。如果系统中的 ro.debuggable 为 0， 则会判断程序的 AndroidManifest.xml 中 application 标签中的 android:debuggable 属性是否为 true。</p>
+<p>所以，我们可以通过修改 default.prop 文件中的 ro.debuggable 属性来调试设备中的所有应用。</p>
+<p>下面介绍二种修改 ro.debuggable 的方式</p>
+<h2 id="方式一（不推荐）"><a href="#方式一（不推荐）" class="headerlink" title="方式一（不推荐）"></a>方式一（不推荐）</h2><p>注入 init 进程，修改内存中的属性值，只要init进程不重启，这些属性值就会生效。但是如果设备重启，则修改的属性值就失效。</p>
+<p>前提：需要有 su 命令（root）</p>
+<p>具体方法: </p>
+<ol>
+<li>在 Github 上搜索 mprop，下载对应的 mprop 工具</li>
+<li><code>adb push ./mprop  /data/local/tmp</code> 将 mprop 推送到手机</li>
+<li><code>adb shell</code> 进入手机 shell</li>
+<li><code>su</code> 切换到 root</li>
+<li><code>cd /data/local/tmp &amp; chmod 777 ./mprop</code></li>
+<li><code>./mprop ro.debuggable 1</code></li>
+</ol>
+<h2 id="方式二-（推荐）"><a href="#方式二-（推荐）" class="headerlink" title="方式二 （推荐）"></a>方式二 （推荐）</h2><p>前提：需要先安装 Magisk</p>
+<p>具体方法:</p>
+<ol>
+<li>在 Github 上搜索 MagiskHidePropsConfig，下载对应的 MagiskHidePropsConfig 模块</li>
+<li>在 Magisk 中安装下载的 MagiskHidePropsConfig 模块并开启</li>
+<li><code>adb shell</code></li>
+<li><code>props</code></li>
+<li>输入 5 ，Add&#x2F;edit custom props<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> Select an option below.</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">1 - Edit device fingerprint</span><br><span class="line">2 - Force BASIC key attestation</span><br><span class="line">3 - Device simulation (disabled)</span><br><span class="line">4 - Edit MagiskHide props (active)</span><br><span class="line">5 - Add/edit custom props</span><br><span class="line">6 - Delete prop values</span><br><span class="line">7 - Script settings</span><br><span class="line">8 - Collect logs</span><br><span class="line">u - Perform module update check</span><br><span class="line">r - Reset all options/settings</span><br><span class="line">b - Reboot device</span><br><span class="line">e - Exit</span><br><span class="line"></span><br><span class="line">See the module readme or the</span><br><span class="line">support thread @ XDA <span class="keyword">for</span> details.</span><br><span class="line"></span><br><span class="line">Enter your desired option: 5</span><br></pre></td></tr></table></figure></li>
+<li>输入 n, New custom prop</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> Custom props</span><br><span class="line"> Select an option below:</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">Set or edit custom prop values <span class="keyword">for</span> your device.</span><br><span class="line"></span><br><span class="line">Currently no custom props <span class="built_in">set</span>.</span><br><span class="line">Please add one by selecting</span><br><span class="line"><span class="string">&quot;New custom prop&quot;</span> below.</span><br><span class="line"></span><br><span class="line">n - New custom prop</span><br><span class="line">b - Go back to main menu</span><br><span class="line">e - Exit</span><br><span class="line"></span><br><span class="line">See the module readme or the</span><br><span class="line">support thread @ XDA <span class="keyword">for</span> details.</span><br><span class="line"></span><br><span class="line">Enter your desired option: n</span><br></pre></td></tr></table></figure>
+<ol start="7">
+<li>输入 ro.debuggable</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> New custom prop</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">Enter the prop to <span class="built_in">set</span>. Example:</span><br><span class="line">ro.sf.lcd_density</span><br><span class="line"></span><br><span class="line">b - Go back</span><br><span class="line">e - Exit</span><br><span class="line"></span><br><span class="line">Enter your desired option: ro.debuggable</span><br></pre></td></tr></table></figure>
+<ol start="8">
+<li>输入 y</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> ro.debuggable</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">ro.debuggable is</span><br><span class="line">one of the sensitive props that can be</span><br><span class="line"><span class="built_in">set</span> by the MagiskHide props option.</span><br><span class="line"></span><br><span class="line">Are you sure you want to proceed?</span><br><span class="line"></span><br><span class="line">y - Yes</span><br><span class="line">n - No</span><br><span class="line">e - Exit</span><br><span class="line"></span><br><span class="line">Enter your desired option: y</span><br></pre></td></tr></table></figure>
+<ol start="9">
+<li>输入 1</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> ro.debuggable</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">Enter the value you want to <span class="built_in">set</span></span><br><span class="line">ro.debuggable to,</span><br><span class="line">or <span class="keyword">select</span> from the options below.</span><br><span class="line"></span><br><span class="line">The currently <span class="built_in">set</span> value is:</span><br><span class="line">0</span><br><span class="line">Please enter the new value.</span><br><span class="line"></span><br><span class="line">b - Go back</span><br><span class="line">e - Exit</span><br><span class="line"></span><br><span class="line">Enter your desired option: 1</span><br></pre></td></tr></table></figure>
+<ol start="10">
+<li>输入 y</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> ro.debuggable</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">This will <span class="built_in">set</span> ro.debuggable to:</span><br><span class="line"></span><br><span class="line">1</span><br><span class="line"></span><br><span class="line">Pick an option below to change</span><br><span class="line">what boot stage the prop will</span><br><span class="line">be <span class="built_in">set</span> <span class="keyword">in</span>, or <span class="built_in">set</span>/reset a delay:</span><br><span class="line"></span><br><span class="line">1 - Default (current)</span><br><span class="line">2 - post-fs-data</span><br><span class="line">3 - late_start service</span><br><span class="line">4 - Both boot stages</span><br><span class="line">d - Delay</span><br><span class="line"></span><br><span class="line">Do you want to <span class="built_in">continue</span>?</span><br><span class="line"></span><br><span class="line">Enter y(es), n(o), e(xit)</span><br><span class="line">or an option from above: y</span><br><span class="line"></span><br><span class="line">Working. Please <span class="built_in">wait</span>...</span><br><span class="line"></span><br><span class="line">Working. Please <span class="built_in">wait</span>...</span><br><span class="line"></span><br><span class="line">Working. Please <span class="built_in">wait</span>...</span><br><span class="line"></span><br><span class="line">Working. Please <span class="built_in">wait</span>...</span><br><span class="line"></span><br><span class="line">Working. Please <span class="built_in">wait</span>...</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">MagiskHide Props Config v6.1.2</span><br><span class="line">by Didgeridoohan @ XDA Developers</span><br><span class="line"></span><br><span class="line">=====================================</span><br><span class="line"> Reboot - ro.debuggable</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">Reboot <span class="keyword">for</span> changes to take effect.</span><br><span class="line"></span><br><span class="line">Do you want to reboot now (y/n)?</span><br><span class="line"></span><br><span class="line">Enter y(es), n(o) or e(xit): y</span><br><span class="line"></span><br><span class="line">Rebooting...</span><br></pre></td></tr></table></figure>
+
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>通过上述两种方式修改 ro.debuggable 的值后，在手机 shell 中输入<code>getprop ro.debuggble</code> 应该会得到 1。此时我们就能愉快地调试手机上的所有 app 了。</p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>加载评论需要在浏览器启用 JavaScript 脚本支持。</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E5%BC%8F%E4%B8%80%EF%BC%88%E4%B8%8D%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">方式一（不推荐）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E5%BC%8F%E4%BA%8C-%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">方式二 （推荐）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">4.</span> <span class="toc-text">结语</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&text=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&title=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&is_video=false&description=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Android 搞机之打开系统调试总开关 ro.debuggable&body=Check out this article: https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&title=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&title=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&title=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&title=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&name=Android 搞机之打开系统调试总开关 ro.debuggable&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2023/10/11/Android%20%E6%90%9E%E6%9C%BA%E4%B9%8B%E6%89%93%E5%BC%80%E7%B3%BB%E7%BB%9F%E8%B0%83%E8%AF%95%E6%80%BB%E5%BC%80%E5%85%B3%20ro.debuggable/&t=Android 搞机之打开系统调试总开关 ro.debuggable"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'beilunyang/beilunyang.github.io';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>
