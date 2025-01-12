@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="前言“今天她又发新笔记了吗?” “糟了,她更新了我却没能第一时间看到…” “为什么别人都能秒回评论,我却总是来晚一步…” “为什么我总是错过她的新动态…” 相信很多同学都有过这样的经历。作为一名资深舔狗，一直秉承着 “舔得狗中狗，方为人上人” 的原则，必须 24 小时待命，不能错过女神的任何动态，但同时作为一名资深软件工程师，与其整天盯着手机刷新,不如用技术来解决这个问题!今天，我们就来构建一个专">
+<meta property="og:type" content="article">
+<meta property="og:title" content="追女神必备！使用 Python 构建小红书用户动态监控系统">
+<meta property="og:url" content="https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="悖论の小黑屋">
+<meta property="og:description" content="前言“今天她又发新笔记了吗?” “糟了,她更新了我却没能第一时间看到…” “为什么别人都能秒回评论,我却总是来晚一步…” “为什么我总是错过她的新动态…” 相信很多同学都有过这样的经历。作为一名资深舔狗，一直秉承着 “舔得狗中狗，方为人上人” 的原则，必须 24 小时待命，不能错过女神的任何动态，但同时作为一名资深软件工程师，与其整天盯着手机刷新,不如用技术来解决这个问题!今天，我们就来构建一个专">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.otaku.ren/20250112/AQADC8AxG7U9GVR-.jpg">
+<meta property="og:image" content="https://pic.otaku.ren/20250112/AQADEMAxG7U9GVR-.jpg">
+<meta property="og:image" content="https://pic.otaku.ren/20250112/AQADD8AxG7U9GVR-.jpg">
+<meta property="og:image" content="https://pic.otaku.ren/20250112/AQADG8AxG7U9GVR-.jpg">
+<meta property="og:image" content="https://pic.otaku.ren/20250112/AQADHcAxG7U9GVR-.jpg">
+<meta property="og:image" content="https://pic.otaku.ren/20250112/AQADIsAxG7U9GVR9.jpg">
+<meta property="article:published_time" content="2025-01-12T23:53:55.000Z">
+<meta property="article:modified_time" content="2025-01-12T15:56:45.715Z">
+<meta property="article:author" content="beilunyang">
+<meta property="article:tag" content="爬虫">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="监控系统">
+<meta property="article:tag" content="新手教程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.otaku.ren/20250112/AQADC8AxG7U9GVR-.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="https://www.gravatar.com/avatar/7386a5bf1f1b67ddfe8747d912582360">
+        
+      
+    
+    <!-- title -->
+    <title>追女神必备！使用 Python 构建小红书用户动态监控系统</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2024/10/13/%E4%BD%BF%E7%94%A8%20TypeScript%20%E5%BC%80%E5%8F%91%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%20Telegram%20%E6%9C%BA%E5%99%A8%E4%BA%BA%EF%BC%882%EF%BC%89-%20%E5%B0%86%20Telegram%20%E5%81%9A%E4%B8%BA%20OSS%20%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&text=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&title=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&is_video=false&description=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=追女神必备！使用 Python 构建小红书用户动态监控系统&body=Check out this article: https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&title=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&title=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&title=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&title=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&name=追女神必备！使用 Python 构建小红书用户动态监控系统&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&t=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">需求分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%80%E6%9C%AF%E6%96%B9%E6%A1%88"><span class="toc-number">3.</span> <span class="toc-text">技术方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="toc-number">4.</span> <span class="toc-text">创建项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">5.</span> <span class="toc-text">核心代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E9%85%8D%E7%BD%AE%E6%A8%A1%E5%9D%97"><span class="toc-number">5.1.</span> <span class="toc-text">实现配置模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E9%80%9A%E7%9F%A5%E6%A8%A1%E5%9D%97"><span class="toc-number">5.2.</span> <span class="toc-text">实现企业微信通知模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E6%A8%A1%E5%9D%97"><span class="toc-number">5.3.</span> <span class="toc-text">实现数据库模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%B7%A5%E5%85%B7%E6%A8%A1%E5%9D%97"><span class="toc-number">5.4.</span> <span class="toc-text">实现工具模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E7%9B%91%E6%8E%A7%E4%B8%BB%E7%A8%8B%E5%BA%8F"><span class="toc-number">5.5.</span> <span class="toc-text">实现监控主程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XHSMonitor-%E7%B1%BB%E8%AF%A6%E8%A7%A3"><span class="toc-number">5.6.</span> <span class="toc-text">XHSMonitor 类详解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#init-%E6%96%B9%E6%B3%95"><span class="toc-number">5.6.1.</span> <span class="toc-text">__init__ 方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#get-latest-notes-%E6%96%B9%E6%B3%95"><span class="toc-number">5.6.2.</span> <span class="toc-text">get_latest_notes 方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#send-error-notification-%E6%96%B9%E6%B3%95"><span class="toc-number">5.6.3.</span> <span class="toc-text">send_error_notification 方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#monitor-user-%E6%96%B9%E6%B3%95"><span class="toc-number">5.6.4.</span> <span class="toc-text">monitor_user 方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#send-note-notification-%E6%96%B9%E6%B3%95"><span class="toc-number">5.6.5.</span> <span class="toc-text">send_note_notification 方法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E7%9B%91%E6%8E%A7%E7%A8%8B%E5%BA%8F"><span class="toc-number">6.</span> <span class="toc-text">运行监控程序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%B0%8F%E7%BA%A2%E4%B9%A6-cookie"><span class="toc-number">6.1.</span> <span class="toc-text">获取小红书 cookie</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF"><span class="toc-number">6.2.</span> <span class="toc-text">获取企业微信配置信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%A5%B3%E7%A5%9E%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7-ID"><span class="toc-number">6.3.</span> <span class="toc-text">获取女神小红书用户 ID</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C"><span class="toc-number">6.4.</span> <span class="toc-text">本地运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">6.5.</span> <span class="toc-text">部署到云服务器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">7.</span> <span class="toc-text">结语</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%9C%B0%E5%9D%80"><span class="toc-number">8.</span> <span class="toc-text">项目地址</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        追女神必备！使用 Python 构建小红书用户动态监控系统
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">beilunyang</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2025-01-12T23:53:55.000Z" class="dt-published" itemprop="datePublished">2025-01-12</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Python/" rel="tag">Python</a>, <a class="p-category" href="/tags/%E6%96%B0%E6%89%8B%E6%95%99%E7%A8%8B/" rel="tag">新手教程</a>, <a class="p-category" href="/tags/%E7%88%AC%E8%99%AB/" rel="tag">爬虫</a>, <a class="p-category" href="/tags/%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/" rel="tag">监控系统</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>“今天她又发新笔记了吗?”</p>
+<p>“糟了,她更新了我却没能第一时间看到…”</p>
+<p>“为什么别人都能秒回评论,我却总是来晚一步…”</p>
+<p>“为什么我总是错过她的新动态…”</p>
+<p>相信很多同学都有过这样的经历。作为一名资深舔狗，一直秉承着 “舔得狗中狗，方为人上人” 的原则，必须 24 小时待命，不能错过女神的任何动态，但同时作为一名资深软件工程师，与其整天盯着手机刷新,不如用技术来解决这个问题!<br>今天，我们就来构建一个专属得“女神小红书动态监控系统”，让你永远不错过她的每一条动态，永远第一时间向她嘘寒问暖，做她最忠实的粉丝（舔狗）!</p>
+<h2 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h2><p>作为一名合格的舔狗，我们需要：</p>
+<ul>
+<li>实时监控女神的小红书最新笔记</li>
+<li>第一时间获得更新提醒</li>
+<li>快人一步送上点赞或者评论</li>
+</ul>
+<p>通过这个项目，你将获得：</p>
+<ul>
+<li>女神更新笔记时，第一时间收到通知</li>
+<li>展现你的技术实力</li>
+<li>提升你的 Python 编程能力</li>
+<li>成为女神最忠实的粉丝（舔狗）</li>
+</ul>
+<h2 id="技术方案"><a href="#技术方案" class="headerlink" title="技术方案"></a>技术方案</h2><p>为了实现这个浪漫的需求，我们需要：</p>
+<ul>
+<li>使用 Python + xhs 库获取女神的最新笔记</li>
+<li>通过企业微信接收消息通知</li>
+<li>使用 SQLite 存储笔记历史数据</li>
+</ul>
+<p>确定好大致技术方案后，就让我们开始这段浪漫的编程之旅吧!</p>
+<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>首先让我们创建一个新的项目目录并进入该目录，然后创建一个虚拟环境，并安装所需的依赖库。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建项目目录</span></span><br><span class="line"><span class="built_in">mkdir</span> xhs-monitor</span><br><span class="line"><span class="built_in">cd</span> xhs-monitor</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建虚拟环境</span></span><br><span class="line">python -m venv venv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 激活虚拟环境（Linux/Mac）</span></span><br><span class="line"><span class="built_in">source</span> venv/bin/activate</span><br><span class="line"></span><br><span class="line"><span class="comment"># 激活虚拟环境（Windows）</span></span><br><span class="line">venv\Scripts\activate</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装依赖库</span></span><br><span class="line">pip install requests xhs playwright sqlite3</span><br></pre></td></tr></table></figure>
+
+<h2 id="核心代码实现"><a href="#核心代码实现" class="headerlink" title="核心代码实现"></a>核心代码实现</h2><h3 id="实现配置模块"><a href="#实现配置模块" class="headerlink" title="实现配置模块"></a>实现配置模块</h3><p>创建 config.py 文件, 用来配置小红书，企业微信通知以及监控相关的可配置信息。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># config.py</span></span><br><span class="line">XHS_CONFIG = &#123;</span><br><span class="line">    <span class="string">&quot;COOKIE&quot;</span>: <span class="string">&quot;你的小红书Cookie&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">WECOM_CONFIG = &#123;</span><br><span class="line">    <span class="string">&quot;CORPID&quot;</span>: <span class="string">&quot;你的企业ID&quot;</span>,</span><br><span class="line">    <span class="string">&quot;AGENTID&quot;</span>: 你的应用ID,</span><br><span class="line">    <span class="string">&quot;SECRET&quot;</span>: <span class="string">&quot;你的应用Secret&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MONITOR_CONFIG = &#123;</span><br><span class="line">    <span class="string">&quot;USER_ID&quot;</span>: <span class="string">&quot;女神的用户ID&quot;</span>,  <span class="comment"># 例如: &quot;5ff0e191000000000101d406&quot;</span></span><br><span class="line">    <span class="string">&quot;CHECK_INTERVAL&quot;</span>: <span class="number">5</span>,      <span class="comment"># 检查间隔(秒)</span></span><br><span class="line">    <span class="string">&quot;ERROR_COUNT&quot;</span>: <span class="number">10</span>,         <span class="comment"># 连续错误次数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="实现企业微信通知模块"><a href="#实现企业微信通知模块" class="headerlink" title="实现企业微信通知模块"></a>实现企业微信通知模块</h3><p>创建 wecom.py 文件, 用来实现企业微信通知功能。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># wecom.py</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">WecomMessage</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, corpid: <span class="built_in">str</span>, agentid: <span class="built_in">int</span>, secret: <span class="built_in">str</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        初始化企业微信消息发送类</span></span><br><span class="line"><span class="string">        :param corpid: 企业ID</span></span><br><span class="line"><span class="string">        :param agentid: 应用ID</span></span><br><span class="line"><span class="string">        :param secret: 应用的Secret</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="variable language_">self</span>.corpid = corpid</span><br><span class="line">        <span class="variable language_">self</span>.agentid = agentid</span><br><span class="line">        <span class="variable language_">self</span>.secret = secret</span><br><span class="line">        <span class="variable language_">self</span>.access_token = <span class="literal">None</span></span><br><span class="line">        <span class="variable language_">self</span>.token_expires_time = <span class="number">0</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_access_token</span>(<span class="params">self</span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        获取访问令牌</span></span><br><span class="line"><span class="string">        :return: access_token</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        now = time.time()</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.access_token <span class="keyword">and</span> now &lt; <span class="variable language_">self</span>.token_expires_time:</span><br><span class="line">            <span class="keyword">return</span> <span class="variable language_">self</span>.access_token</span><br><span class="line">            </span><br><span class="line">        url = <span class="string">&quot;https://qyapi.weixin.qq.com/cgi-bin/gettoken&quot;</span></span><br><span class="line">        params = &#123;</span><br><span class="line">            <span class="string">&quot;corpid&quot;</span>: <span class="variable language_">self</span>.corpid,</span><br><span class="line">            <span class="string">&quot;corpsecret&quot;</span>: <span class="variable language_">self</span>.secret</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            response = requests.get(url, params=params)</span><br><span class="line">            data = response.json()</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> data.get(<span class="string">&quot;errcode&quot;</span>) == <span class="number">0</span>:</span><br><span class="line">                <span class="variable language_">self</span>.access_token = data.get(<span class="string">&quot;access_token&quot;</span>)</span><br><span class="line">                <span class="variable language_">self</span>.token_expires_time = now + data.get(<span class="string">&quot;expires_in&quot;</span>) - <span class="number">200</span>  <span class="comment"># 提前200秒刷新</span></span><br><span class="line">                <span class="keyword">return</span> <span class="variable language_">self</span>.access_token</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">raise</span> Exception(<span class="string">f&quot;获取access_token失败: <span class="subst">&#123;data&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;获取access_token异常: <span class="subst">&#123;e&#125;</span>&quot;</span>)</span><br><span class="line">            <span class="keyword">raise</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">send_text</span>(<span class="params">self, content: <span class="built_in">str</span>, touser: <span class="built_in">str</span> = <span class="string">&quot;@all&quot;</span></span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        发送文本消息</span></span><br><span class="line"><span class="string">        :param content: 消息内容</span></span><br><span class="line"><span class="string">        :param touser: 接收人，默认为所有人</span></span><br><span class="line"><span class="string">        :return: 是否发送成功</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            message = &#123;</span><br><span class="line">                <span class="string">&quot;touser&quot;</span>: touser,</span><br><span class="line">                <span class="string">&quot;msgtype&quot;</span>: <span class="string">&quot;text&quot;</span>,</span><br><span class="line">                <span class="string">&quot;agentid&quot;</span>: <span class="variable language_">self</span>.agentid,</span><br><span class="line">                <span class="string">&quot;text&quot;</span>: &#123;</span><br><span class="line">                    <span class="string">&quot;content&quot;</span>: content</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="string">&quot;enable_duplicate_check&quot;</span>: <span class="number">1</span>,</span><br><span class="line">                <span class="string">&quot;duplicate_check_interval&quot;</span>: <span class="number">1800</span></span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            access_token = <span class="variable language_">self</span>.get_access_token()</span><br><span class="line">            url = <span class="string">f&quot;https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=<span class="subst">&#123;access_token&#125;</span>&quot;</span></span><br><span class="line">            </span><br><span class="line">            response = requests.post(url, json=message)</span><br><span class="line">            result = response.json()</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> result.get(<span class="string">&quot;errcode&quot;</span>) == <span class="number">0</span>:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">f&quot;企业微信消息发送成功&quot;</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">f&quot;企业微信消息发送失败: <span class="subst">&#123;result&#125;</span>&quot;</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">                </span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;企业微信消息发送异常: <span class="subst">&#123;e&#125;</span>&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span> </span><br></pre></td></tr></table></figure>
+<ul>
+<li>我们创建一个 <code>WecomMessage</code> 类, 用来实现企业微信通知功能。</li>
+<li>根据企业微信相关文档（<a target="_blank" rel="noopener" href="https://developer.work.weixin.qq.com/document/path/90236%EF%BC%89">https://developer.work.weixin.qq.com/document/path/90236）</a>, 我们使用企业微信的 message API 来发送应用消息实现通知。这需要一些企业微信的配置信息, 包括企业ID, 应用ID, 应用Secret。我们通过配置模块存放这些信息，并将这些信息作为 <code>WecomMessage</code> 类的 <code>__init__</code> 方法的参数。</li>
+<li>发送应用消息需要获取访问令牌（access_token）, 我们通过 <code>get_access_token</code> 方法来获取。</li>
+<li>最后，我们通过 <code>send_text</code> 方法来发送文本消息。</li>
+</ul>
+<h3 id="实现数据库模块"><a href="#实现数据库模块" class="headerlink" title="实现数据库模块"></a>实现数据库模块</h3><p>创建 db.py 文件, 用来实现数据库相关功能。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">List</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Database</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, db_path: <span class="built_in">str</span> = <span class="string">&quot;notes.db&quot;</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        初始化数据库连接</span></span><br><span class="line"><span class="string">        :param db_path: 数据库文件路径</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="variable language_">self</span>.db_path = db_path</span><br><span class="line">        <span class="variable language_">self</span>.init_db()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">init_db</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        初始化数据库表</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">with</span> sqlite3.connect(<span class="variable language_">self</span>.db_path) <span class="keyword">as</span> conn:</span><br><span class="line">            cursor = conn.cursor()</span><br><span class="line">            cursor.execute(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">                CREATE TABLE IF NOT EXISTS notes (</span></span><br><span class="line"><span class="string">                    note_id TEXT PRIMARY KEY,</span></span><br><span class="line"><span class="string">                    user_id TEXT NOT NULL,</span></span><br><span class="line"><span class="string">                    title TEXT,</span></span><br><span class="line"><span class="string">                    discovered_time TEXT NOT NULL,</span></span><br><span class="line"><span class="string">                    type TEXT</span></span><br><span class="line"><span class="string">                )</span></span><br><span class="line"><span class="string">            &#x27;&#x27;&#x27;</span>)</span><br><span class="line">            conn.commit()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_note_if_not_exists</span>(<span class="params">self, note_data: <span class="built_in">dict</span></span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        添加笔记记录</span></span><br><span class="line"><span class="string">        :param note_data: 笔记数据</span></span><br><span class="line"><span class="string">        :return: 是否为新笔记</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">with</span> sqlite3.connect(<span class="variable language_">self</span>.db_path) <span class="keyword">as</span> conn:</span><br><span class="line">            cursor = conn.cursor()</span><br><span class="line">            </span><br><span class="line">            cursor.execute(<span class="string">&#x27;SELECT note_id FROM notes WHERE note_id = ?&#x27;</span>, </span><br><span class="line">                         (note_data.get(<span class="string">&#x27;note_id&#x27;</span>),))</span><br><span class="line">            <span class="keyword">if</span> cursor.fetchone():</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">                </span><br><span class="line">            cursor.execute(<span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">                INSERT INTO notes (</span></span><br><span class="line"><span class="string">                    note_id, user_id, title, discovered_time, type</span></span><br><span class="line"><span class="string">                ) VALUES (?, ?, ?, ?, ?)</span></span><br><span class="line"><span class="string">            &#x27;&#x27;&#x27;</span>, (</span><br><span class="line">                note_data.get(<span class="string">&#x27;note_id&#x27;</span>),</span><br><span class="line">                note_data.get(<span class="string">&#x27;user&#x27;</span>).get(<span class="string">&#x27;user_id&#x27;</span>),</span><br><span class="line">                note_data.get(<span class="string">&#x27;display_title&#x27;</span>, <span class="string">&#x27;无标题&#x27;</span>),</span><br><span class="line">                datetime.now().strftime(<span class="string">&#x27;%Y-%m-%d %H:%M:%S&#x27;</span>),</span><br><span class="line">                note_data.get(<span class="string">&#x27;type&#x27;</span>, <span class="string">&#x27;normal&#x27;</span>)</span><br><span class="line">            ))</span><br><span class="line">            conn.commit()</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>我们创建一个 <code>Database</code> 类, 用来实现数据库相关功能。</li>
+<li>通过 <code>init_db</code> 方法来初始化数据库表, 如果 notes 数据库表不存在, 则创建它。</li>
+<li>通过 <code>add_note_if_not_exists</code> 方法来添加笔记记录。如果笔记已存在, 则返回 False, 否则将笔记插入到数据库表并返回 True<ul>
+<li>由于该监控系统主要是监控用户是否有新笔记，对笔记的具体内容并不是很关心, 所以这里我们只保存笔记的 id, 用户 id, 标题, 发现时间以及笔记类型。</li>
+<li>之所以将笔记持久化到数据库，也只是为了去重，防止重复发送通知。</li>
+</ul>
+</li>
+</ul>
+<h3 id="实现工具模块"><a href="#实现工具模块" class="headerlink" title="实现工具模块"></a>实现工具模块</h3><p>创建 utils.py 文件, 用来实现程序所需的工具函数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> playwright.sync_api <span class="keyword">import</span> sync_playwright</span><br><span class="line"><span class="keyword">from</span> time <span class="keyword">import</span> sleep</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">xhs_sign</span>(<span class="params">uri, data=<span class="literal">None</span>, a1=<span class="string">&quot;&quot;</span>, web_session=<span class="string">&quot;&quot;</span></span>):</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">with</span> sync_playwright() <span class="keyword">as</span> playwright:</span><br><span class="line">                stealth_js_path = <span class="string">&quot;public/stealth.min.js&quot;</span></span><br><span class="line">                chromium = playwright.chromium</span><br><span class="line"></span><br><span class="line">                <span class="comment"># 如果一直失败可尝试设置成 False 让其打开浏览器，适当添加 sleep 可查看浏览器状态</span></span><br><span class="line">                browser = chromium.launch(headless=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">                browser_context = browser.new_context()</span><br><span class="line">                browser_context.add_init_script(path=stealth_js_path)</span><br><span class="line">                context_page = browser_context.new_page()</span><br><span class="line">                context_page.goto(<span class="string">&quot;https://www.xiaohongshu.com&quot;</span>)</span><br><span class="line">                browser_context.add_cookies([</span><br><span class="line">                    &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;a1&#x27;</span>, <span class="string">&#x27;value&#x27;</span>: a1, <span class="string">&#x27;domain&#x27;</span>: <span class="string">&quot;.xiaohongshu.com&quot;</span>, <span class="string">&#x27;path&#x27;</span>: <span class="string">&quot;/&quot;</span>&#125;]</span><br><span class="line">                )</span><br><span class="line">                context_page.reload()</span><br><span class="line">                <span class="comment"># 这个地方设置完浏览器 cookie 之后，如果这儿不 sleep 一下签名获取就失败了，如果经常失败请设置长一点试试</span></span><br><span class="line">                sleep(<span class="number">1</span>)</span><br><span class="line">                encrypt_params = context_page.evaluate(<span class="string">&quot;([url, data]) =&gt; window._webmsxyw(url, data)&quot;</span>, [uri, data])</span><br><span class="line">                <span class="keyword">return</span> &#123;</span><br><span class="line">                    <span class="string">&quot;x-s&quot;</span>: encrypt_params[<span class="string">&quot;X-s&quot;</span>],</span><br><span class="line">                    <span class="string">&quot;x-t&quot;</span>: <span class="built_in">str</span>(encrypt_params[<span class="string">&quot;X-t&quot;</span>])</span><br><span class="line">                &#125;</span><br><span class="line">        <span class="keyword">except</span> Exception:</span><br><span class="line">            <span class="comment"># 这儿有时会出现 window._webmsxyw is not a function 或未知跳转错误，因此加一个失败重试趴</span></span><br><span class="line">            <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">raise</span> Exception(<span class="string">&quot;重试了这么多次还是无法签名成功，寄寄寄&quot;</span>)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>这里我们实现了一个 <code>xhs_sign</code> 方法，用来生成小红书请求的签名。</li>
+<li>该方法通过 playwright 库来模拟浏览器行为，获取小红书请求的签名，并返回签名信息。而不是直接逆向小红书请求的签名算法，因为小红书请求的签名算法可能会随时更新，导致我们之前逆向的代码失效。</li>
+<li>如果签名获取失败，则抛出异常，并重试 10 次。</li>
+</ul>
+<h3 id="实现监控主程序"><a href="#实现监控主程序" class="headerlink" title="实现监控主程序"></a>实现监控主程序</h3><p>创建 monitor.py 文件, 用来实现监控主程序。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> xhs <span class="keyword">import</span> XhsClient</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">List</span></span><br><span class="line"><span class="keyword">from</span> config <span class="keyword">import</span> XHS_CONFIG, WECOM_CONFIG, MONITOR_CONFIG</span><br><span class="line"><span class="keyword">from</span> utils <span class="keyword">import</span> xhs_sign</span><br><span class="line"><span class="keyword">from</span> db <span class="keyword">import</span> Database</span><br><span class="line"><span class="keyword">from</span> wecom <span class="keyword">import</span> WecomMessage</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">XHSMonitor</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, cookie: <span class="built_in">str</span>, corpid: <span class="built_in">str</span>, agentid: <span class="built_in">int</span>, secret: <span class="built_in">str</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        初始化监控类</span></span><br><span class="line"><span class="string">        :param cookie: 小红书cookie</span></span><br><span class="line"><span class="string">        :param corpid: 企业ID</span></span><br><span class="line"><span class="string">        :param agentid: 应用ID</span></span><br><span class="line"><span class="string">        :param secret: 应用的Secret</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="variable language_">self</span>.client = XhsClient(cookie=cookie, sign=xhs_sign)</span><br><span class="line">        <span class="variable language_">self</span>.wecom = WecomMessage(corpid, agentid, secret)</span><br><span class="line">        <span class="variable language_">self</span>.db = Database()</span><br><span class="line">        <span class="variable language_">self</span>.error_count = <span class="number">0</span></span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">send_error_notification</span>(<span class="params">self, error_msg: <span class="built_in">str</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        发送错误通知</span></span><br><span class="line"><span class="string">        :param error_msg: 错误信息</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        time_str = time.strftime(<span class="string">&#x27;%Y-%m-%d %H:%M:%S&#x27;</span>)</span><br><span class="line">        content = (</span><br><span class="line">            <span class="string">&quot;小红书监控异常告警\n&quot;</span></span><br><span class="line">            <span class="string">f&quot;错误信息：<span class="subst">&#123;error_msg&#125;</span>\n&quot;</span></span><br><span class="line">            <span class="string">f&quot;告警时间：<span class="subst">&#123;time_str&#125;</span>&quot;</span></span><br><span class="line">        )</span><br><span class="line">        <span class="variable language_">self</span>.wecom.send_text(content)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_latest_notes</span>(<span class="params">self, user_id: <span class="built_in">str</span></span>) -&gt; <span class="type">List</span>[<span class="built_in">dict</span>]:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        获取用户最新笔记</span></span><br><span class="line"><span class="string">        :param user_id: 用户ID</span></span><br><span class="line"><span class="string">        :return: 笔记列表</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            res_data = <span class="variable language_">self</span>.client.get_user_notes(user_id)</span><br><span class="line">            <span class="variable language_">self</span>.error_count = <span class="number">0</span></span><br><span class="line">            <span class="keyword">return</span> res_data.get(<span class="string">&#x27;notes&#x27;</span>, [])</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            error_msg = <span class="built_in">str</span>(e)</span><br><span class="line"></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;获取用户笔记失败: <span class="subst">&#123;error_msg&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">            time.sleep(<span class="number">60</span>)</span><br><span class="line"></span><br><span class="line">            <span class="variable language_">self</span>.error_count += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> <span class="variable language_">self</span>.error_count &gt;= MONITOR_CONFIG[<span class="string">&quot;ERROR_COUNT&quot;</span>]:</span><br><span class="line">                <span class="variable language_">self</span>.send_error_notification(<span class="string">f&quot;API 请求失败\n详细信息：<span class="subst">&#123;error_msg&#125;</span>&quot;</span>)</span><br><span class="line">                exit(-<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">send_note_notification</span>(<span class="params">self, note_data: <span class="built_in">dict</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        发送笔记通知</span></span><br><span class="line"><span class="string">        :param note_data: 笔记数据</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        note_url = <span class="string">f&quot;https://www.xiaohongshu.com/explore/<span class="subst">&#123;note_data.get(<span class="string">&#x27;note_id&#x27;</span>)&#125;</span>&quot;</span></span><br><span class="line">        user_name = note_data.get(<span class="string">&#x27;user&#x27;</span>, &#123;&#125;).get(<span class="string">&#x27;nickname&#x27;</span>, <span class="string">&#x27;未知用户&#x27;</span>)</span><br><span class="line">        title = note_data.get(<span class="string">&#x27;display_title&#x27;</span>, <span class="string">&#x27;无标题&#x27;</span>)</span><br><span class="line">        <span class="built_in">type</span> = note_data.get(<span class="string">&#x27;type&#x27;</span>, <span class="string">&#x27;未知类型&#x27;</span>)</span><br><span class="line">        time_str = time.strftime(<span class="string">&#x27;%Y-%m-%d %H:%M:%S&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        content = (</span><br><span class="line">            <span class="string">&quot;小红书用户发布新笔记\n&quot;</span></span><br><span class="line">            <span class="string">f&quot;用户：<span class="subst">&#123;user_name&#125;</span>\n&quot;</span></span><br><span class="line">            <span class="string">f&quot;标题：<span class="subst">&#123;title&#125;</span>\n&quot;</span></span><br><span class="line">            <span class="string">f&quot;链接：<span class="subst">&#123;note_url&#125;</span>\n&quot;</span></span><br><span class="line">            <span class="string">f&quot;类型：<span class="subst">&#123;<span class="built_in">type</span>&#125;</span>\n&quot;</span></span><br><span class="line">            <span class="string">f&quot;监控时间：<span class="subst">&#123;time_str&#125;</span>&quot;</span></span><br><span class="line">        )</span><br><span class="line">        </span><br><span class="line">        <span class="variable language_">self</span>.wecom.send_text(content)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">monitor_user</span>(<span class="params">self, user_id: <span class="built_in">str</span>, interval: <span class="built_in">int</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        监控用户动态</span></span><br><span class="line"><span class="string">        :param user_id: 用户ID</span></span><br><span class="line"><span class="string">        :param interval: 检查间隔(秒)</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;开始监控用户: <span class="subst">&#123;user_id&#125;</span>&quot;</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                latest_notes = <span class="variable language_">self</span>.get_latest_notes(user_id)</span><br><span class="line"></span><br><span class="line">                <span class="keyword">for</span> note <span class="keyword">in</span> latest_notes:</span><br><span class="line">                    <span class="keyword">if</span> <span class="variable language_">self</span>.db.add_note_if_not_exists(note):</span><br><span class="line">                        <span class="built_in">print</span>(<span class="string">f&quot;发现新笔记: <span class="subst">&#123;note.get(<span class="string">&#x27;display_title&#x27;</span>)&#125;</span>&quot;</span>)</span><br><span class="line">                        <span class="variable language_">self</span>.send_note_notification(note)</span><br><span class="line">                    </span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                error_msg = <span class="built_in">str</span>(e)</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">f&quot;监控过程发生错误: <span class="subst">&#123;error_msg&#125;</span>&quot;</span>)</span><br><span class="line">            time.sleep(interval)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    monitor = XHSMonitor(</span><br><span class="line">        cookie=XHS_CONFIG[<span class="string">&quot;COOKIE&quot;</span>],</span><br><span class="line">        corpid=WECOM_CONFIG[<span class="string">&quot;CORPID&quot;</span>],</span><br><span class="line">        agentid=WECOM_CONFIG[<span class="string">&quot;AGENTID&quot;</span>],</span><br><span class="line">        secret=WECOM_CONFIG[<span class="string">&quot;SECRET&quot;</span>]</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    monitor.monitor_user(</span><br><span class="line">        user_id=MONITOR_CONFIG[<span class="string">&quot;USER_ID&quot;</span>],</span><br><span class="line">        interval=MONITOR_CONFIG[<span class="string">&quot;CHECK_INTERVAL&quot;</span>]</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>首先我们定义一个 <code>main</code> 函数，用来启动监控。<code>main</code> 函数中我们通过 <code>XHSMonitor</code> 类来初始化监控对象，并传入配置模块中的小红书 cookie, 企业微信配置信息以及监控配置信息。</li>
+<li>然后我们通过 <code>monitor_user</code> 方法来监控女神的最新笔记。</li>
+<li><code>XHSMonitor</code> 类中我们一共需要实现 5 个方法, 分别是：<ul>
+<li><code>__init__</code> 方法</li>
+<li><code>send_error_notification</code> 方法</li>
+<li><code>send_note_notification</code> 方法</li>
+<li><code>get_latest_notes</code> 方法</li>
+<li><code>monitor_user</code> 方法</li>
+</ul>
+</li>
+</ul>
+<h3 id="XHSMonitor-类详解"><a href="#XHSMonitor-类详解" class="headerlink" title="XHSMonitor 类详解"></a>XHSMonitor 类详解</h3><h4 id="init-方法"><a href="#init-方法" class="headerlink" title="__init__ 方法"></a><code>__init__</code> 方法</h4><p><code>__init__</code> 方法用来初始化监控对象的属性, 我们需要在这个方法中初始化 <code>xhsClient</code> 对象, <code>wecomMessage</code> 对象以及 <code>database</code> 对象，并赋值给监控对象对应的属性。同时，我们还需要初始化一个错误计数器，用来记录 API 请求失败的次数。<br>其中在初始化 <code>xhsClient</code> 对象时，我们传入了 cookie 和 sign 参数。cookie 是我们在配置模块中配置的小红书 cookie，sign 则是我们在 utils 模块中实现的 <code>xhs_sign</code> 方法, 用来生成小红书请求的签名。</p>
+<h4 id="get-latest-notes-方法"><a href="#get-latest-notes-方法" class="headerlink" title="get_latest_notes 方法"></a><code>get_latest_notes</code> 方法</h4><p><code>get_latest_notes</code> 方法的主要功能是获取女神的最新笔记。内部通过 <code>XhsClient</code> 的 <code>get_user_notes</code> 方法来获取小红书用户笔记。如果获取失败，则将错误信息记录到错误计数器中，如果错误计数器达到最大重试次数，则调用 <code>send_error_notification</code> 方法发送错误通知并退出程序。当然，如果获取成功，则将错误计数器清零。由于大多数错误是触发了小红书的反爬虫机制，所以这里我们也会通过 <code>sleep</code> 方法来等待一段时间，然后再重试。</p>
+<h4 id="send-error-notification-方法"><a href="#send-error-notification-方法" class="headerlink" title="send_error_notification 方法"></a><code>send_error_notification</code> 方法</h4><p><code>send_error_notification</code> 方法的主要功能是发送错误通知到企业微信。核心逻辑也很简单，就是将错误信息和当前时间拼接成一条文本消息，然后调用 <code>WecomMessage</code> 的 <code>send_text</code> 方法发送。</p>
+<h4 id="monitor-user-方法"><a href="#monitor-user-方法" class="headerlink" title="monitor_user 方法"></a><code>monitor_user</code> 方法</h4><p><code>monitor_user</code> 方法用来监控女神的最新笔记。通过 while 循环不断调用 <code>get_latest_notes</code> 方法获取女神的最新笔记，然后通过 <code>add_note_if_not_exists</code> 方法判断笔记是否已存在，如果笔记不存在，则说明是新笔记，则调用 <code>send_note_notification</code> 方法发送笔记通知到企业微信，告知我们女神发布了新笔记，我们就可以第一时间去点赞或者评论了。</p>
+<h4 id="send-note-notification-方法"><a href="#send-note-notification-方法" class="headerlink" title="send_note_notification 方法"></a><code>send_note_notification</code> 方法</h4><p><code>send_note_notification</code> 方法和 <code>send_error_notification</code> 类似。将笔记的标题, 链接, 类型, 监控时间以及用户名拼接成一条文本消息，然后调用 <code>WecomMessage</code> 的 <code>send_text</code> 方法发送。</p>
+<h2 id="运行监控程序"><a href="#运行监控程序" class="headerlink" title="运行监控程序"></a>运行监控程序</h2><p>以上，我们的核心代码已经实现完毕，接下来我们就可以运行我们的监控程序，测试程序是否正常，行为是否符合预期。</p>
+<p>在正式运行之前，我们需要先配置好小红书 cookie, 企业微信配置信息以及监控配置信息。</p>
+<h3 id="获取小红书-cookie"><a href="#获取小红书-cookie" class="headerlink" title="获取小红书 cookie"></a>获取小红书 cookie</h3><p>我们登录小红书 Web 端，打开开发者工具，在 Network 标签下找到请求头中包含 Cookie（a1, web_session 和 webId）的请求，复制请求头中的 Cookie 信息，然后粘贴到配置模块中的 XHS_CONFIG 中。<br><img src="https://pic.otaku.ren/20250112/AQADC8AxG7U9GVR-.jpg" alt="xhs_cookie"></p>
+<h3 id="获取企业微信配置信息"><a href="#获取企业微信配置信息" class="headerlink" title="获取企业微信配置信息"></a>获取企业微信配置信息</h3><p>登录企业微信后台，创建一个企业或者加入一个企业，获取企业的 CORPID，然后在应用管理中创建一个应用，获取应用的 AGENTID 和 SECRET，然后粘贴到配置模块中的 WECOM_CONFIG 中。<br><img src="https://pic.otaku.ren/20250112/AQADEMAxG7U9GVR-.jpg" alt="wecom_config"><br><img src="https://pic.otaku.ren/20250112/AQADD8AxG7U9GVR-.jpg" alt="wecom_agentid"></p>
+<h3 id="获取女神小红书用户-ID"><a href="#获取女神小红书用户-ID" class="headerlink" title="获取女神小红书用户 ID"></a>获取女神小红书用户 ID</h3><p>通过小红书 Web 端，访问女神的笔记主页，浏览器地址栏 &#x2F;user&#x2F;profile&#x2F;xxx 中的 xxx 就是小红书用户 ID。<br><img src="https://pic.otaku.ren/20250112/AQADG8AxG7U9GVR-.jpg" alt="xhs_user_id"></p>
+<h3 id="本地运行"><a href="#本地运行" class="headerlink" title="本地运行"></a>本地运行</h3><p>当完成以上配置后，本地运行很简单，只需要在终端中执行以下命令即可：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python monitor.py</span><br></pre></td></tr></table></figure>
+<p><img src="https://pic.otaku.ren/20250112/AQADHcAxG7U9GVR-.jpg" alt="xhs_monitor"><br>当终端输出 “开始监控用户: xxxxxxx” 时，说明监控程序已经启动成功，女神发布新笔记时，我们就会收到通知了。(注意：第一次启动时，由于数据库中没有数据，所以会发送很多通知，不用担心，这些通知都是女神之前的笔记，我们只需要持续运行监控，关注新笔记即可)<br><img src="https://pic.otaku.ren/20250112/AQADIsAxG7U9GVR9.jpg" alt="xhs_monitor_success"></p>
+<h3 id="部署到云服务器"><a href="#部署到云服务器" class="headerlink" title="部署到云服务器"></a>部署到云服务器</h3><p>部署到云服务器，可以保证监控程序的持久运行。我们使用 screen 保持程序在后台持续运行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">screen -S xhs_monitor</span><br><span class="line">python monitor.py</span><br><span class="line"></span><br><span class="line"><span class="comment"># 按 Ctrl+A+D 分离 screen 会话</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>通过这篇教程，我们实现了一个女神小红书动态监控系统，让我们永远不错过她的每一条动态，永远第一时间向她嘘寒问暖，做她最忠实的粉丝（舔狗）! 但是，技术只是手段，真正的爱情需要我们用心去经营，希望各位同学都能追到自己的女神，并和她一起走向幸福的未来! </p>
+<h2 id="项目地址"><a href="#项目地址" class="headerlink" title="项目地址"></a>项目地址</h2><p><a target="_blank" rel="noopener" href="https://github.com/beilunyang/xhs-monitor/tree/tutorial-1">https://github.com/beilunyang/xhs-monitor</a></p>
+
+  </div>
+</article>
+
+
+    <div class="blog-post-comments">
+        <div id="utterances_thread">
+            <noscript>加载评论需要在浏览器启用 JavaScript 脚本支持。</noscript>
+        </div>
+    </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">需求分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%80%E6%9C%AF%E6%96%B9%E6%A1%88"><span class="toc-number">3.</span> <span class="toc-text">技术方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="toc-number">4.</span> <span class="toc-text">创建项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">5.</span> <span class="toc-text">核心代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E9%85%8D%E7%BD%AE%E6%A8%A1%E5%9D%97"><span class="toc-number">5.1.</span> <span class="toc-text">实现配置模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E9%80%9A%E7%9F%A5%E6%A8%A1%E5%9D%97"><span class="toc-number">5.2.</span> <span class="toc-text">实现企业微信通知模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E6%A8%A1%E5%9D%97"><span class="toc-number">5.3.</span> <span class="toc-text">实现数据库模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%B7%A5%E5%85%B7%E6%A8%A1%E5%9D%97"><span class="toc-number">5.4.</span> <span class="toc-text">实现工具模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E7%9B%91%E6%8E%A7%E4%B8%BB%E7%A8%8B%E5%BA%8F"><span class="toc-number">5.5.</span> <span class="toc-text">实现监控主程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XHSMonitor-%E7%B1%BB%E8%AF%A6%E8%A7%A3"><span class="toc-number">5.6.</span> <span class="toc-text">XHSMonitor 类详解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#init-%E6%96%B9%E6%B3%95"><span class="toc-number">5.6.1.</span> <span class="toc-text">__init__ 方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#get-latest-notes-%E6%96%B9%E6%B3%95"><span class="toc-number">5.6.2.</span> <span class="toc-text">get_latest_notes 方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#send-error-notification-%E6%96%B9%E6%B3%95"><span class="toc-number">5.6.3.</span> <span class="toc-text">send_error_notification 方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#monitor-user-%E6%96%B9%E6%B3%95"><span class="toc-number">5.6.4.</span> <span class="toc-text">monitor_user 方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#send-note-notification-%E6%96%B9%E6%B3%95"><span class="toc-number">5.6.5.</span> <span class="toc-text">send_note_notification 方法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E7%9B%91%E6%8E%A7%E7%A8%8B%E5%BA%8F"><span class="toc-number">6.</span> <span class="toc-text">运行监控程序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%B0%8F%E7%BA%A2%E4%B9%A6-cookie"><span class="toc-number">6.1.</span> <span class="toc-text">获取小红书 cookie</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF"><span class="toc-number">6.2.</span> <span class="toc-text">获取企业微信配置信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%A5%B3%E7%A5%9E%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7-ID"><span class="toc-number">6.3.</span> <span class="toc-text">获取女神小红书用户 ID</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C"><span class="toc-number">6.4.</span> <span class="toc-text">本地运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">6.5.</span> <span class="toc-text">部署到云服务器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">7.</span> <span class="toc-text">结语</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%9C%B0%E5%9D%80"><span class="toc-number">8.</span> <span class="toc-text">项目地址</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&text=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&title=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&is_video=false&description=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=追女神必备！使用 Python 构建小红书用户动态监控系统&body=Check out this article: https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&title=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&title=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&title=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&title=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&name=追女神必备！使用 Python 构建小红书用户动态监控系统&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://beilunyang.github.io/2025/01/12/%E8%BF%BD%E5%A5%B3%E7%A5%9E%E5%BF%85%E5%A4%87%EF%BC%81%E4%BD%BF%E7%94%A8-Python-%E6%9E%84%E5%BB%BA%E5%B0%8F%E7%BA%A2%E4%B9%A6%E7%94%A8%E6%88%B7%E5%8A%A8%E6%80%81%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F/&t=追女神必备！使用 Python 构建小红书用户动态监控系统"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2025
+    beilunyang
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">About</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="https://github.com/beilunyang">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+  <script type="text/javascript">
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?ff79330890944419b7024a1981a182d6";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+    <script type="text/javascript">
+      var utterances_repo = 'beilunyang/beilunyang.github.io';
+      var utterances_issue_term = 'pathname';
+      var utterances_label = 'comment';
+      var utterances_theme = 'github-dark';
+
+      (function(){
+          var script = document.createElement('script');
+
+          script.src = 'https://utteranc.es/client.js';
+          script.setAttribute('repo', utterances_repo);
+          script.setAttribute('issue-term', 'pathname');
+          script.setAttribute('label', utterances_label);
+          script.setAttribute('theme', utterances_theme);
+          script.setAttribute('crossorigin', 'anonymous');
+          script.async = true;
+          (document.getElementById('utterances_thread')).appendChild(script);
+      }());
+  </script>
+
+</body>
+</html>
